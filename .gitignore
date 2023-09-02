@@ -1,0 +1,8 @@
+bin/engine.dll
+bin/engine.exp
+bin/engine.ilk
+bin/engine.lib
+bin/engine.pdb
+testbed.exe
+testbed.ilk
+testbed.pdb
