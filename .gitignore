@@ -3,6 +3,6 @@ bin/engine.exp
 bin/engine.ilk
 bin/engine.lib
 bin/engine.pdb
-testbed.exe
-testbed.ilk
-testbed.pdb
+bin/testbed.exe
+bin/testbed.ilk
+bin/testbed.pdb
