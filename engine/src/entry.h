@@ -3,6 +3,7 @@
 #include "core/application.h"
 #include "core/logger.h"
 #include "game_types.h"
+#include "core/lmemory.h"
 
 // Externally-defined function to create a game.
 extern b8 create_game(game* out_game);
@@ -11,6 +12,8 @@ extern b8 create_game(game* out_game);
 */
 int main(void) 
 {
+    initialize_memory();
+
     // Request the game instance from the application.
     game game_inst;
     if(!create_game(&game_inst)) {
@@ -37,6 +40,6 @@ int main(void)
     }
 
 
-    
+    shutdown_memory();
     return 0;
 }

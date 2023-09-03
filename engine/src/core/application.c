@@ -1,7 +1,7 @@
 #include "application.h"
 #include "game_types.h"
 #include "logger.h"
-
+#include "core/lmemory.h"
 
 // TODO: Test
 #include "platform/platform.h"
@@ -69,6 +69,9 @@ b8 application_create(game* game_inst)
 
 b8 application_run()
 {
+    // called once, not worried about the memory leak
+    KINFO(get_memory_usage_str());
+
     while(app_state.is_running) {
         if(!platform_pump_messages(&app_state.platform)){
             app_state.is_running = FALSE;
