@@ -6,6 +6,7 @@
 #include "core/lmemory.h"
 #include "platform/platform.h"
 #include "core/event.h"
+#include "core/input.h"
 
 
 typedef struct application_state {
@@ -33,6 +34,7 @@ b8 application_create(game* game_inst)
 
     // Initialize subsystems.
     initialize_logging();
+    input_initialization();
 
     // TODO: Remove these.
     KFATAL("A test message : %f", 3.14f);
@@ -91,24 +93,30 @@ b8 application_run()
                 app_state.is_running = FALSE;
                 break;
             }
-        }
+        
 
-        // TODO: Implement delta-time.
-        if(!app_state.is_suspended) {
-            if(!app_state.game_inst->render(app_state.game_inst, (f32)0)) {
-                KFATAL("Game render failed, shutting down.");
-                app_state.is_running = FALSE;
-                break;
+            // TODO: Implement delta-time.
+            if(!app_state.is_suspended) {
+                if(!app_state.game_inst->render(app_state.game_inst, (f32)0)) {
+                    KFATAL("Game render failed, shutting down.");
+                    app_state.is_running = FALSE;
+                    break;
+                }
             }
-        }        
 
+            // NOTE: Input update/state copying should always be handled 
+            // after any input should be recorded; ie before this line.
+            // As a safety, input is the last thing to be update before
+            // this frame ends.
+            input_update(0);        
+        }
     }
 
     // If somehow the while loop is broken w/o this flag, set it.
     app_state.is_running = FALSE;
 
     event_shutdown();
-
+    input_shutdown();
     platform_shutdown(&app_state.platform);
 
     return TRUE;
