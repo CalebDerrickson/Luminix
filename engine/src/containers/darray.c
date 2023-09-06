@@ -43,7 +43,7 @@ void* _darray_resize(void* array)
         stride);
     lcopy_memory(temp, array, length * stride);
 
-    _darray_filed_set(temp, DARRAY_LENGTH, length);
+    _darray_field_set(temp, DARRAY_LENGTH, length);
     _darray_destroy(array);
     return temp;
 }
@@ -69,7 +69,7 @@ void _darray_pop(void* array, void* dest)
     u64 stride = darray_stride(array);
     u64 addr = (u64)array;
     addr += ((length - 1) * stride);
-    lcopy_memory(array, DARRAY_LENGTH, length - 1);
+    lcopy_memory(array, (void*)addr, length - 1);
     _darray_field_set(array, DARRAY_LENGTH, length - 1);
 }
 
@@ -95,7 +95,7 @@ void* _darray_pop_at(void* array, u64 index, void* dest)
         );
     }
 
-    _darray_filed_set(array, DARRAY_LENGTH, length - 1);
+    _darray_field_set(array, DARRAY_LENGTH, length - 1);
     return array;
 }
 
@@ -115,14 +115,14 @@ void* _darray_insert_at(void* array, u64 index, void* value_ptr)
 
     // If not on the last element, copy the rest outward.
     if (index != length - 1) {
-        kcopy_memory(
+        lcopy_memory(
             (void*)(addr + ((index + 1) * stride)),
             (void*)(addr + (index * stride)),
             stride * (length - index));
     }
 
     // Set the value at the index
-    kcopy_memory((void*)(addr + (index * stride)), value_ptr, stride);
+    lcopy_memory((void*)(addr + (index * stride)), value_ptr, stride);
 
     _darray_field_set(array, DARRAY_LENGTH, length + 1);
     return array;
