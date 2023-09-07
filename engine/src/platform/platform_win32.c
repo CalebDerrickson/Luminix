@@ -51,7 +51,7 @@ b8 platform_startup(
         wc.lpszClassName = "luminix_window_class";
 
         // Register Window Class 
-        if(!RegisterClassA(&wc)) {
+        if (!RegisterClassA(&wc)) {
             MessageBoxA(0, "Window registration failed", "Error", MB_ICONEXCLAMATION | MB_OK);
             return FALSE;
         }
@@ -92,7 +92,7 @@ b8 platform_startup(
             window_style, window_x, window_y, window_width, window_height, 
             0, 0, state->h_instance, 0); 
 
-        if(handle == 0) {
+        if (handle == 0) {
             MessageBoxA(NULL, "Window creation failed!", "Error!", MB_ICONEXCLAMATION | MB_OK);
 
             KFATAL("Window creation failed!");
@@ -123,7 +123,7 @@ void platform_shutdown(platform_state* plat_state)
     // Cold-cast to the known type
     internal_state* state = (internal_state *)plat_state->internal_state;
 
-    if(state->hwnd){
+    if (state->hwnd){
         DestroyWindow(state->hwnd);
         state->hwnd = 0;
     }  
@@ -254,7 +254,7 @@ LRESULT CALLBACK win32_process_message(HWND hwnd, u32 msg, WPARAM w_param, LPARA
 
         case WM_MOUSEWHEEL: {
             i32 z_delta = GET_WHEEL_DELTA_WPARAM(w_param);
-            if(z_delta != 0) {
+            if (z_delta != 0) {
                 // Flatten the input to be OS - independent (-1, 1)
                 // Not checking for variable wheel speeds.
                 z_delta = (z_delta <= 0) ? -1 : 1;
@@ -294,7 +294,7 @@ LRESULT CALLBACK win32_process_message(HWND hwnd, u32 msg, WPARAM w_param, LPARA
             }
 
             // Pass to input subsystem
-            if(mouse_button != BUTTON_MAX_BUTTONS) {
+            if (mouse_button != BUTTON_MAX_BUTTONS) {
                 input_process_button(mouse_button, pressed);
             }
         } break;

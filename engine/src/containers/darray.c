@@ -52,7 +52,7 @@ void* _darray_push(void* array, const void* value_ptr)
 {
     u64 length = darray_length(array);
     u64 stride = darray_stride(array);
-    if(length >= darray_capacity(array)) {
+    if (length >= darray_capacity(array)) {
         array = _darray_resize(array);
     }
 
@@ -78,7 +78,7 @@ void* _darray_pop_at(void* array, u64 index, void* dest)
     u64 length = darray_length(array);
     u64 stride = darray_stride(array);
 
-    if(index >= length) {
+    if (index >= length) {
         KERROR("Index outside the bounds of this array! Length: %i, index: %index", length, index);
         return array;
     }
@@ -87,7 +87,7 @@ void* _darray_pop_at(void* array, u64 index, void* dest)
     lcopy_memory(dest, (void*)(addr + (index * stride)), stride);
 
     // If not on the last element, snip out the entry and copy the rest inward.
-    if(index != length - 1) {
+    if (index != length - 1) {
         lcopy_memory(
             (void*)(addr + (index * stride)),
             (void*)(addr + ((index + 1) * stride)),

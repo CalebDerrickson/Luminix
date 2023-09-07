@@ -47,7 +47,7 @@ void log_output(log_level level, const char* message, ...) {
     char out_message2[msg_len];
     sprintf(out_message2, "%s%s\n", level_strings[level], out_message);
 
-    if(is_error){
+    if (is_error){
         platform_console_write_error(out_message2, level);
     } else {
         platform_console_write(out_message2, level);

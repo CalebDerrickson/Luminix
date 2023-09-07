@@ -39,7 +39,7 @@ void input_shutdown()
 
 void input_update(f64 delta_time)
 {
-    if(!initialized) {
+    if (!initialized) {
         return;
     }
 
@@ -65,7 +65,7 @@ void input_process_key(keys key, b8 pressed)
 void input_process_button(buttons button, b8 pressed)
 {
     // State changed ? fire event : nothing
-    if(state.mouse_current.buttons[button] != pressed) {
+    if (state.mouse_current.buttons[button] != pressed) {
         state.mouse_current.buttons[button] = pressed;
   
         // Fire the event.
@@ -78,7 +78,7 @@ void input_process_button(buttons button, b8 pressed)
 void input_process_mouse_move(i16 x, i16 y)
 {
     // Only process if actually different
-    if(state.mouse_current.x != x || state.mouse_current.y != y) {
+    if (state.mouse_current.x != x || state.mouse_current.y != y) {
         // NOTE: enable this if debugging
         //KDEBUG("Mouse pos : %i, %i", x, y);
 
@@ -107,7 +107,7 @@ void input_process_mouse_wheel(i8 z_delta)
 
 b8 input_is_key_down(keys key)
 {
-    if(!initialized) {
+    if (!initialized) {
         return FALSE;
     }
     return state.keyboard_current.keys[key] == TRUE;
@@ -115,7 +115,7 @@ b8 input_is_key_down(keys key)
 
 b8 input_is_key_up(keys key)
 {
-    if(!initialized) {
+    if (!initialized) {
         return TRUE;
     }
     return state.keyboard_current.keys[key] == FALSE;
@@ -123,7 +123,7 @@ b8 input_is_key_up(keys key)
 
 b8 input_was_key_down(keys key)
 {
-    if(!initialized) {
+    if (!initialized) {
         return FALSE;
     }
     return state.keyboard_previous.keys[key] == TRUE;
@@ -131,7 +131,7 @@ b8 input_was_key_down(keys key)
 
 b8 input_was_key_up(keys key)
 {
-    if(!initialized) {
+    if (!initialized) {
         return TRUE;
     }
     return state.keyboard_previous.keys[key] == FALSE;
@@ -139,7 +139,7 @@ b8 input_was_key_up(keys key)
 
 b8 input_is_button_down(buttons button)
 {
-    if(!initialized){
+    if (!initialized){
         return FALSE;
     }
     return state.keyboard_current.keys[button] == TRUE;
@@ -147,7 +147,7 @@ b8 input_is_button_down(buttons button)
 
 b8 input_is_button_up(buttons button)
 {
-    if(!initialized){
+    if (!initialized){
         return TRUE;
     }
     return state.keyboard_current.keys[button] == FALSE;
@@ -156,7 +156,7 @@ b8 input_is_button_up(buttons button)
 
 b8 input_was_button_down(buttons button)
 {
-    if(!initialized){
+    if (!initialized){
         return FALSE;
     }
     return state.keyboard_previous.keys[button] == TRUE;
@@ -164,7 +164,7 @@ b8 input_was_button_down(buttons button)
 
 b8 input_was_button_up(buttons button)
 {
-    if(!initialized){
+    if (!initialized){
         return TRUE;
     }
     return state.keyboard_previous.keys[button] == FALSE;
@@ -172,7 +172,7 @@ b8 input_was_button_up(buttons button)
 
 void input_get_mouse_position(i32* x, i32* y)
 {
-    if(!initialized){
+    if (!initialized){
         *x = 0;
         *y = 0;
         return;
@@ -183,7 +183,7 @@ void input_get_mouse_position(i32* x, i32* y)
 
 void input_get_previous_mouse_position(i32* x, i32* y)
 {
-    if(!initialized){
+    if (!initialized){
         *x = 0;
         *y = 0;
         return;

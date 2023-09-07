@@ -57,7 +57,7 @@ b8 platform_startup(
     // Retrieve the connection from the display
     state->connection = XGetXCBConnection(state->display);
     
-    if(xcb_connection_has_error(state->connection)) {
+    if (xcb_connection_has_error(state->connection)) {
         KFATAL("Failed to connect to X server via XCB.");
         return FALSE;
     }
@@ -195,7 +195,7 @@ b8 platform_pump_messages(platform_state* plat_state)
     // Poll for events until null is returned
     while(event != 0){
         event = xcb_poll_for_event(state->connection);
-        if(event == 0){
+        if (event == 0){
             break;
         }
 
@@ -260,7 +260,7 @@ b8 platform_pump_messages(platform_state* plat_state)
                 cm = (xcb_clinet_message_event_t *)event;
                 
                 // Window close
-                if(cm->data.data32[0] == state->wm_delete_win) {
+                if (cm->data.data32[0] == state->wm_delete_win) {
                     quit_flagged = TRUE;
                 }
             } break;

@@ -46,7 +46,7 @@ void shutdown_memory()
 
 void* lallocate(u64 size, memory_tag tag)
 {
-    if(tag == MEMORY_TAG_UNKNOWN){
+    if (tag == MEMORY_TAG_UNKNOWN){
         KWARN("lallocate called using MEMORY_TAG_UNKNOWN. Re-class this allocation.");
     }
 
@@ -61,7 +61,7 @@ void* lallocate(u64 size, memory_tag tag)
 
 void lfree(void* block, u64 size, memory_tag tag) 
 {
-    if(tag == MEMORY_TAG_UNKNOWN){
+    if (tag == MEMORY_TAG_UNKNOWN){
         KWARN("lfree called using MEMORY_TAG_UNKNOWN. Re-class this allocation.");
     }
 
@@ -99,7 +99,7 @@ char* get_memory_usage_str()
 
         char unit[4] = "XiB";
         f32 amount = 1.0f;
-        if(stats.tagged_allocations[it] >= gib) {
+        if (stats.tagged_allocations[it] >= gib) {
             unit[0] = 'G';
             amount = stats.tagged_allocations[it] / (f32) gib;
         }

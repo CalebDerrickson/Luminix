@@ -16,25 +16,25 @@ int main(void)
 
     // Request the game instance from the application.
     game game_inst;
-    if(!create_game(&game_inst)) {
+    if (!create_game(&game_inst)) {
         KFATAL("Could not create game!");
         return -1;
     }
 
     // Ensure the function pointers exist
-    if( !game_inst.initialize || !game_inst.render || !game_inst.update || !game_inst.on_resize ) {
+    if ( !game_inst.initialize || !game_inst.render || !game_inst.update || !game_inst.on_resize ) {
         KFATAL("The game's function pointers must be assigned!");
         return -2;
     }
 
     // Initialization.
-    if(!application_create(&game_inst)) {
+    if (!application_create(&game_inst)) {
         KINFO("Application failed to create!");
         return 1;
     }
 
     // Begin the game loop
-    if(!application_run()) {
+    if (!application_run()) {
         KINFO("Application did not shutdown properly.");
         return 2;
     }

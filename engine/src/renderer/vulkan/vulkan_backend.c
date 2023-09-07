@@ -27,7 +27,7 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
 
     VkResult result = vkCreateInstance(&create_info, context.allocator, &context.instance);
 
-    if(result != VK_SUCCESS){
+    if (result != VK_SUCCESS){
         KERROR("vkCreateInstance failed with result %u", result);
         return FALSE;
     }

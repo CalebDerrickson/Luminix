@@ -32,7 +32,7 @@ b8 application_on_key(u16 code, void* sender, void* listener_inst, event_context
 
 b8 application_create(game* game_inst)
 {
-    if(initialized) {
+    if (initialized) {
         KERROR("application_create called more than once.");
         return FALSE;
     }
@@ -54,7 +54,7 @@ b8 application_create(game* game_inst)
     app_state.is_running = TRUE;
     app_state.is_suspended = FALSE;
 
-    if(!event_initialize()) {
+    if (!event_initialize()) {
         KERROR("Event system failed initialization. Application cannot continue.");
         return FALSE;
     }
@@ -64,7 +64,7 @@ b8 application_create(game* game_inst)
     event_register(EVENT_CODE_KEY_PRESSED, 0, application_on_key);
     event_register(EVENT_CODE_KEY_RELEASED, 0, application_on_key);
 
-    if(!platform_startup(
+    if (!platform_startup(
         &app_state.platform, 
         game_inst->application_config.name, 
         game_inst->application_config.start_pos_x,
@@ -76,13 +76,13 @@ b8 application_create(game* game_inst)
     }
 
     // Renderer startup
-    if(!renderer_initialize(game_inst->application_config.name, &app_state.platform)) {
+    if (!renderer_initialize(game_inst->application_config.name, &app_state.platform)) {
         KFATAL("failed to intitialize renderer. Abotring application.");
         return FALSE;
     }
 
     // Initialize the game
-    if(!app_state.game_inst->initialize(app_state.game_inst)) {
+    if (!app_state.game_inst->initialize(app_state.game_inst)) {
         KFATAL("Game failed to initilaize.");
         return FALSE;
     }
@@ -111,12 +111,12 @@ b8 application_run()
     KINFO(get_memory_usage_str());
 
     while(app_state.is_running) {
-        if(!platform_pump_messages(&app_state.platform)){
+        if (!platform_pump_messages(&app_state.platform)){
             app_state.is_running = FALSE;
         }
 
         // TODO: Implement delta-time.
-        if(!app_state.is_suspended) {
+        if (!app_state.is_suspended) {
             
             // Calculate delta-time
             clock_update(&app_state.clock);
@@ -124,7 +124,7 @@ b8 application_run()
             f64 delta = (current_time - app_state.last_time);
             f64 frame_start_time = platform_get_absolute_time();
 
-            if(!app_state.game_inst->update(app_state.game_inst, (f32)delta)) {
+            if (!app_state.game_inst->update(app_state.game_inst, (f32)delta)) {
                 KFATAL("Game update failed, shutting down.");
                 app_state.is_running = FALSE;
                 break;
@@ -133,8 +133,8 @@ b8 application_run()
 
             // Calls the render routine
             // TODO: Implement delta-time.
-            if(!app_state.is_suspended) {
-                if(!app_state.game_inst->render(app_state.game_inst, (f32)delta)) {
+            if (!app_state.is_suspended) {
+                if (!app_state.game_inst->render(app_state.game_inst, (f32)delta)) {
                     KFATAL("Game render failed, shutting down.");
                     app_state.is_running = FALSE;
                     break;
@@ -159,7 +159,7 @@ b8 application_run()
 
                 // Give the time back to the OS
                 b8 limit_frames = FALSE;
-                if(remaining_ms > 0 && limit_frames) {
+                if (remaining_ms > 0 && limit_frames) {
                     platform_sleep(remaining_ms - 1);
                 }
 
@@ -210,10 +210,10 @@ b8 application_on_event(u16 code, void* sender, void* listener_inst, event_conte
 b8 application_on_key(u16 code, void* sender, void* listener_inst, event_context context)
 {
     // TODO: clean this up using switches
-    if(code == EVENT_CODE_KEY_PRESSED) {
+    if (code == EVENT_CODE_KEY_PRESSED) {
 
         u16 key_code = context.data.u16[0];
-        if(key_code == KEY_ESCAPE) {
+        if (key_code == KEY_ESCAPE) {
             
             // NOTE: Technically firing an event to itself, but there may be other listeners.
             event_context data = {};
@@ -232,7 +232,7 @@ b8 application_on_key(u16 code, void* sender, void* listener_inst, event_context
     } else if (code == EVENT_CODE_KEY_RELEASED) {
 
         u16 key_code = context.data.u16[0];
-        if( key_code == KEY_B) {
+        if ( key_code == KEY_B) {
             
             // Example on checking for a key
             KDEBUG("EXPLICIT - B key released!");
