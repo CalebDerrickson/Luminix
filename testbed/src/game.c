@@ -3,7 +3,7 @@
 
 b8 game_initialize(game* game_inst)
 {
-    KDEBUG("Game initialize was called.");
+    LDEBUG("Game initialize was called.");
     return TRUE;
 }
 

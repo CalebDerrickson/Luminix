@@ -1,12 +1,13 @@
 #include "platform/platform.h"
+#include "containers/darray.h"
 #include "core/logger.h"
-#include <stdio.h>
 #include "core/input.h"
 
 // Windows platform layer.
-#if KPLATFORM_WINDOWS
+#if LPLATFORM_WINDOWS
 
 
+#include <stdio.h>
 #include <windows.h>
 #include <windowsx.h> // param input extraction
 
@@ -95,7 +96,7 @@ b8 platform_startup(
         if (handle == 0) {
             MessageBoxA(NULL, "Window creation failed!", "Error!", MB_ICONEXCLAMATION | MB_OK);
 
-            KFATAL("Window creation failed!");
+            LFATAL("Window creation failed!");
             return FALSE;
         } else {
             state->hwnd = handle;
@@ -203,6 +204,11 @@ void platform_sleep(u64 ms)
     Sleep(ms);
 }
 
+void platform_get_required_extension_names(const char*** names_darray)
+{
+    darray_push(*names_darray, &"VK_KHR_win32_surface");
+}
+
 LRESULT CALLBACK win32_process_message(HWND hwnd, u32 msg, WPARAM w_param, LPARAM l_param)
 {
     switch(msg) 
@@ -304,4 +310,4 @@ LRESULT CALLBACK win32_process_message(HWND hwnd, u32 msg, WPARAM w_param, LPARA
     return DefWindowProcA(hwnd, msg, w_param, l_param);
 }
 
-#endif // KPLATFORM_WINDOWS
+#endif // LPLATFORM_WINDOWS

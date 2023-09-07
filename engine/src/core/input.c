@@ -28,7 +28,7 @@ void input_initialization()
 {
     lzero_memory(&state, sizeof(input_state));
     initialized = TRUE;
-    KINFO("Input subsystem initialized");
+    LINFO("Input subsystem initialized");
 }
 
 void input_shutdown()
@@ -80,7 +80,7 @@ void input_process_mouse_move(i16 x, i16 y)
     // Only process if actually different
     if (state.mouse_current.x != x || state.mouse_current.y != y) {
         // NOTE: enable this if debugging
-        //KDEBUG("Mouse pos : %i, %i", x, y);
+        //LDEBUG("Mouse pos : %i, %i", x, y);
 
         // Update internal state
         state.mouse_current.x = x;

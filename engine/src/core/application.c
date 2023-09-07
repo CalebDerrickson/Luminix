@@ -33,7 +33,7 @@ b8 application_on_key(u16 code, void* sender, void* listener_inst, event_context
 b8 application_create(game* game_inst)
 {
     if (initialized) {
-        KERROR("application_create called more than once.");
+        LERROR("application_create called more than once.");
         return FALSE;
     }
 
@@ -44,18 +44,18 @@ b8 application_create(game* game_inst)
     input_initialization();
 
     // TODO: Remove these.
-    KFATAL("A test message : %f", 3.14f);
-    KERROR("A test message : %f", 3.14f);
-    KWARN("A test message : %f", 3.14f);
-    KINFO("A test message : %f", 3.14f);
-    KDEBUG("A test message : %f", 3.14f);
-    KTRACE("A test message : %f", 3.14f);
+    LFATAL("A test message : %f", 3.14f);
+    LERROR("A test message : %f", 3.14f);
+    LWARN("A test message : %f", 3.14f);
+    LINFO("A test message : %f", 3.14f);
+    LDEBUG("A test message : %f", 3.14f);
+    LTRACE("A test message : %f", 3.14f);
 
     app_state.is_running = TRUE;
     app_state.is_suspended = FALSE;
 
     if (!event_initialize()) {
-        KERROR("Event system failed initialization. Application cannot continue.");
+        LERROR("Event system failed initialization. Application cannot continue.");
         return FALSE;
     }
 
@@ -77,13 +77,13 @@ b8 application_create(game* game_inst)
 
     // Renderer startup
     if (!renderer_initialize(game_inst->application_config.name, &app_state.platform)) {
-        KFATAL("failed to intitialize renderer. Abotring application.");
+        LFATAL("failed to intitialize renderer. Abotring application.");
         return FALSE;
     }
 
     // Initialize the game
     if (!app_state.game_inst->initialize(app_state.game_inst)) {
-        KFATAL("Game failed to initilaize.");
+        LFATAL("Game failed to initilaize.");
         return FALSE;
     }
 
@@ -108,7 +108,7 @@ b8 application_run()
     f64 target_frame_seconds = 1.0f / 60;
 
     // called once, not worried about the memory leak
-    KINFO(get_memory_usage_str());
+    LINFO(get_memory_usage_str());
 
     while(app_state.is_running) {
         if (!platform_pump_messages(&app_state.platform)){
@@ -125,7 +125,7 @@ b8 application_run()
             f64 frame_start_time = platform_get_absolute_time();
 
             if (!app_state.game_inst->update(app_state.game_inst, (f32)delta)) {
-                KFATAL("Game update failed, shutting down.");
+                LFATAL("Game update failed, shutting down.");
                 app_state.is_running = FALSE;
                 break;
             }
@@ -135,7 +135,7 @@ b8 application_run()
             // TODO: Implement delta-time.
             if (!app_state.is_suspended) {
                 if (!app_state.game_inst->render(app_state.game_inst, (f32)delta)) {
-                    KFATAL("Game render failed, shutting down.");
+                    LFATAL("Game render failed, shutting down.");
                     app_state.is_running = FALSE;
                     break;
                 }
@@ -198,7 +198,7 @@ b8 application_on_event(u16 code, void* sender, void* listener_inst, event_conte
     switch (code)
     {
         case EVENT_CODE_APPLICATION_QUIT: {
-            KINFO("EVENT_CODE_APPLICATION_QUIT received, shutting down.\n");
+            LINFO("EVENT_CODE_APPLICATION_QUIT received, shutting down.\n");
             app_state.is_running = FALSE;
             return TRUE;
         }
@@ -224,10 +224,10 @@ b8 application_on_key(u16 code, void* sender, void* listener_inst, event_context
         } else if (key_code == KEY_A) {
 
             // Example on checking for a key
-            KDEBUG("Explicit - A key pressed!");
+            LDEBUG("Explicit - A key pressed!");
         } else {
 
-            KDEBUG("'%c' key pressed in window.", key_code);
+            LDEBUG("'%c' key pressed in window.", key_code);
         }
     } else if (code == EVENT_CODE_KEY_RELEASED) {
 
@@ -235,10 +235,10 @@ b8 application_on_key(u16 code, void* sender, void* listener_inst, event_context
         if ( key_code == KEY_B) {
             
             // Example on checking for a key
-            KDEBUG("EXPLICIT - B key released!");
+            LDEBUG("EXPLICIT - B key released!");
         } else {
             
-            KDEBUG("'%c' key released in window.", key_code);
+            LDEBUG("'%c' key released in window.", key_code);
         }
     }
     return FALSE;

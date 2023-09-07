@@ -2,6 +2,7 @@
 #pragma once 
 
 #include "platform/platform.h"
+#include "containers/darray.h"
 #include "core/logger.h"
 #include "core/input.h"
 #include "core/event.h"
@@ -58,7 +59,7 @@ b8 platform_startup(
     state->connection = XGetXCBConnection(state->display);
     
     if (xcb_connection_has_error(state->connection)) {
-        KFATAL("Failed to connect to X server via XCB.");
+        LFATAL("Failed to connect to X server via XCB.");
         return FALSE;
     }
 
@@ -164,7 +165,7 @@ b8 platform_startup(
     // Flush the stream
     i32 stream_result = xcb_flush(state->connection);
     if (stream_result <= 0){
-        KFATAL("An error occured when flushing the stream: %d", stream_result);
+        LFATAL("An error occured when flushing the stream: %d", stream_result);
         return FALSE;
     }
 
@@ -340,6 +341,11 @@ void platform_sleep(u64 ms)
     }
     usleep( (ms % 1000) * 1000);
 #endif
+}
+
+void platform_get_required_extension_names(const char*** names_darray)
+{
+    darray_push(*names_darray, &"VK_KHR_xcb_surface");
 }
 
 // Key translation

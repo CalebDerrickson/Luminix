@@ -2,10 +2,21 @@
 
 #include "defines.h"
 
+#include "core/asserts.h"
+
 #include <vulkan/vulkan.h>
 
+
+// Checks the given expresion's return type value agains VK_SUCCESS
+#define VK_CHECK(expr)              \
+    {                               \
+        LASSERT(expr == VK_SUCCESS);\
+    }                               \
 
 typedef struct vulkan_context {
     VkInstance instance;
     VkAllocationCallbacks* allocator;
+#if defined(_DEBUG)
+    VkDebugUtilsMessengerEXT debug_messenger;
+#endif
 } vulkan_context;

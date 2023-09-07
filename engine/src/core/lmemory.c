@@ -47,7 +47,7 @@ void shutdown_memory()
 void* lallocate(u64 size, memory_tag tag)
 {
     if (tag == MEMORY_TAG_UNKNOWN){
-        KWARN("lallocate called using MEMORY_TAG_UNKNOWN. Re-class this allocation.");
+        LWARN("lallocate called using MEMORY_TAG_UNKNOWN. Re-class this allocation.");
     }
 
     stats.total_allocated += size;
@@ -62,7 +62,7 @@ void* lallocate(u64 size, memory_tag tag)
 void lfree(void* block, u64 size, memory_tag tag) 
 {
     if (tag == MEMORY_TAG_UNKNOWN){
-        KWARN("lfree called using MEMORY_TAG_UNKNOWN. Re-class this allocation.");
+        LWARN("lfree called using MEMORY_TAG_UNKNOWN. Re-class this allocation.");
     }
 
     // TODO: memory alignment
