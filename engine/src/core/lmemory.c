@@ -1,9 +1,8 @@
 #include "lmemory.h"
 #include "core/logger.h"
 #include "platform/platform.h"
+#include "core/lstring.h"
 
-// TODO: custom string lib
-#include <string.h>
 #include <stdio.h>
 
 struct memory_stats{
@@ -122,6 +121,6 @@ char* get_memory_usage_str()
         offset += length;
     }
 
-    char* out_string = _strdup(buffer);
+    char* out_string = string_duplicate(buffer);
     return out_string;
 }
