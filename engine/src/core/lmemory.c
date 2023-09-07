@@ -93,7 +93,7 @@ char* get_memory_usage_str()
     const u64 gib = mib * kib;
 
     char buffer[8000] = "System memory use (tagged): \n";
-    u64 offset = strlen(buffer);
+    u64 offset = string_length(buffer);
 
     for(u32 it = MEMORY_TAG_UNKNOWN; it != MEMORY_TAG_MAX_TAGS; it++){
 
