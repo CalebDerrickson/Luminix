@@ -1,6 +1,7 @@
 #include "vulkan_backend.h"
 #include "vulkan_types.inl"
 #include "vulkan_platform.h"
+#include "vulkan_device.h"
 
 #include "core/logger.h"
 #include "core/lstring.h"
@@ -119,6 +120,19 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
     VK_CHECK(func(context.instance, &debug_create_info, context.allocator, &context.debug_messenger));
     LDEBUG("Vulkan debugger created.");
 #endif
+
+    // Surface
+    LDEBUG("Creating Vulkan surface...");
+    if(!platform_create_vulkan_surface(plat_state, &context)) {
+        LERROR("Failed to create platform surface!");
+        return FALSE;
+    }
+
+    // Device creation
+    if(!vulkan_device_create(&context)) {
+        LERROR("Failed to create device!");
+        return FALSE;
+    }
 
     LINFO("Vulkan Renderer initialized successfully.");
 
