@@ -37,7 +37,7 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
     darray_push(required_extensions, &VK_KHR_SURFACE_EXTENSION_NAME);     // Generic surface extension
     platform_get_required_extension_names(&required_extensions);          // Platform-specific extension(s)
 
-#if(_DEBUG)
+#if (_DEBUG)
     darray_push(required_extensions, &VK_EXT_DEBUG_UTILS_EXTENSION_NAME); // Debug utilities
 
     LDEBUG("Required extensions:");
@@ -71,14 +71,14 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
         b8 found = FALSE;
 
         for(u32 j = 0; j < available_layer_count; j++) {
-            if(strings_equal(required_validation_layer_names[i], available_layers[j].layerName)) {
+            if (strings_equal(required_validation_layer_names[i], available_layers[j].layerName)) {
                 found = TRUE;
                 LINFO("Found.");
                 break;
             }
         }
 
-        if(!found) {
+        if (!found) {
             LFATAL("Required validationlayer is missing: %s", required_validation_layer_names[i]);
             return FALSE;
         }
@@ -123,13 +123,13 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
 
     // Surface
     LDEBUG("Creating Vulkan surface...");
-    if(!platform_create_vulkan_surface(plat_state, &context)) {
+    if (!platform_create_vulkan_surface(plat_state, &context)) {
         LERROR("Failed to create platform surface!");
         return FALSE;
     }
 
     // Device creation
-    if(!vulkan_device_create(&context)) {
+    if (!vulkan_device_create(&context)) {
         LERROR("Failed to create device!");
         return FALSE;
     }
@@ -141,8 +141,10 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
 
 void vulkan_renderer_backend_shutdown(renderer_backend* backend)
 {
+    vulkan_device_destroy(&context);
+
     LDEBUG("Destroying Vulkan Debugger...");
-    if(context.debug_messenger) {
+    if (context.debug_messenger) {
         PFN_vkDestroyDebugUtilsMessengerEXT func = 
         (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(context.instance, "vkDestroyDebugUtilsMessengerEXT");
         func(context.instance, context.debug_messenger, context.allocator);
