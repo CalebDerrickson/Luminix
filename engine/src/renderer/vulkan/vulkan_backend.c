@@ -48,7 +48,7 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
 
     LDEBUG("Required extensions:");
     u32 length = darray_length(required_extensions);
-    for(u32 i = 0; i < length; i++) {
+    for (u32 i = 0; i < length; i++) {
         LDEBUG(required_extensions[i]);
     }
 #endif
@@ -72,11 +72,11 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
     VK_CHECK(vkEnumerateInstanceLayerProperties(&available_layer_count, available_layers));
 
     // Verify all required layers are available.
-    for(u32 i = 0; i < required_validation_layer_count; i++) {
+    for (u32 i = 0; i < required_validation_layer_count; i++) {
         LINFO("Searching for layer %s ...", required_validation_layer_names[i]);
         b8 found = FALSE;
 
-        for(u32 j = 0; j < available_layer_count; j++) {
+        for (u32 j = 0; j < available_layer_count; j++) {
             if (strings_equal(required_validation_layer_names[i], available_layers[j].layerName)) {
                 found = TRUE;
                 LINFO("Found.");
@@ -164,7 +164,7 @@ void vulkan_renderer_backend_shutdown(renderer_backend* backend)
     vulkan_device_destroy(&context);
 
     LDEBUG("Destroying Vulkan surface...");
-    if(context.surface) {
+    if (context.surface) {
         vkDestroySurfaceKHR(context.instance, context.surface, context.allocator);
         context.surface = 0;
     }
@@ -239,9 +239,9 @@ i32 find_memory_index(u32 type_filter, u32 property_flags)
         &memory_properties
     );
 
-    for(u32 i = 0; i < memory_properties.memoryTypeCount; i++) {
+    for (u32 i = 0; i < memory_properties.memoryTypeCount; i++) {
         // Check each memory type to see if its bit is set to 1.
-        if(type_filter & (1 << i) && (memory_properties.memoryTypes[i].propertyFlags & property_flags) == property_flags) {
+        if (type_filter & (1 << i) && (memory_properties.memoryTypes[i].propertyFlags & property_flags) == property_flags) {
             return i;
         }
     }

@@ -95,7 +95,7 @@ char* get_memory_usage_str()
     char buffer[8000] = "System memory use (tagged): \n";
     u64 offset = string_length(buffer);
 
-    for(u32 it = MEMORY_TAG_UNKNOWN; it != MEMORY_TAG_MAX_TAGS; it++){
+    for (u32 it = MEMORY_TAG_UNKNOWN; it != MEMORY_TAG_MAX_TAGS; it++){
 
         char unit[4] = "XiB";
         f32 amount = 1.0f;

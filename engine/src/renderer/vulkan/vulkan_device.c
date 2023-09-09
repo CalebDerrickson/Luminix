@@ -37,7 +37,7 @@ b8 physical_device_meets_requirements(
 b8 vulkan_device_create(vulkan_context* context)
 {
     LINFO("Selecting physical device...");
-    if(!select_physical_device(context)) {
+    if (!select_physical_device(context)) {
         return FALSE;
     }
 
@@ -140,7 +140,7 @@ void vulkan_device_destroy(vulkan_context* context)
 
     // Destroy the logical device
     LINFO("Destroying logical device...");
-    if(context->device.logical_device) {
+    if (context->device.logical_device) {
         vkDestroyDevice(context->device.logical_device, context->allocator);
         context->device.logical_device = 0;
     }
@@ -149,7 +149,7 @@ void vulkan_device_destroy(vulkan_context* context)
     LINFO("Releasing physical device resources...");
     context->device.physical_device = 0;
 
-    if(context->device.swapchain_support.formats) {
+    if (context->device.swapchain_support.formats) {
         lfree(context->device.swapchain_support.formats,
         sizeof(VkSurfaceFormatKHR) * context->device.swapchain_support.format_count,
         MEMORY_TAG_RENDERER);
@@ -157,7 +157,7 @@ void vulkan_device_destroy(vulkan_context* context)
         context->device.swapchain_support.format_count = 0;
     }
 
-    if(context->device.swapchain_support.present_modes) {
+    if (context->device.swapchain_support.present_modes) {
         lfree(context->device.swapchain_support.present_modes,
         sizeof(VkSurfaceFormatKHR) * context->device.swapchain_support.present_mode_count,
         MEMORY_TAG_RENDERER);
@@ -239,7 +239,7 @@ b8 vulkan_device_detect_depth_format(vulkan_device* device)
         VK_FORMAT_D24_UNORM_S8_UINT};
 
     u32 flags = VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
-    for(u64 i = 0; i < candidate_count; i++) {
+    for (u64 i = 0; i < candidate_count; i++) {
         VkFormatProperties properties;
         vkGetPhysicalDeviceFormatProperties(
             device->physical_device, 
@@ -247,7 +247,7 @@ b8 vulkan_device_detect_depth_format(vulkan_device* device)
             &properties
         );
 
-        if((properties.linearTilingFeatures & flags) == flags) {
+        if ((properties.linearTilingFeatures & flags) == flags) {
             device->depth_format = candidates[i];
             return TRUE;
         } else if ((properties.optimalTilingFeatures & flags) == flags) {
@@ -270,7 +270,7 @@ b8 select_physical_device(vulkan_context* context)
 
     VkPhysicalDevice physical_devices[physical_device_count];
     VK_CHECK(vkEnumeratePhysicalDevices(context->instance, &physical_device_count, physical_devices));
-    for(u32 i = 0; i < physical_device_count; i++) {
+    for (u32 i = 0; i < physical_device_count; i++) {
         VkPhysicalDeviceProperties properties;
         vkGetPhysicalDeviceProperties(physical_devices[i], &properties);
 
@@ -343,7 +343,7 @@ b8 select_physical_device(vulkan_context* context)
             );
 
             // Memory information
-            for(u32 j = 0; j < memory.memoryHeapCount; j++) {
+            for (u32 j = 0; j < memory.memoryHeapCount; j++) {
                 f32 memory_size_gib = (((f32)memory.memoryHeaps[j].size) / 1024.f / 1024.f / 1024.f);
                 if (memory.memoryHeaps[j].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) {
                     LINFO("Local GPU memory: %.2f GiB", memory_size_gib);

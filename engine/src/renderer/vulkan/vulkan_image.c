@@ -53,7 +53,7 @@ void vulkan_image_create(
     );
 
     i32 memory_type = context->find_memory_index(memory_requirements.memoryTypeBits, memory_flags);
-    if(memory_type == -1) {
+    if (memory_type == -1) {
         LERROR("Required memory type not found. Image not valid.");
     }
 
@@ -78,7 +78,7 @@ void vulkan_image_create(
         0
     ));
 
-    if(create_view) {
+    if (create_view) {
         out_image->view = 0;
         vulkan_image_view_create(
             context,
@@ -122,15 +122,15 @@ void vulkan_image_destroy(
     vulkan_image* image
 )
 {
-    if(image->view) {
+    if (image->view) {
         vkDestroyImageView(context->device.logical_device, image->view, context->allocator);
         image->view = 0;
     }
-    if(image->memory) {
+    if (image->memory) {
         vkFreeMemory(context->device.logical_device, image->memory, context->allocator);
         image->memory = 0;
     }
-    if(image->handle) {
+    if (image->handle) {
         vkDestroyImage(context->device.logical_device, image->handle, context->allocator);
         image->handle = 0;
     }

@@ -75,7 +75,7 @@ b8 platform_startup(
     // Loop through screens 
     xcb_screen_iterator_t it = xcb_setup_roots_iterator(setup);
     int screen_p = 0;
-    for(i32 s = screen_p; s > 0; s--) {
+    for (i32 s = screen_p; s > 0; s--) {
         xcb_screen_next(&it);
     }
 

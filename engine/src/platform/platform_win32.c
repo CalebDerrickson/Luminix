@@ -230,7 +230,7 @@ b8 platform_create_vulkan_surface(platform_state* plat_state, vulkan_context* co
 
     VkResult result = vkCreateWin32SurfaceKHR(context->instance, &create_info, context->allocator, &state->surface); 
 
-    if(result != VK_SUCCESS) {
+    if (result != VK_SUCCESS) {
         LFATAL("Vulkan surface creation failed!");
     }
 
