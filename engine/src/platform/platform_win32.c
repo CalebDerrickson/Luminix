@@ -1,7 +1,9 @@
 #include "platform/platform.h"
 #include "containers/darray.h"
+
 #include "core/logger.h"
 #include "core/input.h"
+#include "core/event.h"
 
 // Windows platform layer.
 #if LPLATFORM_WINDOWS
@@ -247,7 +249,8 @@ LRESULT CALLBACK win32_process_message(HWND hwnd, u32 msg, WPARAM w_param, LPARA
             return 1;
 
         case WM_CLOSE:
-            // TODO: Fire an event for the application to quit.
+            event_context data = {};
+            event_fire(EVENT_CODE_APPLICATION_QUIT, 0, data);
             return 0;
 
         case WM_DESTROY:
