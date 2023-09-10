@@ -10,7 +10,7 @@ void vulkan_fence_create(
     // Make sure to signal the fence if required.
     out_fence->is_signaled = create_signaled;
     VkFenceCreateInfo create_info = {VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
-    if(out_fence->is_signaled) {
+    if (out_fence->is_signaled) {
         create_info.flags = VK_FENCE_CREATE_SIGNALED_BIT;
     }
 
@@ -28,7 +28,7 @@ void vulkan_fence_destroy(
     vulkan_fence* fence
 )
 {
-    if(fence->handle) {
+    if (fence->handle) {
         vkDestroyFence(
             context->device.logical_device,
             fence->handle,
@@ -45,7 +45,7 @@ b8 vulkan_fence_wait(
     u64 timeout_ns
 )
 {
-    if(!fence->is_signaled) {
+    if (!fence->is_signaled) {
         VkResult result = vkWaitForFences(
             context->device.logical_device,
             1,
@@ -88,7 +88,7 @@ void vulkan_fence_reset(
     vulkan_fence* fence
 )
 {
-    if(fence->is_signaled) {
+    if (fence->is_signaled) {
         VK_CHECK(vkResetFences(
             context->device.logical_device,
             1,

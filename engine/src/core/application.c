@@ -255,24 +255,24 @@ b8 application_on_key(u16 code, void* sender, void* listener_inst, event_context
 
 b8 application_on_resize(u16 code, void* sender, void* listener_inst, event_context context)
 {
-    if(code == EVENT_CODE_RESIZED) {
+    if (code == EVENT_CODE_RESIZED) {
         u16 width = context.data.u16[0];
         u16 height = context.data.u16[1];
 
         // Check if different. If so, trigger a resize event.
-        if(width != app_state.width || height != app_state.height) {
+        if (width != app_state.width || height != app_state.height) {
             app_state.width = width;
             app_state.height = height;
 
             LDEBUG("Window resize: %i, %i", width, height);
         
             // Handle Minimization
-            if(width == 0 || height == 0) {
+            if (width == 0 || height == 0) {
                 LINFO("Window minimized, suspending application.");
                 app_state.is_suspended = TRUE;
                 return TRUE;
             } else {
-                if(app_state.is_suspended) {
+                if (app_state.is_suspended) {
                     LINFO("Window restored, resuming application.");
                     app_state.is_suspended = FALSE;
                 }

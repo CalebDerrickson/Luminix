@@ -13,7 +13,7 @@ void vulkan_framebuffer_create(
 {
     // Take a copy of the attachments, renderpass and attachment count
     out_framebuffer->attachments = lallocate(sizeof(VkImageView) * attachment_count, MEMORY_TAG_RENDERER);
-    for(u32 i = 0; i < attachment_count; i++) {
+    for (u32 i = 0; i < attachment_count; i++) {
         out_framebuffer->attachments[i] = attachments[i];
     }
 
@@ -47,7 +47,7 @@ void vulkan_framebuffer_destroy(
         framebuffer->handle,
         context->allocator
     );
-    if(framebuffer->attachments) {
+    if (framebuffer->attachments) {
         lfree(framebuffer->attachments, sizeof(VkImageView) * framebuffer->attachment_count, MEMORY_TAG_RENDERER);
         framebuffer->attachments = 0;
     }

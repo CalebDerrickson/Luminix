@@ -53,13 +53,13 @@ void vulkan_command_buffer_begin(
     begin_info.flags = 0;
 
     // Checking for passed flags
-    if(is_single_use) {
+    if (is_single_use) {
         begin_info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
     }
-    if(is_renderpass_continue) {
+    if (is_renderpass_continue) {
         begin_info.flags |= VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
     }
-    if(is_simultaneous_use) {
+    if (is_simultaneous_use) {
         begin_info.flags |= VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
     }
 

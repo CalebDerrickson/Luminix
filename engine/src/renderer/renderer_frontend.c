@@ -44,7 +44,7 @@ b8 renderer_end_frame(f32 delta_time)
 
 void renderer_on_resized(u16 width, u16 height)
 {
-    if(backend) { 
+    if (backend) { 
         backend->resized(backend, width, height);
     } else {
         LWARN("renderer backend does not accept resize: %i, %i", width, height);

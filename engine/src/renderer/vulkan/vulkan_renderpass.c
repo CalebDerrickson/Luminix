@@ -126,7 +126,7 @@ void vulkan_renderpass_destroy(
     vulkan_renderpass* renderpass
 )
 {
-    if(renderpass && renderpass->handle) {
+    if (renderpass && renderpass->handle) {
         vkDestroyRenderPass(context->device.logical_device, renderpass->handle, context->allocator);
         renderpass->handle = 0;
     }

@@ -152,14 +152,14 @@ void vulkan_device_destroy(vulkan_context* context)
     context->device.transfer_queue = 0;
 
     LDEBUG("Destroying Command Pool...");
-    if(context->device.graphics_command_pool) {
+    if (context->device.graphics_command_pool) {
         vkDestroyCommandPool(context->device.logical_device, 
             context->device.graphics_command_pool, 
             context->allocator
         );
         context->device.graphics_command_pool = 0;
     }
-    
+
     // Destroy the logical device
     LINFO("Destroying logical device...");
     if (context->device.logical_device) {
