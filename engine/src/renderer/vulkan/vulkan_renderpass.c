@@ -10,6 +10,19 @@ void vulkan_renderpass_create(
     f32 depth, u32 stencil
 )
 {
+    out_renderpass->x = x;
+    out_renderpass->y = y;
+    out_renderpass->w = w;
+    out_renderpass->h = h;
+    
+    out_renderpass->r = r;
+    out_renderpass->g = g;
+    out_renderpass->b = b;
+    out_renderpass->a = a;
+    
+    out_renderpass->depth = depth;
+    out_renderpass->stencil = stencil;
+    
     // Main subpass
     VkSubpassDescription subpass = {};
     subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
@@ -119,13 +132,13 @@ void vulkan_renderpass_destroy(
     }
 }
 
-void renderpass_begin(
+void vulkan_renderpass_begin(
     vulkan_command_buffer* command_buffer,
     vulkan_renderpass* renderpass,
     VkFramebuffer frame_buffer
 )
 {
-    VkRenderPassBeginInfo begin_info = {VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
+  VkRenderPassBeginInfo begin_info = {VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
     begin_info.renderPass = renderpass->handle;
     begin_info.framebuffer = frame_buffer;
     begin_info.renderArea.offset.x = renderpass->x;
@@ -133,9 +146,8 @@ void renderpass_begin(
     begin_info.renderArea.extent.width = renderpass->w;
     begin_info.renderArea.extent.height = renderpass->h;
 
-    // One for color, one for depth
     VkClearValue clear_values[2];
-    lzero_memory(clear_values, sizeof(clear_values) * 2);
+    lzero_memory(clear_values, sizeof(VkClearValue) * 2);
     clear_values[0].color.float32[0] = renderpass->r;
     clear_values[0].color.float32[1] = renderpass->g;
     clear_values[0].color.float32[2] = renderpass->b;
@@ -150,7 +162,7 @@ void renderpass_begin(
     command_buffer->state = COMMAND_BUFFER_STATE_IN_RENDER_PASS;
 }
 
-void renderpass_end(
+void vulkan_renderpass_end(
     vulkan_command_buffer* command_buffer,
     vulkan_renderpass* renderpass
 )
