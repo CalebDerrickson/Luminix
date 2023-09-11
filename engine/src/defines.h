@@ -100,7 +100,7 @@ STATIC_ASSERT(sizeof(f64) == 8, "Expected f64 to be 8 bytes.");
 
 // Inlining
 #ifdef _MSC_VER
-#define LINLINE _forceinline
+#define LINLINE __forceinline
 #define LNOINLINE __declspec(noinline)
 #else
 #define LINLINE static inline

@@ -31,7 +31,6 @@
 
 // --------------------------------------
 // General Math functions
-// Use Taylor Expansions where possible
 // --------------------------------------
 
 LAPI f32 lsin(f32 x);
@@ -39,7 +38,14 @@ LAPI f32 lcos(f32 x);
 LAPI f32 ltan(f32 x);
 LAPI f32 lacos(f32 x);
 LAPI f32 lsqrt(f32 x);
-LAPI f32 labs(f32 x);
+LAPI f32 labsf(f32 x);
+
+LAPI i32 lrandom();
+LAPI i32 lrandom_in_range(i32 min, i32 max);
+
+LAPI f32 flrandom();
+LAPI f32 flrandom_in_range(f32 min, f32 max);
+
 
 /**
  * @brief Indicates if the value is a power of 2. 0 is _not_ a power of 2.
@@ -50,13 +56,6 @@ LINLINE b8 is_power_of_2(u64 value)
 {
     return (value != 0) && ((value & (value - 1)) == 0);
 }
-
-LAPI i32 lrandom();
-LAPI i32 lrandom_in_range(i32 min, i32 max);
-
-LAPI f32 flrandom();
-LAPI f32 flrandom_in_range(f32 min, f32 max);
-
 
 // --------------------------------------
 // Vector 2 
@@ -238,10 +237,10 @@ LINLINE vec2 vec2_normalized(vec2 vector)
  */
 LINLINE b8 vec2_compare(vec2 vector_1, vec2 vector_2, f32 tolerance)
 {
-    if(labs(vector_1.x - vector_2.x) > tolerance) {
+    if(labsf(vector_1.x - vector_2.x) > tolerance) {
         return FALSE;
     }
-    if(labs(vector_1.y - vector_2.y) > tolerance) {
+    if(labsf(vector_1.y - vector_2.y) > tolerance) {
         return FALSE;
     }
 
@@ -498,13 +497,13 @@ LINLINE vec3 vec3_normalized(vec3 vector)
  */
 LINLINE b8 vec3_compare(vec3 vector_1, vec3 vector_2, f32 tolerance)
 {
-    if(labs(vector_1.x - vector_2.x) > tolerance) {
+    if(labsf(vector_1.x - vector_2.x) > tolerance) {
         return FALSE;
     }
-    if(labs(vector_1.y - vector_2.y) > tolerance) {
+    if(labsf(vector_1.y - vector_2.y) > tolerance) {
         return FALSE;
     }
-    if(labs(vector_1.z - vector_2.z) > tolerance) {
+    if(labsf(vector_1.z - vector_2.z) > tolerance) {
         return FALSE;
     }
     return TRUE;

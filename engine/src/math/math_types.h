@@ -45,14 +45,17 @@ typedef union vec3
     };
 } vec3;
 
+//TODO: ReImplement alignas for SIMD operations
+
 typedef union vec4 
-#if defined(LUSE_SIMD)
-    // Used for SIMD operations
-    alignas(16) __m128 data;
-#endif
+// #if defined(LUSE_SIMD)
+//     // Used for SIMD operations
+//     alignas(16) __m128 data;
+// #endif
 {
     // An array of x, y, z, t.
-    alignas(16) f32 elements[4];
+    // alignas(16) f32 elements[4];
+    f32 elements[4];
     struct 
     {
         union 
@@ -82,7 +85,8 @@ typedef union vec4
 typedef vec4 quat;
 
 typedef union mat4 {
-    alignas(16) f32 data[16];
+    // alignas(16) f32 data[16];
+    f32 data[16];
 
 #if defined(LUSE_SIMD)
     // Used for SIMD operations
