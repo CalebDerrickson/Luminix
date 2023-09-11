@@ -81,3 +81,11 @@ typedef union vec4
 // Quaternion definition
 typedef vec4 quat;
 
+typedef union mat4 {
+    alignas(16) f32 data[16];
+
+#if defined(LUSE_SIMD)
+    // Used for SIMD operations
+    alignas(16) vec4 rows[4];
+#endif
+} mat4;
