@@ -24,6 +24,8 @@ typedef struct application_state {
     f64 last_time;
     linear_allocator systems_allocator;
 
+    // Each subsystem is given a u64 and block of memory
+
     u64 memory_system_memory_requirement;
     void* memory_system_state;
 

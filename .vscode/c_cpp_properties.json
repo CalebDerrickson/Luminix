@@ -3,8 +3,25 @@
         {
             "name": "Linux",
             "includePath": [
-                "$[workspaceFolder]/engine/src/**",
-                "$[VULKAN_SDK]/include"
+                "${workspaceFolder}/engine/src/**",
+                "${VULKAN_SDK}/include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "LEXPORT"
+            ],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        },
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/engine/src/**",
+                "${VULKAN_SDK}/include"
             ],
             "defines": [
                 "_DEBUG",
@@ -21,10 +38,7 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/engine/src/**",
-                "${VULKAN_SDK}/Include",
-                "${VULKAN_SDK}/Include/**",
-                "${workspaceFolder}/engine/src",
-                "${workspaceFolder}/tests/"
+                "${VULKAN_SDK}/include"
             ],
             "defines": [
                 "_DEBUG",
