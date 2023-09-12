@@ -27,7 +27,7 @@ typedef enum memory_tag{
 } memory_tag;
 
 
-LAPI void initialize_memory();
+LAPI void initialize_memory(u64* memory_requirement, void* state);
 LAPI void shutdown_memory();
 
 
@@ -47,3 +47,5 @@ LAPI void* lset_memory(void* dest, i32 value, u64 size);
 // Print out usage statistics to the console.
 // should be freed after use
 LAPI char* get_memory_usage_str();
+
+LAPI u64 get_memory_alloc_count();
