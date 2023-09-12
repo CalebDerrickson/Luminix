@@ -19,128 +19,137 @@
 #include "renderer/vulkan/vulkan_types.inl"
 
 
-typedef struct internal_state {
+typedef struct platform_state {
     HINSTANCE h_instance;
     HWND hwnd;
     VkSurfaceKHR surface;
-} internal_state;
+    
+    // Clock
+    f64 clock_freq;
+    LARGE_INTEGER start_time; 
 
-// Clock
-static f64 clock_freq;
-static LARGE_INTEGER start_time; 
+} platform_state;
+
+static platform_state* state_ptr;
 
 // Forward declaration of win32_process_message to use in Window Class creation
 LRESULT CALLBACK win32_process_message(HWND hwnd, u32 msg, WPARAM w_param, LPARAM l_param);
 
-b8 platform_startup(
-    platform_state* plat_state,
+b8 platform_system_startup(
+    u64* memory_requirement,
+    void* state,
     const char* application_name,
     i32 x,
     i32 y, 
     i32 width, 
-    i32 height) 
-    {
-            
-        plat_state->internal_state = malloc(sizeof(internal_state));
-        internal_state* state = (internal_state *)plat_state->internal_state;
+    i32 height
+) 
+{
+    *memory_requirement = sizeof(platform_state);
 
-        state->h_instance = GetModuleHandleA(0);
-
-        // Create Window Class
-        HICON icon = LoadIcon(state->h_instance, IDI_APPLICATION);
-        WNDCLASSA wc;
-        memset(&wc, 0, sizeof(wc));
-        wc.style = CS_DBLCLKS;                    // Get Double-Clicks
-        wc.lpfnWndProc = win32_process_message;
-        wc.cbClsExtra = 0;
-        wc.cbWndExtra = 0;
-        wc.hInstance = state->h_instance;
-        wc.hIcon = icon;
-        wc.hCursor = LoadCursor(NULL, IDC_ARROW); // NULL: Manage the cursor manually
-        wc.hbrBackground = NULL;                  // Transparent 
-        wc.lpszClassName = "luminix_window_class";
-
-        // Register Window Class 
-        if (!RegisterClassA(&wc)) {
-            MessageBoxA(0, "Window registration failed", "Error", MB_ICONEXCLAMATION | MB_OK);
-            return false;
-        }
-
-        // Initializing window dimensions and style
-        u32 client_x = x;
-        u32 client_y = y;
-        u32 client_width = width;
-        u32 client_height = height;
-
-        u32 window_x = client_x;
-        u32 window_y = client_y;
-        u32 window_width = client_width;
-        u32 window_height = client_height;
-
-        u32 window_style = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION;
-        u32 window_ex_style = WS_EX_APPWINDOW;
-
-        window_style |= WS_MAXIMIZEBOX;
-        window_style |= WS_MINIMIZEBOX;
-        window_style |= WS_THICKFRAME;
-
-        // Obtain the size of the border.
-        RECT border_rect = {0,0,0,0};
-        AdjustWindowRectEx(&border_rect, window_style, 0, window_ex_style);
-
-        // We've set it up st the border rectance is negative.
-        window_x += border_rect.left;
-        window_y += border_rect.top;
-
-        // Increase the size of the OS border accordingly
-        window_width += border_rect.right - border_rect.left;
-        window_height += border_rect.bottom - border_rect.top;
-
-        // Create Window
-        HWND handle = CreateWindowExA(
-            window_ex_style, "luminix_window_class", application_name,
-            window_style, window_x, window_y, window_width, window_height, 
-            0, 0, state->h_instance, 0); 
-
-        if (handle == 0) {
-            MessageBoxA(NULL, "Window creation failed!", "Error!", MB_ICONEXCLAMATION | MB_OK);
-
-            LFATAL("Window creation failed!");
-            return false;
-        } else {
-            state->hwnd = handle;
-        }
-
-        // Show the window
-        b32 should_activate = 1; // TODO: If the window should not accept input, this should be false.
-        i32 show_window_command_flags = should_activate ? SW_SHOW : SW_SHOWNOACTIVATE;
-        // If the window should be initially minimized, use SW_MINIMIZE : SW_SHOWMINNOACTIVE;
-        // If the window should be initially maximized, use SW_SHOWMAXIMIZED : SW_MAXIMIZE;
-        ShowWindow(state->hwnd, show_window_command_flags);
-
-        // Clock Setup
-        LARGE_INTEGER freq;
-        QueryPerformanceFrequency(&freq);
-        clock_freq = 1.0 / (f64)freq.QuadPart;
-        QueryPerformanceCounter(&start_time);
-
+    if(state == 0) {
         return true;
     }
 
+    state_ptr = state;
+    state_ptr->h_instance = GetModuleHandleA(0);
 
-void platform_shutdown(platform_state* plat_state) 
+    // Create Window Class
+    HICON icon = LoadIcon(state_ptr->h_instance, IDI_APPLICATION);
+    WNDCLASSA wc;
+    memset(&wc, 0, sizeof(wc));
+    wc.style = CS_DBLCLKS;                    // Get Double-Clicks
+    wc.lpfnWndProc = win32_process_message;
+    wc.cbClsExtra = 0;
+    wc.cbWndExtra = 0;
+    wc.hInstance = state_ptr->h_instance;
+    wc.hIcon = icon;
+    wc.hCursor = LoadCursor(NULL, IDC_ARROW); // NULL: Manage the cursor manually
+    wc.hbrBackground = NULL;                  // Transparent 
+    wc.lpszClassName = "luminix_window_class";
+
+    // Register Window Class 
+    if (!RegisterClassA(&wc)) {
+        MessageBoxA(0, "Window registration failed", "Error", MB_ICONEXCLAMATION | MB_OK);
+        return false;
+    }
+
+    // Initializing window dimensions and style
+    u32 client_x = x;
+    u32 client_y = y;
+    u32 client_width = width;
+    u32 client_height = height;
+
+    u32 window_x = client_x;
+    u32 window_y = client_y;
+    u32 window_width = client_width;
+    u32 window_height = client_height;
+
+    u32 window_style = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION;
+    u32 window_ex_style = WS_EX_APPWINDOW;
+
+    window_style |= WS_MAXIMIZEBOX;
+    window_style |= WS_MINIMIZEBOX;
+    window_style |= WS_THICKFRAME;
+
+    // Obtain the size of the border.
+    RECT border_rect = {0,0,0,0};
+    AdjustWindowRectEx(&border_rect, window_style, 0, window_ex_style);
+
+    // We've set it up st the border rectance is negative.
+    window_x += border_rect.left;
+    window_y += border_rect.top;
+
+    // Increase the size of the OS border accordingly
+    window_width += border_rect.right - border_rect.left;
+    window_height += border_rect.bottom - border_rect.top;
+
+    // Create Window
+    HWND handle = CreateWindowExA(
+        window_ex_style, "luminix_window_class", application_name,
+        window_style, window_x, window_y, window_width, window_height, 
+        0, 0, state_ptr->h_instance, 0); 
+
+    if (handle == 0) {
+        MessageBoxA(NULL, "Window creation failed!", "Error!", MB_ICONEXCLAMATION | MB_OK);
+
+        LFATAL("Window creation failed!");
+        return false;
+    } else {
+        state_ptr->hwnd = handle;
+    }
+
+    // Show the window
+    b32 should_activate = 1; // TODO: If the window should not accept input, this should be false.
+    i32 show_window_command_flags = should_activate ? SW_SHOW : SW_SHOWNOACTIVATE;
+    // If the window should be initially minimized, use SW_MINIMIZE : SW_SHOWMINNOACTIVE;
+    // If the window should be initially maximized, use SW_SHOWMAXIMIZED : SW_MAXIMIZE;
+    ShowWindow(state_ptr->hwnd, show_window_command_flags);
+
+    // Clock Setup
+    LARGE_INTEGER freq;
+    QueryPerformanceFrequency(&freq);
+    state_ptr->clock_freq = 1.0 / (f64)freq.QuadPart;
+    QueryPerformanceCounter(&state_ptr->start_time);
+
+    return true;
+}
+
+
+void platform_system_shutdown(void *plat_state) 
 {
-    // Cold-cast to the known type
-    internal_state* state = (internal_state *)plat_state->internal_state;
-
-    if (state->hwnd){
-        DestroyWindow(state->hwnd);
-        state->hwnd = 0;
-    }  
+    if (state_ptr && state_ptr->hwnd) {
+        DestroyWindow(state_ptr->hwnd);
+        state_ptr->hwnd = 0;
+    }
 }
 
 b8 platform_pump_messages(platform_state* plat_state)
 {
+    if(!state_ptr) {
+        return false;
+    }
+
     MSG message;
     while(PeekMessageA(&message, NULL, 0, 0, PM_REMOVE)) {
         TranslateMessage(&message);
@@ -203,9 +212,13 @@ void platform_console_write_error(const char* message, u8 color)
 
 f64 platform_get_absolute_time()
 {
+    if(!state_ptr) {
+        return 0;
+    }
+
     LARGE_INTEGER now_time;
     QueryPerformanceCounter(&now_time);
-    return (f64)now_time.QuadPart * clock_freq;
+    return (f64)now_time.QuadPart * state_ptr->clock_freq;
 }
 
 void platform_sleep(u64 ms)
@@ -221,22 +234,29 @@ void platform_get_required_extension_names(const char*** names_darray)
 // Surface creation for Vulkan
 // Explosing the platform layer to Vulkan stuff
 // is not the most ideal solution, but will do for now
-b8 platform_create_vulkan_surface(platform_state* plat_state, vulkan_context* context)
+b8 platform_create_vulkan_surface(vulkan_context* context)
 {
-    // Simply cold-cast to the known type
-    internal_state* state = (internal_state*)plat_state->internal_state;
+
+    if(!state_ptr) {
+        return false;
+    }
 
     VkWin32SurfaceCreateInfoKHR create_info = {VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR};
-    create_info.hinstance = state->h_instance;
-    create_info.hwnd = state->hwnd;
+    create_info.hinstance = state_ptr->h_instance;
+    create_info.hwnd = state_ptr->hwnd;
 
-    VkResult result = vkCreateWin32SurfaceKHR(context->instance, &create_info, context->allocator, &state->surface); 
+    VkResult result = vkCreateWin32SurfaceKHR(
+        context->instance, 
+        &create_info, 
+        context->allocator, 
+        &state_ptr->surface
+    ); 
 
     if (result != VK_SUCCESS) {
         LFATAL("Vulkan surface creation failed!");
     }
 
-    context->surface = state->surface;
+    context->surface = state_ptr->surface;
     return true;
 }
 

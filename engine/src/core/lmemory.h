@@ -27,8 +27,8 @@ typedef enum memory_tag{
 } memory_tag;
 
 
-LAPI void initialize_memory(u64* memory_requirement, void* state);
-LAPI void shutdown_memory();
+LAPI void memory_system_initialize(u64* memory_requirement, void* state);
+LAPI void memory_system_shutdown(void* state);
 
 
 // These functions are designed to be called 

@@ -11,7 +11,7 @@
 typedef struct game {
 
     // The application configuration.
-    application_config application_config;
+    application_config app_config;
 
     // Function pointer to game's initialize function.
     b8 (*initialize)(struct game* game_inst);

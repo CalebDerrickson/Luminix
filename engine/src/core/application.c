@@ -17,7 +17,6 @@ typedef struct application_state {
     game* game_inst;
     b8 is_running;
     b8 is_suspended;
-    platform_state platform;
     i16 width;
     i16 height;
     clock clock;
@@ -25,12 +24,25 @@ typedef struct application_state {
     linear_allocator systems_allocator;
 
     // Each subsystem is given a u64 and block of memory
-
+    // Events
+    u64 event_system_memory_requirement;
+    void* event_system_state;
+    // Memory
     u64 memory_system_memory_requirement;
     void* memory_system_state;
-
+    // Logging
     u64 logging_system_memory_requirement;
     void* logging_system_state;
+    // Input
+    u64 input_system_memory_requirement;
+    void* input_system_state;
+    // Platform
+    u64 platform_system_memory_requirement;
+    void* platform_system_state;
+    // Renderer
+    u64 renderer_system_memory_requirement;
+    void* renderer_system_state;
+
 } application_state;
 
 // Allow only one application config
@@ -63,48 +75,77 @@ b8 application_create(game* game_inst)
 
     // Initialize subsystems.
 
+    // Events
+    event_system_initialize(&app_state->event_system_memory_requirement, 0);
+    app_state->event_system_state = linear_allocator_allocate(
+        &app_state->systems_allocator, 
+        app_state->event_system_memory_requirement
+    );
+    event_system_initialize(&app_state->event_system_memory_requirement, app_state->event_system_state);
+
     // Memory
-    initialize_memory(&app_state->memory_system_memory_requirement, 0);
-    app_state->memory_system_state = linear_allocator_allocate(&app_state->systems_allocator, app_state->memory_system_memory_requirement);
-    initialize_memory(&app_state->memory_system_memory_requirement, app_state->memory_system_state);
+    memory_system_initialize(&app_state->memory_system_memory_requirement, 0);
+    app_state->memory_system_state = linear_allocator_allocate(
+        &app_state->systems_allocator, 
+        app_state->memory_system_memory_requirement
+    );
+    memory_system_initialize(&app_state->memory_system_memory_requirement, app_state->memory_system_state);
         
-    
     // Logging
     initialize_logging(&app_state->logging_system_memory_requirement, 0);
-    app_state->logging_system_state = linear_allocator_allocate(&app_state->systems_allocator, app_state->logging_system_memory_requirement);
+    app_state->logging_system_state = linear_allocator_allocate(
+        &app_state->systems_allocator, 
+        app_state->logging_system_memory_requirement
+    );
     if(!initialize_logging(&app_state->logging_system_memory_requirement, app_state->logging_system_state)) {
         LERROR("Failed to initialize logging system. shutting down...");
         return false;
     }
 
-    input_initialization();
+    // Input
+    input_system_initialize(&app_state->input_system_memory_requirement, 0);
+    app_state->input_system_state = linear_allocator_allocate(
+        &app_state->systems_allocator, 
+        app_state->input_system_memory_requirement
+    );
+    input_system_initialize(&app_state->input_system_memory_requirement, app_state->input_system_state);
 
-
-    if (!event_initialize()) {
-        LERROR("Event system failed initialization. Application cannot continue.");
-        return false;
-    }
-
-    // Register for events
+    // Register for engine-level events
     event_register(EVENT_CODE_APPLICATION_QUIT, 0, application_on_event);
     event_register(EVENT_CODE_KEY_PRESSED, 0, application_on_key);
     event_register(EVENT_CODE_KEY_RELEASED, 0, application_on_key);
     event_register(EVENT_CODE_RESIZED, 0, application_on_resize);
 
-    if (!platform_startup(
-        &app_state->platform, 
-        game_inst->application_config.name, 
-        game_inst->application_config.start_pos_x,
-        game_inst->application_config.start_pos_y, 
-        game_inst->application_config.start_width, 
-        game_inst->application_config.start_height
-        )) {
+    // Platform
+    platform_system_startup(&app_state->platform_system_memory_requirement, 0, 0, 0, 0, 0, 0);
+    app_state->platform_system_state = linear_allocator_allocate(
+        &app_state->systems_allocator,
+        app_state->platform_system_memory_requirement
+    );
+    if (!platform_system_startup(
+            &app_state->platform_system_memory_requirement,
+            app_state->platform_system_state,
+            game_inst->app_config.name,
+            game_inst->app_config.start_pos_x,
+            game_inst->app_config.start_pos_y,
+            game_inst->app_config.start_width,
+            game_inst->app_config.start_height)
+        ) {
         return false;
     }
 
-    // Renderer startup
-    if (!renderer_initialize(game_inst->application_config.name, &app_state->platform)) {
-        LFATAL("failed to intitialize renderer. Abotring application.");
+    // Renderer system
+    renderer_system_initialize(&app_state->renderer_system_memory_requirement, 0, 0);
+    app_state->renderer_system_state = linear_allocator_allocate(
+        &app_state->systems_allocator, 
+        app_state->renderer_system_memory_requirement
+    );
+    if (!renderer_system_initialize(
+        &app_state->renderer_system_memory_requirement, 
+        app_state->renderer_system_state, 
+        game_inst->app_config.name)
+    ) {
+        LFATAL("Failed to initialize renderer. Aborting application.");
         return false;
     }
 
@@ -114,7 +155,7 @@ b8 application_create(game* game_inst)
         return false;
     }
 
-    // Set up on resize
+    // Call resize once to ensure the proper size has been set.
     app_state->game_inst->on_resize(app_state->game_inst, app_state->width, app_state->height);
     return true;
 }
@@ -138,7 +179,7 @@ b8 application_run()
 
     while(app_state->is_running) {
         
-        if (!platform_pump_messages(&app_state->platform)){
+        if (!platform_pump_messages()){
            app_state->is_running = false;
         }
 
@@ -212,12 +253,15 @@ b8 application_run()
     event_unregister(EVENT_CODE_KEY_RELEASED, 0, application_on_key);
     event_unregister(EVENT_CODE_RESIZED, 0, application_on_resize);
 
-    event_shutdown();
-    input_shutdown();
-    renderer_shutdown();
-    platform_shutdown(&app_state->platform);
-    
-    shutdown_memory();
+    input_system_shutdown(app_state->input_system_state);
+
+    renderer_system_shutdown(app_state->renderer_system_state);
+
+    platform_system_shutdown(app_state->platform_system_state);
+
+    memory_system_shutdown(app_state->memory_system_state);
+
+    event_system_shutdown(app_state->event_system_state);
 
     return true;
 }

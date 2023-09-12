@@ -47,7 +47,9 @@ b8 platform_system_startup(
     i32 x,
     i32 y,
     i32 width,
-    i32 height) {
+    i32 height
+) 
+{
     *memory_requirement = sizeof(platform_state);
     if (state == 0) {
         return true;
