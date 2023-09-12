@@ -35,6 +35,9 @@ static platform_state* state_ptr;
 // Forward declaration of win32_process_message to use in Window Class creation
 LRESULT CALLBACK win32_process_message(HWND hwnd, u32 msg, WPARAM w_param, LPARAM l_param);
 
+// Helper funciton to distinguish L and R "special" keys
+keys split_code_left_right(b8 pressed, i32 in_left, i32 in_right, keys out_left, keys out_right);
+
 b8 platform_system_startup(
     u64* memory_requirement,
     void* state,
@@ -134,6 +137,7 @@ b8 platform_system_startup(
 
     return true;
 }
+
 
 
 void platform_system_shutdown(void *plat_state) 
@@ -302,36 +306,25 @@ LRESULT CALLBACK win32_process_message(HWND hwnd, u32 msg, WPARAM w_param, LPARA
             keys key = (u16)w_param;
             
 
-            //ALT keys 
-            if(w_param == VK_MENU) {
-                if(GetKeyState(VK_RMENU) & 0x8000) {
-                    key = KEY_RALT;
-                } else if(GetKeyState(VK_LMENU) & 0x8000) {
-                    key = KEY_LALT;
-                }
-            }
-            //SHIFT keys 
-            if(w_param == VK_SHIFT) {
-                if(GetKeyState(VK_RSHIFT) & 0x8000) {
-                    key = KEY_RSHIFT;
-                } else if(GetKeyState(VK_LSHIFT) & 0x8000) {
-                    key = KEY_LSHIFT;
-                }
-            }
-            //CTRL keys 
-            if(w_param == VK_CONTROL) {
-                if(GetKeyState(VK_LCONTROL) & 0x8000) {
-                    key = KEY_LCONTROL;
-                } else if(GetKeyState(VK_RCONTROL) & 0x8000) {
-                    key = KEY_RCONTROL;
-                }
-            }
+            b8 is_extended = (HIWORD(l_param) & KF_EXTENDED) == KF_EXTENDED;
 
+            // Keypress only determines if _any_ alt/ctrl/shift key is pressed. Determine
+            // which one if so.
+
+            if(w_param == VK_MENU) {
+                key = is_extended ? KEY_RALT : KEY_LALT; 
+            } else if(w_param == VK_SHIFT) {
+                key = is_extended ? KEY_RSHIFT : KEY_LSHIFT;
+            } else if(w_param == VK_CONTROL) {
+                key = is_extended ? KEY_RCONTROL : KEY_LCONTROL;
+            }
 
 
             // Pass to input subsystem for processing
             input_process_key(key, pressed);
 
+            // Return 0 to prevent default window behaviour for some keypresses, such as alt.
+            return 0;
         } break;
 
         case WM_MOUSEMOVE: {
