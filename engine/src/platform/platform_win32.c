@@ -23,20 +23,24 @@ typedef struct platform_state {
     HINSTANCE h_instance;
     HWND hwnd;
     VkSurfaceKHR surface;
-    
-    // Clock
-    f64 clock_freq;
-    LARGE_INTEGER start_time; 
 
 } platform_state;
 
 static platform_state* state_ptr;
 
+// Clock
+static f64 clock_freq;
+static LARGE_INTEGER start_time; 
+
 // Forward declaration of win32_process_message to use in Window Class creation
 LRESULT CALLBACK win32_process_message(HWND hwnd, u32 msg, WPARAM w_param, LPARAM l_param);
 
-// Helper funciton to distinguish L and R "special" keys
-keys split_code_left_right(b8 pressed, i32 in_left, i32 in_right, keys out_left, keys out_right);
+void clock_setup() {
+    LARGE_INTEGER frequency;
+    QueryPerformanceFrequency(&frequency);
+    clock_freq = 1.0f / (f64)frequency.QuadPart;
+    QueryPerformanceCounter(&start_time);
+} 
 
 b8 platform_system_startup(
     u64* memory_requirement,
@@ -129,11 +133,8 @@ b8 platform_system_startup(
     // If the window should be initially maximized, use SW_SHOWMAXIMIZED : SW_MAXIMIZE;
     ShowWindow(state_ptr->hwnd, show_window_command_flags);
 
-    // Clock Setup
-    LARGE_INTEGER freq;
-    QueryPerformanceFrequency(&freq);
-    state_ptr->clock_freq = 1.0 / (f64)freq.QuadPart;
-    QueryPerformanceCounter(&state_ptr->start_time);
+    // Clock setup
+    clock_setup();
 
     return true;
 }
@@ -216,13 +217,13 @@ void platform_console_write_error(const char* message, u8 color)
 
 f64 platform_get_absolute_time()
 {
-    if(!state_ptr) {
-        return 0;
+    if(!clock_freq) {
+        clock_setup();
     }
 
     LARGE_INTEGER now_time;
     QueryPerformanceCounter(&now_time);
-    return (f64)now_time.QuadPart * state_ptr->clock_freq;
+    return (f64)now_time.QuadPart * clock_freq;
 }
 
 void platform_sleep(u64 ms)
