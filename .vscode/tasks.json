@@ -83,7 +83,24 @@
                 "cwd": "${workspaceFolder}"
             },
             "group": "build"
-        }
+        },
+        {
+            "type": "shell",
+            "label": "Build Tests",
+            "windows": {
+                "command": "${workspaceFolder}/tests/build.bat"
+            },
+            "linux": {
+                "command": "${workspaceFolder}/tests/build.sh"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/tests"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
     ],
     "version": "2.0.0"
 }
