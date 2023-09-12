@@ -103,14 +103,14 @@ void vulkan_command_buffer_allocate_and_begin_single_use(
     vulkan_command_buffer_allocate(
         context, 
         pool, 
-        TRUE,           // is_primary is hard coded to true 
+        true,           // is_primary is hard coded to true 
         out_command_buffer
     );
     vulkan_command_buffer_begin(
         out_command_buffer,
-        TRUE,
-        FALSE,
-        FALSE
+        true,
+        false,
+        false
     );
 }
 

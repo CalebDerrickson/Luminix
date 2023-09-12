@@ -238,13 +238,13 @@ LINLINE vec2 vec2_normalized(vec2 vector)
 LINLINE b8 vec2_compare(vec2 vector_1, vec2 vector_2, f32 tolerance)
 {
     if(labsf(vector_1.x - vector_2.x) > tolerance) {
-        return FALSE;
+        return false;
     }
     if(labsf(vector_1.y - vector_2.y) > tolerance) {
-        return FALSE;
+        return false;
     }
 
-    return TRUE;
+    return true;
 }
 
 /**
@@ -498,15 +498,15 @@ LINLINE vec3 vec3_normalized(vec3 vector)
 LINLINE b8 vec3_compare(vec3 vector_1, vec3 vector_2, f32 tolerance)
 {
     if(labsf(vector_1.x - vector_2.x) > tolerance) {
-        return FALSE;
+        return false;
     }
     if(labsf(vector_1.y - vector_2.y) > tolerance) {
-        return FALSE;
+        return false;
     }
     if(labsf(vector_1.z - vector_2.z) > tolerance) {
-        return FALSE;
+        return false;
     }
-    return TRUE;
+    return true;
 }
 
 /**

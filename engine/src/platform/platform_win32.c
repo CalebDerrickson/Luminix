@@ -63,7 +63,7 @@ b8 platform_startup(
         // Register Window Class 
         if (!RegisterClassA(&wc)) {
             MessageBoxA(0, "Window registration failed", "Error", MB_ICONEXCLAMATION | MB_OK);
-            return FALSE;
+            return false;
         }
 
         // Initializing window dimensions and style
@@ -106,7 +106,7 @@ b8 platform_startup(
             MessageBoxA(NULL, "Window creation failed!", "Error!", MB_ICONEXCLAMATION | MB_OK);
 
             LFATAL("Window creation failed!");
-            return FALSE;
+            return false;
         } else {
             state->hwnd = handle;
         }
@@ -124,7 +124,7 @@ b8 platform_startup(
         clock_freq = 1.0 / (f64)freq.QuadPart;
         QueryPerformanceCounter(&start_time);
 
-        return TRUE;
+        return true;
     }
 
 
@@ -147,7 +147,7 @@ b8 platform_pump_messages(platform_state* plat_state)
         DispatchMessageA(&message);
     }
 
-    return TRUE;
+    return true;
 }
 
 void* platform_allocate(u64 size, b8 aligned)
@@ -237,7 +237,7 @@ b8 platform_create_vulkan_surface(platform_state* plat_state, vulkan_context* co
     }
 
     context->surface = state->surface;
-    return TRUE;
+    return true;
 }
 
 LRESULT CALLBACK win32_process_message(HWND hwnd, u32 msg, WPARAM w_param, LPARAM l_param)
@@ -281,6 +281,34 @@ LRESULT CALLBACK win32_process_message(HWND hwnd, u32 msg, WPARAM w_param, LPARA
             b8 pressed = (msg == WM_KEYDOWN || msg == WM_SYSKEYDOWN);
             keys key = (u16)w_param;
             
+
+            //ALT keys 
+            if(w_param == VK_MENU) {
+                if(GetKeyState(VK_RMENU) & 0x8000) {
+                    key = KEY_RALT;
+                } else if(GetKeyState(VK_LMENU) & 0x8000) {
+                    key = KEY_LALT;
+                }
+            }
+            //SHIFT keys 
+            if(w_param == VK_SHIFT) {
+                if(GetKeyState(VK_RSHIFT) & 0x8000) {
+                    key = KEY_RSHIFT;
+                } else if(GetKeyState(VK_LSHIFT) & 0x8000) {
+                    key = KEY_LSHIFT;
+                }
+            }
+            //CTRL keys 
+            if(w_param == VK_CONTROL) {
+                if(GetKeyState(VK_LCONTROL) & 0x8000) {
+                    key = KEY_LCONTROL;
+                } else if(GetKeyState(VK_RCONTROL) & 0x8000) {
+                    key = KEY_RCONTROL;
+                }
+            }
+
+
+
             // Pass to input subsystem for processing
             input_process_key(key, pressed);
 

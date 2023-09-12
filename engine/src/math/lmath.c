@@ -4,7 +4,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-static b8 rand_seed = FALSE;
+static b8 rand_seed = false;
 
 f32 lsin(f32 x)
 {
@@ -46,7 +46,7 @@ i32 lrandom()
 {
     if(!rand_seed) {
         srand((u32)platform_get_absolute_time());
-        rand_seed = TRUE;
+        rand_seed = true;
     }
     return rand();
 }
@@ -55,7 +55,7 @@ i32 lrandom_in_range(i32 min, i32 max)
 {
     if(!rand_seed) {
         srand((u32)platform_get_absolute_time());
-        rand_seed = TRUE;
+        rand_seed = true;
     }
     return (rand() % (max - min + 1)) + min;
 }

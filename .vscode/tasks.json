@@ -39,10 +39,10 @@
             "type": "shell",
             "label": "Build Everything",
             "windows": {
-                "command": "${workspaceFolder}/build-all.bat",
+                "command": "${workspaceFolder}/build-all.bat"
             },
             "linux": {
-                "command": "${workspaceFolder}/build-all.sh",
+                "command": "${workspaceFolder}/build-all.sh"
             },
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -59,23 +59,24 @@
             "type": "shell",
             "label": "Clean Everything",
             "windows": {
-                "command": "${workspaceFolder}\\clean-all.bat",
+                "command": "${workspaceFolder}\\clean-all.bat"
             },
             "linux": {
-                "command": "${workspaceFolder}/clean-all.sh",
+                "command": "${workspaceFolder}/clean-all.sh"
             },
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "group": "build"
+            "group": "build",
+            "problemMatcher": []
         },
         {
             "type": "shell",
             "label": "Post-Build",
-            "windows" : {
-                "command": "${workspaceFolder}/post-build.bat",
+            "windows": {
+                "command": "${workspaceFolder}/post-build.bat"
             },
-            "linux" : {
+            "linux": {
                 "command": "${workspaceFolder}/post-build.sh"
             },
             "options": {
@@ -83,7 +84,6 @@
             },
             "group": "build"
         }
-
     ],
     "version": "2.0.0"
 }
