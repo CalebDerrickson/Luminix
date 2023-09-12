@@ -55,8 +55,8 @@ b8 application_create(game* game_inst)
     app_state->is_running = false;
     app_state->is_suspended = false;
 
-
-    u64 systems_allocator_total_size = 64 * 1021 * 1024; // 64 MB
+    // Allocating 64 MB to our linear allocator
+    u64 systems_allocator_total_size = 64 * 1021 * 1024; 
     linear_allocator_create(systems_allocator_total_size, 0, &app_state->systems_allocator);
 
    

@@ -82,8 +82,10 @@ void lfree(void* block, u64 size, memory_tag tag)
     }
 
     // TODO: memory alignment
+    if(state_ptr) {
     state_ptr->stats.total_allocated -= size;
     state_ptr->stats.tagged_allocations[tag] -= size;
+    }
     platform_free(block, false);
 }
 
