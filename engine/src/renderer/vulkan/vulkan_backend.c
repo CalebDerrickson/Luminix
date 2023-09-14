@@ -17,6 +17,10 @@
 
 #include "containers/darray.h"
 
+#include "platform/platform.h"
+
+// Shaders
+#include "shaders/vulkan_object_shader.h"
 
 // Static Vulkan context
 static vulkan_context context;
@@ -219,6 +223,13 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
         context.images_in_flight[i] = 0;
     }
 
+    // Create builtin shaders
+    if(!vulkan_object_shader_create(&context, &context.object_shader)) {
+        LERROR("Error loading built-in basic_lighting shader.");
+        return false;
+    }
+
+
     LINFO("Vulkan Renderer initialized successfully.");
 
     return true;
@@ -355,6 +366,7 @@ b8 vulkan_renderer_backend_begin_frame(renderer_backend* backend, f32 delta_time
 
     // Wait for the execution of the current frame to complete.
     // The fence being free will allow this one to move on. 
+    // I don't know why UINT64_MAX shows up as an error
     if (!vulkan_fence_wait(
         &context,
         &context.in_flight_fences[context.current_frame],
@@ -366,6 +378,7 @@ b8 vulkan_renderer_backend_begin_frame(renderer_backend* backend, f32 delta_time
 
     // Acquire the next image from the swapchain. Pass along the semaphore that should be signaled when this completes.
     // this same semaphore will later be waited on by the queue submission to ensure this image is available.
+    // I don't know why UINT64_MAX shows up as an error
     if (!vulkan_swapchain_acquire_next_image_index(
         &context,
         &context.swapchain,
@@ -426,6 +439,7 @@ b8 vulkan_renderer_backend_end_frame(renderer_backend* backend, f32 delta_time)
     vulkan_command_buffer_end(command_buffer);
 
     // Make sure the previous frame is not using this image (its fence is being waited on)
+    // I don't know why UINT64_MAX shows up as an error
     if (context.images_in_flight[context.image_index] != VK_NULL_HANDLE) {
         vulkan_fence_wait(
             &context,
