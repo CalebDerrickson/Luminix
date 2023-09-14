@@ -314,12 +314,14 @@ LRESULT CALLBACK win32_process_message(HWND hwnd, u32 msg, WPARAM w_param, LPARA
 
             if (w_param == VK_MENU) {
                 key = is_extended ? KEY_RALT : KEY_LALT; 
-            } else if (w_param == VK_SHIFT) {
-                key = is_extended ? KEY_RSHIFT : KEY_LSHIFT;
             } else if (w_param == VK_CONTROL) {
                 key = is_extended ? KEY_RCONTROL : KEY_LCONTROL;
+            } else if (w_param == VK_SHIFT) {
+                // Shift has to be done a little differently 
+                u32 left_shift = MapVirtualKey(VK_LSHIFT,MAPVK_VK_TO_VSC);
+                u32 scancode = ((l_param & (0xFF << 16)) >> 16);
+                key = (scancode == left_shift ? KEY_LSHIFT : KEY_RSHIFT);
             }
-
 
             // Pass to input subsystem for processing
             input_process_key(key, pressed);
