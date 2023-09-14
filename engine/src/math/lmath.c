@@ -44,7 +44,7 @@ f32 labsf(f32 x)
 
 i32 lrandom()
 {
-    if(!rand_seed) {
+    if (!rand_seed) {
         srand((u32)platform_get_absolute_time());
         rand_seed = true;
     }
@@ -53,7 +53,7 @@ i32 lrandom()
 
 i32 lrandom_in_range(i32 min, i32 max)
 {
-    if(!rand_seed) {
+    if (!rand_seed) {
         srand((u32)platform_get_absolute_time());
         rand_seed = true;
     }

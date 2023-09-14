@@ -366,7 +366,7 @@ void platform_get_required_extension_names(const char*** names_darray)
 // Surface creation for Vulkan
 b8 platform_create_vulkan_surface(platform_state* plat_state, vulkan_context* context)
 {
-    if(!state_ptr) {
+    if (!state_ptr) {
         return false;
     }
 

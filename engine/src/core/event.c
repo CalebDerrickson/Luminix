@@ -28,7 +28,7 @@ static event_system_state* state_ptr;
 void event_system_initialize(u64* memory_requirement, void* state)
 {
     *memory_requirement = sizeof(event_system_state);
-    if(state == 0) {
+    if (state == 0) {
         return;
     }
     lzero_memory(state, sizeof(state));
@@ -36,13 +36,13 @@ void event_system_initialize(u64* memory_requirement, void* state)
 }
 void event_system_shutdown()
 {
-    if(!state_ptr) {
+    if (!state_ptr) {
         return;
     }
 
     // Free the events arrays. Objects pointed to should be destroyed on their own.
     for(u16 i = 0; i < MAX_MESSAGE_CODES; i++) {
-        if(state_ptr->registered[i].events != 0) {
+        if (state_ptr->registered[i].events != 0) {
             darray_destroy(state_ptr->registered[i].events);
             state_ptr->registered[i].events = 0;
         }
@@ -79,7 +79,7 @@ b8 event_register(u16 code, void* listener, PFN_on_event on_event)
 
 b8 event_unregister(u16 code, void* listener, PFN_on_event on_event)
 {
-    if(!state_ptr) {
+    if (!state_ptr) {
         return false;
     }
 

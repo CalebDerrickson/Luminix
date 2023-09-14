@@ -13,7 +13,7 @@ static renderer_system_state* state_ptr;
 b8 renderer_system_initialize(u64* memory_requirement, void* state, const char* application_name) 
 {
     *memory_requirement = sizeof(renderer_system_state);    
-    if(state == 0) {
+    if (state == 0) {
         return false;
     }
 
@@ -32,7 +32,7 @@ b8 renderer_system_initialize(u64* memory_requirement, void* state, const char* 
 
 void renderer_system_shutdown(void* state)
 {
-    if(!state_ptr) {
+    if (!state_ptr) {
         return;
     }
 
@@ -42,7 +42,7 @@ void renderer_system_shutdown(void* state)
 
 b8 renderer_begin_frame(f32 delta_time)
 {
-    if(!state_ptr) {
+    if (!state_ptr) {
         return false;
     }
     return state_ptr->backend.begin_frame(&state_ptr->backend, delta_time);
@@ -50,7 +50,7 @@ b8 renderer_begin_frame(f32 delta_time)
 
 b8 renderer_end_frame(f32 delta_time) 
 {
-    if(!state_ptr) {
+    if (!state_ptr) {
         return false;
     }
     b8 result = state_ptr->backend.end_frame(&state_ptr->backend, delta_time);

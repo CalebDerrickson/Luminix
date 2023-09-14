@@ -60,21 +60,21 @@ void input_process_key(keys key, b8 pressed)
         // Update internal state
         state_ptr->keyboard_current.keys[key] = pressed;
 
-        if(key == KEY_LALT) {
+        if (key == KEY_LALT) {
             LINFO("Left alt %s.", pressed? "pressed" : "released");
-        } else if(key == KEY_RALT) {
+        } else if (key == KEY_RALT) {
             LINFO("Right alt %s.", pressed? "pressed" : "released");
         }
         
-        if(key == KEY_LCONTROL) {
+        if (key == KEY_LCONTROL) {
             LINFO("Left control %s.", pressed? "pressed" : "released");
-        } else if(key == KEY_RCONTROL) {
+        } else if (key == KEY_RCONTROL) {
             LINFO("Right control %s.", pressed? "pressed" : "released");
         }
         
-        if(key == KEY_LSHIFT) {
+        if (key == KEY_LSHIFT) {
             LINFO("Left shift %s.", pressed? "pressed" : "released");
-        } else if(key == KEY_RSHIFT) {
+        } else if (key == KEY_RSHIFT) {
             LINFO("Right shift %s.", pressed? "pressed" : "released");
         }
 

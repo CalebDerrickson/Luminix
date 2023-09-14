@@ -26,7 +26,7 @@ b8 strings_equal(const char* str1, const char* str2)
 
 i32 string_format(char *dest, const char *format, ...) 
 {
-    if(!dest) {
+    if (!dest) {
         return -1;
     }
 
@@ -39,7 +39,7 @@ i32 string_format(char *dest, const char *format, ...)
 
 i32 string_format_v(char *dest, const char *format, void *va_listp) 
 {
-    if(!dest) {
+    if (!dest) {
         return -1;
     }
 

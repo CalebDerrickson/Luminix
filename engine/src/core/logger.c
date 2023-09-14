@@ -15,7 +15,7 @@ static logger_system_state* state_ptr;
 
 b8 initialize_logging(u64* memory_requirement, void* state) {
     *memory_requirement = sizeof(logger_system_state);
-    if(state == 0) {
+    if (state == 0) {
         return true;
     }
 

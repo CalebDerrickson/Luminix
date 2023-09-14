@@ -54,7 +54,7 @@ b8 platform_system_startup(
 {
     *memory_requirement = sizeof(platform_state);
 
-    if(state == 0) {
+    if (state == 0) {
         return true;
     }
 
@@ -151,7 +151,7 @@ void platform_system_shutdown(void *plat_state)
 
 b8 platform_pump_messages(platform_state* plat_state)
 {
-    if(!state_ptr) {
+    if (!state_ptr) {
         return false;
     }
 
@@ -217,7 +217,7 @@ void platform_console_write_error(const char* message, u8 color)
 
 f64 platform_get_absolute_time()
 {
-    if(!clock_freq) {
+    if (!clock_freq) {
         clock_setup();
     }
 
@@ -242,7 +242,7 @@ void platform_get_required_extension_names(const char*** names_darray)
 b8 platform_create_vulkan_surface(vulkan_context* context)
 {
 
-    if(!state_ptr) {
+    if (!state_ptr) {
         return false;
     }
 
@@ -312,11 +312,11 @@ LRESULT CALLBACK win32_process_message(HWND hwnd, u32 msg, WPARAM w_param, LPARA
             // Keypress only determines if _any_ alt/ctrl/shift key is pressed. Determine
             // which one if so.
 
-            if(w_param == VK_MENU) {
+            if (w_param == VK_MENU) {
                 key = is_extended ? KEY_RALT : KEY_LALT; 
-            } else if(w_param == VK_SHIFT) {
+            } else if (w_param == VK_SHIFT) {
                 key = is_extended ? KEY_RSHIFT : KEY_LSHIFT;
-            } else if(w_param == VK_CONTROL) {
+            } else if (w_param == VK_CONTROL) {
                 key = is_extended ? KEY_RCONTROL : KEY_LCONTROL;
             }
 

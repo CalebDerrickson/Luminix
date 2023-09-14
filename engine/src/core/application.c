@@ -97,7 +97,7 @@ b8 application_create(game* game_inst)
         &app_state->systems_allocator, 
         app_state->logging_system_memory_requirement
     );
-    if(!initialize_logging(&app_state->logging_system_memory_requirement, app_state->logging_system_state)) {
+    if (!initialize_logging(&app_state->logging_system_memory_requirement, app_state->logging_system_state)) {
         LERROR("Failed to initialize logging system. shutting down...");
         return false;
     }

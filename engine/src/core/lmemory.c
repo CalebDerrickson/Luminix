@@ -44,7 +44,7 @@ static memory_system_state* state_ptr;
 void memory_system_initialize(u64* memory_requirement, void* state)
 {
     *memory_requirement = sizeof(memory_system_state);
-    if(state == 0) {
+    if (state == 0) {
         return;
     }
     state_ptr = state;
@@ -65,7 +65,7 @@ void* lallocate(u64 size, memory_tag tag)
         LWARN("lallocate called using MEMORY_TAG_UNKNOWN. Re-class this allocation.");
     }
 
-    if(state_ptr) {
+    if (state_ptr) {
         state_ptr->stats.total_allocated += size;
         state_ptr->stats.tagged_allocations[tag] += size;
         state_ptr->alloc_count++;
@@ -84,7 +84,7 @@ void lfree(void* block, u64 size, memory_tag tag)
     }
 
     // TODO: memory alignment
-    if(state_ptr) {
+    if (state_ptr) {
     state_ptr->stats.total_allocated -= size;
     state_ptr->stats.tagged_allocations[tag] -= size;
     }
