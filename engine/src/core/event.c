@@ -41,7 +41,7 @@ void event_system_shutdown()
     }
 
     // Free the events arrays. Objects pointed to should be destroyed on their own.
-    for(u16 i = 0; i < MAX_MESSAGE_CODES; i++) {
+    for (u16 i = 0; i < MAX_MESSAGE_CODES; i++) {
         if (state_ptr->registered[i].events != 0) {
             darray_destroy(state_ptr->registered[i].events);
             state_ptr->registered[i].events = 0;

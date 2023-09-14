@@ -630,7 +630,7 @@ LINLINE vec4 vec4_from_vec3(vec3 vector, f32 w)
 LINLINE vec4 vec4_add(vec4 vector_1, vec4 vector_2)
 {
     vec4 res;
-    for(u32 i = 0; i < 4; i++){
+    for (u32 i = 0; i < 4; i++){
         res.elements[i] = vector_1.elements[i] + vector_2.elements[i];
     }
     return res;
@@ -645,7 +645,7 @@ LINLINE vec4 vec4_add(vec4 vector_1, vec4 vector_2)
 LINLINE vec4 vec4_subtract(vec4 vector_1, vec4 vector_2)
 {
     vec4 res;
-    for(u32 i = 0; i < 4; i++){
+    for (u32 i = 0; i < 4; i++){
         res.elements[i] = vector_1.elements[i] - vector_2.elements[i];
     }
     return res;
@@ -660,7 +660,7 @@ LINLINE vec4 vec4_subtract(vec4 vector_1, vec4 vector_2)
 LINLINE vec4 vec4_mult(vec4 vector_1, vec4 vector_2)
 {
     vec4 res;
-    for(u32 i = 0; i < 4; i++){
+    for (u32 i = 0; i < 4; i++){
         res.elements[i] = vector_1.elements[i] * vector_2.elements[i];
     }
     return res;
@@ -675,7 +675,7 @@ LINLINE vec4 vec4_mult(vec4 vector_1, vec4 vector_2)
 LINLINE vec4 vec4_div(vec4 vector_1, vec4 vector_2)
 {
     vec4 res;
-    for(u32 i = 0; i < 4; i++){
+    for (u32 i = 0; i < 4; i++){
         res.elements[i] = vector_1.elements[i] / vector_2.elements[i];
     }
     return res;
@@ -690,7 +690,7 @@ LINLINE vec4 vec4_div(vec4 vector_1, vec4 vector_2)
 LINLINE f32 vec4_dot(vec4 vector_1, vec4 vector_2)
 {
     f32 res = 0;
-    for(u32 i = 0; i < 4; i++){
+    for (u32 i = 0; i < 4; i++){
         res += vector_1.elements[i] * vector_2.elements[i];
     }
     return res;
@@ -714,7 +714,7 @@ LINLINE f32 vec4_length(vec4 vector)
 LINLINE void vec4_normalize(vec4* vector)
 {
     const f32 length = vec4_dot(*vector, *vector);
-    for(u32 i = 0; i < 4; i++){
+    for (u32 i = 0; i < 4; i++){
         vector->elements[i] /= length;
     }
 }
@@ -780,8 +780,8 @@ LINLINE mat4 mat4_mul(mat4 matrix1, mat4 matrix2)
     const f32* m2_ptr = matrix2.data;
     f32* dst_ptr = out_matrix.data;
 
-    for(i32 i = 0; i < 4; i++) {
-        for(i32 j = 0; j < 4; j++) {
+    for (i32 i = 0; i < 4; i++) {
+        for (i32 j = 0; j < 4; j++) {
             *dst_ptr =
                 m1_ptr[0] * m2_ptr[0 + j] +
                 m1_ptr[1] * m2_ptr[4 + j] +
