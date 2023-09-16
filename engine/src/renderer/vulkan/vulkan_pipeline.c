@@ -129,9 +129,12 @@ b8 vulkan_graphics_pipeline_create(
     // Pipeline create
     VkGraphicsPipelineCreateInfo pipeline_create_info = {VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO};
     pipeline_create_info.stageCount = stage_count;
+    
+    // Issue? stages is being passed as a pointer to just stages[0], not an array
     pipeline_create_info.pStages = stages;
     pipeline_create_info.pVertexInputState = &vertex_input_info;
     pipeline_create_info.pInputAssemblyState = &input_assembly;
+    
     
     pipeline_create_info.pViewportState = &viewport_state;
     pipeline_create_info.pRasterizationState = &rasterizer_create_info;
