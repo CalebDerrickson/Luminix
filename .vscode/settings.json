@@ -66,6 +66,8 @@
         "utility": "cpp",
         "lmemory.h": "c",
         "defines.h": "c",
-        "vulkan_types.inl": "c"
+        "vulkan_types.inl": "c",
+        "lstring.h" : "c",
+        "logger.h" : "c"
     }
 }

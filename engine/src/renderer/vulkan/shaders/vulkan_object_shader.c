@@ -16,9 +16,9 @@ b8 vulkan_object_shader_create(vulkan_context* context, vulkan_object_shader* ou
     char stage_type_strs[OBJECT_SHADER_STAGE_COUNT][5] = {"vert", "frag"};
     VkShaderStageFlagBits stage_types[OBJECT_SHADER_STAGE_COUNT] = {VK_SHADER_STAGE_VERTEX_BIT, VK_SHADER_STAGE_FRAGMENT_BIT};
 
-    for(u32 i = 0; i < OBJECT_SHADER_STAGE_COUNT; i++) {
+    for (u32 i = 0; i < OBJECT_SHADER_STAGE_COUNT; ++i) {
         // Shader module creation
-        if(!create_shader_module(
+        if (!create_shader_module(
             context, 
             BUILTIN_SHADER_NAME_OBJECT, 
             stage_type_strs[i], 
@@ -75,7 +75,6 @@ b8 vulkan_object_shader_create(vulkan_context* context, vulkan_object_shader* ou
     VkPipelineShaderStageCreateInfo stage_create_infos[OBJECT_SHADER_STAGE_COUNT];
     lzero_memory(stage_create_infos, sizeof(stage_create_infos));
     for (u32 i = 0; i < OBJECT_SHADER_STAGE_COUNT; ++i) {
-        stage_create_infos[i].sType = out_shader->stages[i].shader_stage_create_info.sType;
         stage_create_infos[i] = out_shader->stages[i].shader_stage_create_info;
     }
 
@@ -91,7 +90,8 @@ b8 vulkan_object_shader_create(vulkan_context* context, vulkan_object_shader* ou
             viewport,
             scissor,
             false,
-            &out_shader->pipeline)) {
+            &out_shader->pipeline
+    )) {
         LERROR("Failed to load graphics pipeline for object shader.");
         return false;
     }
@@ -104,7 +104,7 @@ void vulkan_object_shader_destroy(vulkan_context* context, struct vulkan_object_
     vulkan_pipeline_destroy(context, &shader->pipeline);
 
     // Destroy shader modules
-    for(u32 i = 0; i < OBJECT_SHADER_STAGE_COUNT; i++) {
+    for (u32 i = 0; i < OBJECT_SHADER_STAGE_COUNT; i++) {
         vkDestroyShaderModule(context->device.logical_device, shader->stages[i].handle, context->allocator);
         shader->stages[i].handle = 0;
     }

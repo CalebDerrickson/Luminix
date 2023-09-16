@@ -25,7 +25,7 @@ b8 create_shader_module(
 
     // Obtain file handle.
     file_handle handle;
-    if(!filesystem_open(file_name, FILE_MODE_READ, true, &handle)) {
+    if (!filesystem_open(file_name, FILE_MODE_READ, true, &handle)) {
         LERROR("Unable to read shader module: '%s'", file_name);
         return false;
     }
@@ -33,7 +33,7 @@ b8 create_shader_module(
     // Read the entire file as binary
     u64 size = 0;
     u8* file_buffer = 0;
-    if(!filesystem_read_all_bytes(&handle, &file_buffer, &size)) {
+    if (!filesystem_read_all_bytes(&handle, &file_buffer, &size)) {
         LERROR("Unable to binary read shader module: '%s'", file_name);
         return false;
     }
@@ -59,7 +59,7 @@ b8 create_shader_module(
     shader_stages[stage_index].shader_stage_create_info.module = shader_stages[stage_index].handle;
     shader_stages[stage_index].shader_stage_create_info.pName = "main";
 
-    if(file_buffer) {
+    if (file_buffer) {
         lfree(file_buffer, sizeof(u8) * size, MEMORY_TAG_STRING);
         file_buffer = 0;
     }

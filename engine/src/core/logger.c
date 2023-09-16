@@ -16,14 +16,14 @@ static logger_system_state* state_ptr;
 
 void append_to_log_file(const char* message)
 {
-    if(!state_ptr || !state_ptr->log_file_handle.is_valid) {
+    if (!state_ptr || !state_ptr->log_file_handle.is_valid) {
         return;
     }
 
     // Since the message already contains a '\n', just write the bytes directly.
     u64 length = string_length(message);
     u64 written  = 0;
-    if(!filesystem_write(&state_ptr->log_file_handle, length, message, &written)) {
+    if (!filesystem_write(&state_ptr->log_file_handle, length, message, &written)) {
         platform_console_write_error("ERROR writing to console.log", LOG_LEVEL_ERROR);
     }
 
@@ -39,7 +39,7 @@ b8 initialize_logging(u64* memory_requirement, void* state) {
     state_ptr = state;
     
     // Create new/wipe existing log file, then open it.
-    if(!filesystem_open("console.log", FILE_MODE_WRITE, false, &state_ptr->log_file_handle)) {
+    if (!filesystem_open("console.log", FILE_MODE_WRITE, false, &state_ptr->log_file_handle)) {
         platform_console_write_error("ERROR: Unable to open console.log for writing.", LOG_LEVEL_ERROR);
         return false;
     }
@@ -77,7 +77,7 @@ void log_output(log_level level, const char* message, ...) {
     string_format(out_message, "%s%s\n", level_strings[level], out_message);
 
     // Print accordingly
-    if(is_error) {
+    if (is_error) {
         platform_console_write_error(out_message, level);
     } else {
         platform_console_write(out_message, level);

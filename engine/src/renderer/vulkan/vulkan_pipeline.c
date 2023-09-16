@@ -29,7 +29,7 @@ b8 vulkan_graphics_pipeline_create(
     viewport_state.pScissors = &scissor;
 
     // Rasterizer
-    VkPipelineRasterizationStateCreateInfo rasterizer_create_info = {VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO}; 
+    VkPipelineRasterizationStateCreateInfo rasterizer_create_info = {VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO};
     rasterizer_create_info.depthClampEnable = VK_FALSE;
     rasterizer_create_info.rasterizerDiscardEnable = VK_FALSE;
     rasterizer_create_info.polygonMode = is_wireframe ? VK_POLYGON_MODE_LINE : VK_POLYGON_MODE_FILL;
@@ -41,7 +41,7 @@ b8 vulkan_graphics_pipeline_create(
     rasterizer_create_info.depthBiasClamp = 0.0f;
     rasterizer_create_info.depthBiasSlopeFactor = 0.0f;
 
-    // Multisampling
+    // Multisampling.
     VkPipelineMultisampleStateCreateInfo multisampling_create_info = {VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO};
     multisampling_create_info.sampleShadingEnable = VK_FALSE;
     multisampling_create_info.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
@@ -50,7 +50,7 @@ b8 vulkan_graphics_pipeline_create(
     multisampling_create_info.alphaToCoverageEnable = VK_FALSE;
     multisampling_create_info.alphaToOneEnable = VK_FALSE;
 
-    // Depth and stencil testing
+    // Depth and stencil testing.
     VkPipelineDepthStencilStateCreateInfo depth_stencil = {VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO};
     depth_stencil.depthTestEnable = VK_TRUE;
     depth_stencil.depthWriteEnable = VK_TRUE;
@@ -94,9 +94,9 @@ b8 vulkan_graphics_pipeline_create(
 
     // Vertex input
     VkVertexInputBindingDescription binding_description;
-    binding_description.binding = 0;                                // Binding index
+    binding_description.binding = 0;  // Binding index
     binding_description.stride = sizeof(vertex_3d);
-    binding_description.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;    // Move to next data entry for each vertex
+    binding_description.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;  // Move to next data entry for each vertex.
 
     // Attributes
     VkPipelineVertexInputStateCreateInfo vertex_input_info = {VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO};
@@ -118,7 +118,7 @@ b8 vulkan_graphics_pipeline_create(
     pipeline_layout_create_info.pSetLayouts = descriptor_set_layouts;
 
 
-    // Create the pipeline layout
+    // Create the pipeline layout.
     VK_CHECK(vkCreatePipelineLayout(
         context->device.logical_device,
         &pipeline_layout_create_info,
@@ -126,7 +126,7 @@ b8 vulkan_graphics_pipeline_create(
         &out_pipeline->pipeline_layout
     ));
 
-    // Create the pipleine
+    // Pipeline create
     VkGraphicsPipelineCreateInfo pipeline_create_info = {VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO};
     pipeline_create_info.stageCount = stage_count;
     pipeline_create_info.pStages = stages;
@@ -142,7 +142,7 @@ b8 vulkan_graphics_pipeline_create(
     pipeline_create_info.pTessellationState = 0;
     
     pipeline_create_info.layout = out_pipeline->pipeline_layout;
-    
+
     pipeline_create_info.renderPass = renderpass->handle;
     pipeline_create_info.subpass = 0;
     pipeline_create_info.basePipelineHandle = VK_NULL_HANDLE;
@@ -157,7 +157,7 @@ b8 vulkan_graphics_pipeline_create(
         &out_pipeline->handle
     );
 
-    if(vulkan_result_is_success(result)) {
+    if (vulkan_result_is_success(result)) {
         LDEBUG("Graphics pipeline created.");
         return true;
     }
@@ -168,18 +168,18 @@ b8 vulkan_graphics_pipeline_create(
 
 void vulkan_pipeline_destroy(vulkan_context* context, vulkan_pipeline* pipeline)
 {
-    if(!pipeline) {
+    if (!pipeline) {
         return;
     }
 
     // Destroy pipeline
-    if(pipeline->handle) {
+    if (pipeline->handle) {
         vkDestroyPipeline(context->device.logical_device, pipeline->handle, context->allocator);
         pipeline->handle = 0;
     }
 
     // Destroy layout
-    if(pipeline->pipeline_layout) {
+    if (pipeline->pipeline_layout) {
         vkDestroyPipelineLayout(context->device.logical_device, pipeline->pipeline_layout, context->allocator);
         pipeline->pipeline_layout = 0;
     }

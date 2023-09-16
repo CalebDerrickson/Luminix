@@ -22,7 +22,7 @@ b8 filesystem_open(const char* path, file_modes mode, b8 binary, file_handle* ou
     out_handle->handle = 0;
     const char* mode_str;
 
-    if((mode & FILE_MODE_READ) != 0 && (mode & FILE_MODE_WRITE) != 0) {
+    if ((mode & FILE_MODE_READ) != 0 && (mode & FILE_MODE_WRITE) != 0) {
         mode_str = binary ? "w+b" : "w+";
     } else if ((mode & FILE_MODE_READ) != 0 && (mode & FILE_MODE_WRITE) == 0) {
         mode_str = binary ? "rb" : "r";
@@ -35,7 +35,7 @@ b8 filesystem_open(const char* path, file_modes mode, b8 binary, file_handle* ou
 
     // Attempt to open file
     FILE* file = fopen(path, mode_str);
-    if(!file) {
+    if (!file) {
         LERROR("Error oppening file: '%s'", path);
         return false;
     }
@@ -48,7 +48,7 @@ b8 filesystem_open(const char* path, file_modes mode, b8 binary, file_handle* ou
 
 void filesystem_close(file_handle* handle)
 {
-    if(handle->handle) {
+    if (handle->handle) {
         fclose((FILE*)handle->handle);
         handle->handle = 0;
         handle->is_valid = false;
@@ -57,12 +57,12 @@ void filesystem_close(file_handle* handle)
 
 b8 filesystem_read_line(file_handle* handle, char** line_buffer)
 {
-    if(!handle->handle) {
+    if (!handle->handle) {
         return false;
     }
     // Since we're only reading a single line, we'll make an assumption that the line is less than 32K characters long
     char buffer[32000];
-    if(fgets(buffer, 32000, (FILE*)handle->handle) != 0) {
+    if (fgets(buffer, 32000, (FILE*)handle->handle) != 0) {
         u64 length = strlen(buffer);
         *line_buffer = lallocate((sizeof(char) * length) + 1, MEMORY_TAG_STRING);
         strcpy(*line_buffer, buffer);
@@ -74,12 +74,12 @@ b8 filesystem_read_line(file_handle* handle, char** line_buffer)
 
 b8 filesystem_write_line(file_handle* handle, const char* text)
 {
-    if(!handle->handle) {
+    if (!handle->handle) {
         return false;
     }
 
     i32 result = fputs(text, (FILE*)handle->handle);
-    if(result != EOF) {
+    if (result != EOF) {
         result = fputc('\n', (FILE*)handle->handle);
     }
 
@@ -91,13 +91,13 @@ b8 filesystem_write_line(file_handle* handle, const char* text)
 
 b8 filesystem_read(file_handle* handle, u64 data_size, void* out_data, u64* out_bytes_read)
 {
-    if(!handle->handle || !out_data) {
+    if (!handle->handle || !out_data) {
         return false;
     }
 
     *out_bytes_read = fread(out_data, 1, data_size, (FILE*)handle->handle);
     
-    if(*out_bytes_read != data_size) {
+    if (*out_bytes_read != data_size) {
         return false;
     }
 
@@ -106,7 +106,7 @@ b8 filesystem_read(file_handle* handle, u64 data_size, void* out_data, u64* out_
 
 b8 filesystem_read_all_bytes(file_handle* handle, u8** out_bytes, u64* out_bytes_read)
 {
-    if(!handle->handle) {
+    if (!handle->handle) {
         return false;
     }
 
@@ -118,7 +118,7 @@ b8 filesystem_read_all_bytes(file_handle* handle, u8** out_bytes, u64* out_bytes
     *out_bytes = lallocate(sizeof(u8) * size, MEMORY_TAG_STRING);
     *out_bytes_read = fread(*out_bytes, 1, size, (FILE*)handle->handle);
 
-    if(*out_bytes_read != size) {
+    if (*out_bytes_read != size) {
         return false;
     }
 
@@ -127,13 +127,13 @@ b8 filesystem_read_all_bytes(file_handle* handle, u8** out_bytes, u64* out_bytes
 
 b8 filesystem_write(file_handle* handle, u64 data_size, const void* data, u64* out_bytes_written)
 {
-    if(!handle->handle) {
+    if (!handle->handle) {
         return false;
     }
 
     *out_bytes_written = fwrite(data, 1, data_size, (FILE*)handle->handle);
 
-    if(*out_bytes_written != data_size) {
+    if (*out_bytes_written != data_size) {
         return false;
     }
 

@@ -8,11 +8,11 @@ b8 vulkan_graphics_pipeline_create(
     VkVertexInputAttributeDescription* attributes,
     u32 descriptor_set_layout_count,
     VkDescriptorSetLayout* descriptor_set_layouts,
-    u32 stage_count, 
+    u32 stage_count,
     VkPipelineShaderStageCreateInfo* stages,
     VkViewport viewport,
     VkRect2D scissor,
-    b8 is_wireframe, 
+    b8 is_wireframe,
     vulkan_pipeline* out_pipeline
 );
 
