@@ -137,7 +137,7 @@ b8 vulkan_object_shader_create(vulkan_context* context, vulkan_object_shader* ou
     }
 
     // Uniform Buffer
-    if(!vulkan_buffer_create(
+    if (!vulkan_buffer_create(
         context,
         sizeof(global_uniform_object) * 3,
         VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
