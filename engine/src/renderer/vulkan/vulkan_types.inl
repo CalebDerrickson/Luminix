@@ -22,6 +22,16 @@ typedef struct vulkan_swapchain_support_info {
     VkPresentModeKHR* present_modes;
 } vulkan_swapchain_support_info;
 
+typedef struct vulkan_buffer {
+    u64 total_size;
+    VkBuffer handle;
+    VkBufferUsageFlagBits usage;
+    b8 is_locked;
+    VkDeviceMemory memory;
+    i32 memory_index;
+    u32 memory_property_flags;
+}vulkan_buffer;
+
 typedef struct vulkan_device {
     VkPhysicalDevice physical_device;
     VkDevice logical_device;
@@ -158,6 +168,9 @@ typedef struct vulkan_context {
     vulkan_swapchain swapchain;
     vulkan_renderpass main_renderpass;
 
+    vulkan_buffer object_vertex_buffer;
+    vulkan_buffer object_index_buffer;
+    
     // darray of command buffers
     vulkan_command_buffer* graphics_command_buffers;
 
@@ -182,6 +195,8 @@ typedef struct vulkan_context {
 
     i32 (*find_memory_index)(u32 type_filter, u32 property_flags);
 
+    u64 geometry_vertex_offset;
+    u64 geometry_index_offset;
 
 } vulkan_context;
 
