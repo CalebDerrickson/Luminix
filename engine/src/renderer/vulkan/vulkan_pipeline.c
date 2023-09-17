@@ -113,6 +113,19 @@ b8 vulkan_graphics_pipeline_create(
     // Pipeline layout
     VkPipelineLayoutCreateInfo pipeline_layout_create_info = {VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO};
 
+    // Push constants
+    // Push constants behave like a uniform buffer without the descriptor sets.
+    // Used for frequently changing data.
+    // Can work everywhere, ie outside renderpass
+    // max size 128 bytes
+    VkPushConstantRange push_constant;
+    push_constant.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    push_constant.offset = sizeof(mat4) * 0;
+    push_constant.size = sizeof(mat4) * 2;
+    
+    pipeline_layout_create_info.pushConstantRangeCount = 1;
+    pipeline_layout_create_info.pPushConstantRanges = &push_constant;
+
     // Descriptor set layouts
     pipeline_layout_create_info.setLayoutCount = descriptor_set_layout_count;
     pipeline_layout_create_info.pSetLayouts = descriptor_set_layouts;

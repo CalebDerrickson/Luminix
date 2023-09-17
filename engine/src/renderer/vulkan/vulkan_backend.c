@@ -264,7 +264,7 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
     vertex_3d verts[vert_count];
     lzero_memory(verts, sizeof(vertex_3d) * vert_count);
 
-    const f32 factor = 1.0f;
+    const f32 factor = 10.0f;
 
     verts[0].position.x = -0.5 * factor;
     verts[0].position.y = -0.5 * factor;
@@ -528,21 +528,6 @@ void vulkan_renderer_update_global_state(
     // TODO: Other ubo properties
 
     vulkan_object_shader_update_global_state(&context, &context.object_shader);
-
-    // TODO: temp test code
-    vulkan_object_shader_use(&context, &context.object_shader);
-
-    // Bind the vertex buffer at offset.
-    VkDeviceSize offsets[1] = {0};
-
-    vkCmdBindVertexBuffers(command_buffer->handle, 0, 1, &context.object_vertex_buffer.handle, (VkDeviceSize*)offsets);
-
-    // Bind index buffer at offset.
-    vkCmdBindIndexBuffer(command_buffer->handle, context.object_index_buffer.handle, 0, VK_INDEX_TYPE_UINT32);
-
-    // Issue the draw command
-    vkCmdDrawIndexed(command_buffer->handle, 6, 1, 0, 0, 0);
-    // TODO: End temp test code
 }
 
 b8 vulkan_renderer_backend_end_frame(renderer_backend* backend, f32 delta_time)
@@ -619,6 +604,28 @@ b8 vulkan_renderer_backend_end_frame(renderer_backend* backend, f32 delta_time)
     );
 
     return true;
+}
+
+void vulkan_backend_update_object(mat4 model)
+{
+    vulkan_command_buffer* command_buffer = &context.graphics_command_buffers[context.image_index];
+
+    vulkan_object_shader_update_object(&context, &context.object_shader, model);
+    
+    // TODO: temp test code
+    vulkan_object_shader_use(&context, &context.object_shader);
+
+    // Bind the vertex buffer at offset.
+    VkDeviceSize offsets[1] = {0};
+
+    vkCmdBindVertexBuffers(command_buffer->handle, 0, 1, &context.object_vertex_buffer.handle, (VkDeviceSize*)offsets);
+
+    // Bind index buffer at offset.
+    vkCmdBindIndexBuffer(command_buffer->handle, context.object_index_buffer.handle, 0, VK_INDEX_TYPE_UINT32);
+
+    // Issue the draw command
+    vkCmdDrawIndexed(command_buffer->handle, 6, 1, 0, 0, 0);
+    // TODO: End temp test code
 }
 
 VKAPI_ATTR VkBool32 VKAPI_CALL vk_debug_callback( 
