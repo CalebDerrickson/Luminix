@@ -47,7 +47,7 @@ b8 vulkan_buffer_create(
         out_buffer->memory_property_flags
     );
 
-    if(out_buffer->memory_index == -1) {
+    if (out_buffer->memory_index == -1) {
         LERROR("Unable to create vulkan buffer because the required memory type index was not found.");
         return false;
     }
@@ -65,12 +65,12 @@ b8 vulkan_buffer_create(
         &out_buffer->memory
     );
 
-    if(result != VK_SUCCESS) {
+    if (result != VK_SUCCESS) {
         LERROR("Unable to create vulkan buffer because the required memory allocation failed. Error: &i", result);
         return false;
     } 
 
-    if(bind_on_create) {
+    if (bind_on_create) {
         vulkan_buffer_bind(context, out_buffer, 0);
     }
 
@@ -82,14 +82,14 @@ void vulkan_buffer_destroy(
     vulkan_buffer* buffer
 )
 {
-    if(buffer->memory) {
+    if (buffer->memory) {
         vkFreeMemory(context->device.logical_device,
             buffer->memory,
             context->allocator
         );
         buffer->memory = 0;
     }
-    if(buffer->handle) {
+    if (buffer->handle) {
         vkDestroyBuffer(context->device.logical_device,
             buffer->handle,
             context->allocator
@@ -246,7 +246,7 @@ b8 vulkan_buffer_resize(
         &new_memory
     );
 
-    if(result != VK_SUCCESS) {
+    if (result != VK_SUCCESS) {
         LERROR("Unable to resize vulkan buffer because the required memory allocation failed. Error: %i", result);
         return false;
     }
@@ -276,14 +276,14 @@ b8 vulkan_buffer_resize(
     vkDeviceWaitIdle(context->device.logical_device);
 
     // Destroy the old
-    if(buffer->memory) {
+    if (buffer->memory) {
         vkFreeMemory(context->device.logical_device, 
             buffer->memory, 
             context->allocator
         );
         buffer->memory = 0;
     }
-    if(buffer->handle) {
+    if (buffer->handle) {
         vkDestroyBuffer(
             context->device.logical_device, 
             buffer->handle,
