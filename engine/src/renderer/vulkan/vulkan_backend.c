@@ -731,7 +731,7 @@ b8 create_buffers(vulkan_context* context)
 
     const u64 vertex_buffer_size = sizeof(vertex_3d) * 1024 * 1024;
 
-    if(!vulkan_buffer_create(
+    if (!vulkan_buffer_create(
         context,
         vertex_buffer_size,
         VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
@@ -747,7 +747,7 @@ b8 create_buffers(vulkan_context* context)
 
     const u64 index_buffer_size = sizeof(u32) * 1024 * 1024;
 
-    if(!vulkan_buffer_create(
+    if (!vulkan_buffer_create(
         context,
         index_buffer_size,
         VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
