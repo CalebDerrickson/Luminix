@@ -76,7 +76,7 @@ b8 renderer_draw_frame(render_packet* packet)
         mat4 projection = mat4_perspective(deg_to_rad(45.0f), 1280/720.0f, 0.1f, 1000.0f);
         static f32 z = -1.0f;
 
-        if(z > -10.0f){
+        if (z > -10.0f){
             z -= 0.001f;
         }
         
