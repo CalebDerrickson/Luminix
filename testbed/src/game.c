@@ -46,55 +46,55 @@ b8 game_update(game* game_inst, f32 delta_time)
 
 
     // HACK: temp key to move around
-    if(input_is_key_down('A') || input_is_key_down(KEY_LEFT)) {
+    if (input_is_key_down('A') || input_is_key_down(KEY_LEFT)) {
         camera_yaw(state, -1.0f * delta_time);
     }
     
-    if(input_is_key_down('D') || input_is_key_down(KEY_RIGHT)) {
+    if (input_is_key_down('D') || input_is_key_down(KEY_RIGHT)) {
         camera_yaw(state, 1.0f * delta_time);
     }
     
-    if(input_is_key_down(KEY_UP)) {
+    if (input_is_key_down(KEY_UP)) {
         camera_pitch(state, -1.0f * delta_time);
     }
     
-    if(input_is_key_down(KEY_DOWN)) {
+    if (input_is_key_down(KEY_DOWN)) {
         camera_pitch(state, 1.0f * delta_time);
     }
 
     f32 temp_move_speed = 15.0f;
     vec3 velocity = vec3_set(0);
     
-    if(input_is_key_down('W')) {
+    if (input_is_key_down('W')) {
         vec3 forward = mat4_forward(state->view);
         velocity = vec3_add(velocity, forward);
     }
     
-    if(input_is_key_down('S')) {
+    if (input_is_key_down('S')) {
         vec3 backward = mat4_backward(state->view);
         velocity = vec3_add(velocity, backward);
     }
 
-    if(input_is_key_down('Q')) {
+    if (input_is_key_down('Q')) {
         vec3 left = mat4_left(state->view);
         velocity = vec3_add(velocity, left);
     }
     
-    if(input_is_key_down('E')) {
+    if (input_is_key_down('E')) {
         vec3 right = mat4_right(state->view);
         velocity = vec3_add(velocity, right);
     }
 
-    if(input_is_key_down(KEY_SPACE)) {
+    if (input_is_key_down(KEY_SPACE)) {
         velocity.y += 1.0f;
     }
 
-    if(input_is_key_down('X')) {
+    if (input_is_key_down('X')) {
         velocity.y -= 1.0f;
     }
 
     vec3 z = vec3_set(0);
-    if(!vec3_compare(z, velocity, 0.0002f)) {
+    if (!vec3_compare(z, velocity, 0.0002f)) {
         // Be sure to normalize the velocity before applying speed.
         vec3_normalize(&velocity);
         state->camera_position.x += velocity.x * temp_move_speed * delta_time;
@@ -125,7 +125,7 @@ void game_on_resize(game* game_inst, u32 width, u32 height)
 
 void recalculate_view_matrix(game_state* state)
 {
-    if(!state->camera_view_dirty) {
+    if (!state->camera_view_dirty) {
         return;
     }
 
