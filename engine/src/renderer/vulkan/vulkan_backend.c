@@ -305,6 +305,12 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
         sizeof(u32) * index_count,
         indices
     );
+
+    u32 object_id = 0;
+    if(!vulkan_object_shader_acquire_resources(&context, &context.object_shader, &object_id)) {
+        LERROR("Failed to acquire shader resources.");
+        return false;
+    }
     // TODO: End test code
 
     LINFO("Vulkan Renderer initialized successfully.");
@@ -416,6 +422,8 @@ void vulkan_renderer_backend_on_resized(renderer_backend* backend, u16 width, u1
 
 b8 vulkan_renderer_backend_begin_frame(renderer_backend* backend, f32 delta_time)
 {
+    context.frame_delta_time = delta_time;
+
     // Making a local copy for readability.
     vulkan_device* device = &context.device; 
     
@@ -530,7 +538,7 @@ void vulkan_renderer_update_global_state(
     
     // TODO: Other ubo properties
 
-    vulkan_object_shader_update_global_state(&context, &context.object_shader);
+    vulkan_object_shader_update_global_state(&context, &context.object_shader, context.frame_delta_time);
 }
 
 b8 vulkan_renderer_backend_end_frame(renderer_backend* backend, f32 delta_time)
@@ -609,11 +617,11 @@ b8 vulkan_renderer_backend_end_frame(renderer_backend* backend, f32 delta_time)
     return true;
 }
 
-void vulkan_backend_update_object(mat4 model)
+void vulkan_backend_update_object(geometry_render_data data)
 {
     vulkan_command_buffer* command_buffer = &context.graphics_command_buffers[context.image_index];
 
-    vulkan_object_shader_update_object(&context, &context.object_shader, model);
+    vulkan_object_shader_update_object(&context, &context.object_shader, data);
     
     // TODO: temp test code
     vulkan_object_shader_use(&context, &context.object_shader);
@@ -871,7 +879,7 @@ void vulkan_renderer_create_texture(
     out_texture->width = width;
     out_texture->height = height;
     out_texture->channel_count = channel_count;
-    out_texture->generation = 0;
+    out_texture->generation = INVALID_ID;
 
     // Internal data creation
     // TODO: Use an allocator for this
@@ -922,7 +930,9 @@ void vulkan_renderer_create_texture(
     );
 
     // Copy the data from the buffer
-    vulkan_image_copy_from_buffer(&context, &data->image, staging.handle, &temp_buffer);
+    vulkan_image_copy_from_buffer(&context, &temp_buffer, &data->image,  staging.handle);
+
+    vulkan_buffer_destroy(&context, &staging);
 
     // Transition from optimal for data receipt to shader-read-only optimal layout
     vulkan_image_transition_layout(
@@ -967,6 +977,8 @@ void vulkan_renderer_create_texture(
 
 void vulkan_renderer_destroy_texture(texture* texture)
 {
+    vkDeviceWaitIdle(context.device.logical_device);
+
     vulkan_texture_data* data = (vulkan_texture_data*)texture->internal_data;
 
     vulkan_image_destroy(&context, &data->image);

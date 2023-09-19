@@ -202,7 +202,6 @@ void vulkan_image_transition_layout(
 
 }
 
-
 void vulkan_image_copy_from_buffer(
     vulkan_context* context,
     vulkan_command_buffer* command_buffer,
