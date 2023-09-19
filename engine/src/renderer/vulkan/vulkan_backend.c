@@ -257,7 +257,7 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
     }
 
     LDEBUG("Creating standard buffers...");
-    if(!create_buffers(&context)) {
+    if (!create_buffers(&context)) {
         LERROR("Error creating standard buffers.");
         return false;
     }
@@ -315,7 +315,7 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
     );
 
     u32 object_id = 0;
-    if(!vulkan_object_shader_acquire_resources(&context, &context.object_shader, &object_id)) {
+    if (!vulkan_object_shader_acquire_resources(&context, &context.object_shader, &object_id)) {
         LERROR("Failed to acquire shader resources.");
         return false;
     }
@@ -976,7 +976,7 @@ void vulkan_renderer_create_texture(
     sampler_info.maxLod = 0.0f;
 
     VkResult result = vkCreateSampler(context.device.logical_device, &sampler_info, context.allocator, &data->sampler);
-    if(!vulkan_result_is_success(result)) {
+    if (!vulkan_result_is_success(result)) {
         LERROR("Error createing texture sampler: %s", vulkan_result_string(result, true));
         return;
     }
