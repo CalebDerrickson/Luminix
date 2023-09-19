@@ -271,15 +271,23 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
 
     verts[0].position.x = -0.5 * factor;
     verts[0].position.y = -0.5 * factor;
+    verts[0].texcoord.x = 0.0f;
+    verts[0].texcoord.y = 0.0f;
 
     verts[1].position.x = 0.5 * factor;
     verts[1].position.y = 0.5 * factor;
+    verts[1].texcoord.x = 1.0f;
+    verts[1].texcoord.y = 1.0f;
 
     verts[2].position.x = -0.5 * factor;
     verts[2].position.y = 0.5 * factor;
+    verts[2].texcoord.x = 0.0f;
+    verts[2].texcoord.y = 1.0f;
 
     verts[3].position.x = 0.5 * factor;
     verts[3].position.y = -0.5 * factor;
+    verts[3].texcoord.x = 1.0f;    
+    verts[3].texcoord.y = 0.0f;
 
     const u32 index_count = 6;
     u32 indices[index_count] = {0, 1, 2, 0, 3, 1};

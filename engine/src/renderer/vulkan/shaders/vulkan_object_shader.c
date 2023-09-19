@@ -70,8 +70,10 @@ b8 vulkan_object_shader_create(vulkan_context* context, vulkan_object_shader* ou
     ));
 
     // Local/Object Descriptors
+    const u32 local_sampler_count = 1;
     VkDescriptorType descriptor_types[VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT] = {
-        VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,      // Binding 0 - Uniform buffer
+        VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          // Binding 0 - Uniform buffer
+        VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER   // Binding 1 - Diffuse sampler layout.
     };
     VkDescriptorSetLayoutBinding bindings[VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT];
     lzero_memory(&bindings, sizeof(VkDescriptorSetLayoutBinding) * VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT);
@@ -94,13 +96,16 @@ b8 vulkan_object_shader_create(vulkan_context* context, vulkan_object_shader* ou
     ));
 
     // Local/Object descriptor pool: Used for object-specific items like diffuse color
-    VkDescriptorPoolSize object_pool_sizes[1];
-    // the first section will be used for uniform buffers
+    VkDescriptorPoolSize object_pool_sizes[2];
+    // The first section will be used for uniform buffers.
     object_pool_sizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     object_pool_sizes[0].descriptorCount = VULKAN_OBJECT_MAX_OBJECT_COUNT;
+    // The second section will be used for image samplers.
+    object_pool_sizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    object_pool_sizes[1].descriptorCount = local_sampler_count * VULKAN_OBJECT_MAX_OBJECT_COUNT;
 
     VkDescriptorPoolCreateInfo object_pool_info = {VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO};
-    object_pool_info.poolSizeCount = 1;
+    object_pool_info.poolSizeCount = 2;
     object_pool_info.pPoolSizes = object_pool_sizes;
     object_pool_info.maxSets = VULKAN_OBJECT_MAX_OBJECT_COUNT;
 
@@ -129,16 +134,18 @@ b8 vulkan_object_shader_create(vulkan_context* context, vulkan_object_shader* ou
 
     // Attributes
     u32 offset = 0;
-    const i32 attribute_count = 1;
-    VkVertexInputAttributeDescription attribute_descriptions[attribute_count];
-    // Position
-    VkFormat formats[attribute_count] = {
-        VK_FORMAT_R32G32B32_SFLOAT
+#define ATTRIBUTE_COUNT 2
+    VkVertexInputAttributeDescription attribute_descriptions[ATTRIBUTE_COUNT];
+    // Position, texcoord
+    VkFormat formats[ATTRIBUTE_COUNT] = {
+        VK_FORMAT_R32G32B32_SFLOAT,
+        VK_FORMAT_R32G32_SFLOAT
     };
-    u64 sizes[attribute_count] = {
-        sizeof(vec3)
+    u64 sizes[ATTRIBUTE_COUNT] = {
+        sizeof(vec3),
+        sizeof(vec2)
     };
-    for (u32 i = 0; i < attribute_count; ++i) {
+    for (u32 i = 0; i < ATTRIBUTE_COUNT; ++i) {
         attribute_descriptions[i].binding = 0;   // binding index - should match binding desc
         attribute_descriptions[i].location = i;  // attrib location
         attribute_descriptions[i].format = formats[i];
@@ -165,7 +172,7 @@ b8 vulkan_object_shader_create(vulkan_context* context, vulkan_object_shader* ou
     if (!vulkan_graphics_pipeline_create(
             context,
             &context->main_renderpass,
-            attribute_count,
+            ATTRIBUTE_COUNT,
             attribute_descriptions,
             descriptor_set_layout_count,
             layouts,
@@ -230,10 +237,10 @@ b8 vulkan_object_shader_create(vulkan_context* context, vulkan_object_shader* ou
 void vulkan_object_shader_destroy(vulkan_context* context, struct vulkan_object_shader* shader)
 {
     // Destroy object descriptor pool
-    vkDestroyDescriptorPool(context->device.logical_device, &shader->object_descriptor_pool, context->allocator);
+    vkDestroyDescriptorPool(context->device.logical_device, shader->object_descriptor_pool, context->allocator);
 
     // Destroy object descriptor set layout
-    vkDestroyDescriptorSetLayout(context->device.logical_device, &shader->global_descriptor_set_layout, context->allocator);   
+    vkDestroyDescriptorSetLayout(context->device.logical_device, shader->object_descriptor_set_layout, context->allocator);   
 
     // Destroy uniform buffers
     vulkan_buffer_destroy(context, &shader->object_uniform_buffer);
@@ -361,7 +368,7 @@ void vulkan_object_shader_update_object(vulkan_context* context, struct vulkan_o
     vulkan_buffer_load_data(context, &shader->object_uniform_buffer, offset, range, 0, &obo);
 
     // Only do this if the descriptor has not yet been updated.
-    if(object_state->descriptor_states[descriptor_index]. generations[image_index] == INVALID_ID) {
+    if(object_state->descriptor_states[descriptor_index].generations[image_index] == INVALID_ID) {
         VkDescriptorBufferInfo buffer_info;
         buffer_info.buffer = shader->object_uniform_buffer.handle;
         buffer_info.offset = offset;
@@ -382,6 +389,40 @@ void vulkan_object_shader_update_object(vulkan_context* context, struct vulkan_o
     }
 
     descriptor_index++;
+
+    // TODO: Samplers
+    const u32 sampler_count = 1;
+    VkDescriptorImageInfo image_infos[1];
+    for(u32 sampler_index = 0; sampler_index < sampler_count; ++sampler_index) {
+        texture* t = data.textures[sampler_index];
+        u32* descriptor_generation = &object_state->descriptor_states[descriptor_index].generations[image_index];
+
+        // Check if the descriptor needs updating first.
+        if(t && (*descriptor_generation != t->generation || *descriptor_generation == INVALID_ID)) {
+            vulkan_texture_data* internal_data = (vulkan_texture_data*)t->internal_data;
+
+            // Assign view and sampler.
+            image_infos[sampler_index].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            image_infos[sampler_index].imageView = internal_data->image.view;
+            image_infos[sampler_index].sampler = internal_data->sampler;
+
+            VkWriteDescriptorSet descriptor = {VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET};
+            descriptor.dstSet = object_descriptor_set;
+            descriptor.dstBinding = descriptor_index;
+            descriptor.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            descriptor.descriptorCount = 1;
+            descriptor.pImageInfo = &image_infos[sampler_index]; 
+
+            descriptor_writes[descriptor_count] = descriptor;
+            descriptor_count++;
+
+            // Sync frame generation if not using a default texture
+            if(t->generation != INVALID_ID) {
+                *descriptor_generation = t->generation;
+            }
+            descriptor_index++;
+        }
+    }
 
     if(descriptor_count > 0) {
         vkUpdateDescriptorSets(context->device.logical_device, descriptor_count, descriptor_writes, 0, 0);

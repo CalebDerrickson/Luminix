@@ -12,7 +12,7 @@
 // Max number of objects
 #define VULKAN_OBJECT_MAX_OBJECT_COUNT 1024
 
-#define VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT 1
+#define VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT 2
 
 // Checks the given expresion's return type value agains VK_SUCCESS
 #define VK_CHECK(expr)              \
