@@ -14,6 +14,7 @@ layout(location = 1) in struct dto {
     vec2 tex_coord;
 } in_dto;
 
+
 void main() {
     out_color = object_ubo.diffuse_color * texture(diffuse_sampler, in_dto.tex_coord);
 }

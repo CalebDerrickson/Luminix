@@ -280,6 +280,20 @@ void vulkan_object_shader_update_global_state(vulkan_context* context, struct vu
     VkCommandBuffer command_buffer = context->graphics_command_buffers[image_index].handle;
     VkDescriptorSet global_descriptor = shader->global_descriptor_sets[image_index];
 
+
+    // Bind the global descriptor set to be updated.
+    vkCmdBindDescriptorSets(
+        command_buffer, 
+        VK_PIPELINE_BIND_POINT_GRAPHICS, 
+        shader->pipeline.pipeline_layout, 
+        0, 
+        1, 
+        &global_descriptor, 
+        0, 
+        0
+    );
+
+
     // Configure the descriptors for the given index.
     u32 range  = sizeof(global_uniform_object);
     u64 offset = 0;
@@ -312,18 +326,6 @@ void vulkan_object_shader_update_global_state(vulkan_context* context, struct vu
         context->device.logical_device,
         1,
         &descriptor_write,
-        0, 
-        0
-    );
-
-    // Bind the global descriptor set to be updated.
-    vkCmdBindDescriptorSets(
-        command_buffer, 
-        VK_PIPELINE_BIND_POINT_GRAPHICS, 
-        shader->pipeline.pipeline_layout, 
-        0, 
-        1, 
-        &global_descriptor, 
         0, 
         0
     );
@@ -361,6 +363,7 @@ void vulkan_object_shader_update_object(vulkan_context* context, struct vulkan_o
 
     // TODO: Get uniform diffuse color from a material.
     static f32 accumulator = 0.0f;
+    accumulator += context->frame_delta_time;
     f32 s = (lsin(accumulator) + 1.0f) / 2.0f;      // Get a scale from -1, 1 -> 0, 1
     obo.diffuse_color = vec4_make(s, s, s, 1.0f);
 

@@ -36,7 +36,7 @@ b8 renderer_system_initialize(u64* memory_requirement, void* state, const char* 
         return false;
     }
     
-    state_ptr->near_clip = 0.01f;
+    state_ptr->near_clip = 0.1f;
     state_ptr->far_clip = 1000.0f;
     state_ptr->projection = mat4_perspective(deg_to_rad(45.0f), 1280/720.0f, state_ptr->near_clip, state_ptr->far_clip);
 
@@ -49,7 +49,7 @@ b8 renderer_system_initialize(u64* memory_requirement, void* state, const char* 
     const u32 tex_dimension = 256;
     const u32 channels = 4;
     const u32 pixel_count = tex_dimension * tex_dimension;
-    u8 pixels[pixel_count];
+    u8 pixels[pixel_count * channels];
 
     lset_memory(pixels, 255, sizeof(u8) * pixel_count * channels);
 
@@ -134,10 +134,11 @@ b8 renderer_draw_frame(render_packet* packet)
     
         state_ptr->backend.update_global_state(state_ptr->projection, state_ptr->view, vec3_set(0), vec4_set(1.0f), 0);
 
-        static f32 angle = 0.01f;
+        mat4 model = mat4_translation((vec3){0, 0, 0});
+        // static f32 angle = 0.01f;
         // angle += 0.001f;
-        quat rotation = quat_from_axis_angle(vec3_forward(), angle, false);
-        mat4 model = quat_to_rotation_matrix(rotation, vec3_set(0));
+        // quat rotation = quat_from_axis_angle(vec3_forward(), angle, false);
+        // mat4 model = quat_to_rotation_matrix(rotation, vec3_set(0));
         geometry_render_data data = {};
         data.object_id = 0;     // TODO: Actual object id
         data.model = model;

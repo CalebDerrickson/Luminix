@@ -940,7 +940,7 @@ void vulkan_renderer_create_texture(
     // Copy the data from the buffer
     vulkan_image_copy_from_buffer(&context, &temp_buffer, &data->image,  staging.handle);
 
-    vulkan_buffer_destroy(&context, &staging);
+
 
     // Transition from optimal for data receipt to shader-read-only optimal layout
     vulkan_image_transition_layout(
@@ -953,6 +953,8 @@ void vulkan_renderer_create_texture(
     );
 
     vulkan_command_buffer_end_single_use(&context, pool, &temp_buffer, queue);
+
+    vulkan_buffer_destroy(&context, &staging);
 
     // Create a sampler for the texture
     VkSamplerCreateInfo sampler_info = {VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO};
