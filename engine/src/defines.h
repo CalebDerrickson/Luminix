@@ -44,6 +44,18 @@ STATIC_ASSERT(sizeof(f64) == 8, "Expected f64 to be 8 bytes.");
 #define true 1
 #define false 0
 
+/**
+ * @brief Any id set to this should be considered invalid,
+ * and not actually pointing to a real object
+ */
+#define INVALID_ID 4294967295U
+
+// Maximum number of Indices, devices, and queue families
+// Limiting the "magic numbers"
+#define MAX_NUM_INDICES 32
+#define MAX_DEVICE_COUNT 32
+#define MAX_QUEUE_FAMILIES 32
+
 // Platform detection
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 #define LPLATFORM_WINDOWS 1
@@ -108,8 +120,3 @@ STATIC_ASSERT(sizeof(f64) == 8, "Expected f64 to be 8 bytes.");
 #endif
 
 
-// Maximum number of Indices, devices, and queue families
-// Limiting the "magic numbers"
-#define MAX_NUM_INDICES 32
-#define MAX_DEVICE_COUNT 32
-#define MAX_QUEUE_FAMILIES 32

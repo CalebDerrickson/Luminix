@@ -9,6 +9,11 @@
 
 #define OBJECT_SHADER_STAGE_COUNT 2
 
+// Max number of objects
+#define VULKAN_OBJECT_MAX_OBJECT_COUNT 1024
+
+#define VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT 2
+
 // Checks the given expresion's return type value agains VK_SUCCESS
 #define VK_CHECK(expr)              \
     {                               \
@@ -134,6 +139,19 @@ typedef struct vulkan_pipeline {
     VkPipelineLayout pipeline_layout;
 } vulkan_pipeline;
 
+typedef struct vulkan_descriptor_state {
+    // One per frame
+    u32 generations[3];
+} vulkan_descriptor_state;
+
+typedef struct vulkan_object_shader_object_state {
+    // Per frame
+    VkDescriptorSet descriptor_sets[3];
+
+    // Per descriptor
+    vulkan_descriptor_state descriptor_states[VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT];
+} vulkan_object_shader_object_state;
+
 typedef struct vulkan_object_shader {
     // vertex, fragment
     vulkan_shader_stage stages[OBJECT_SHADER_STAGE_COUNT];
@@ -151,11 +169,25 @@ typedef struct vulkan_object_shader {
     // Global uniform buffer.
     vulkan_buffer global_uniform_buffer;
 
+    VkDescriptorPool object_descriptor_pool;
+    VkDescriptorSetLayout object_descriptor_set_layout;
+
+    // Object uniform buffers.
+    vulkan_buffer object_uniform_buffer;
+
+    // TODO: Manage a free list of some kind here instead.
+    u32 object_uniform_buffer_index;
+
+    // TODO: Make dynamic
+    vulkan_object_shader_object_state object_states[VULKAN_OBJECT_MAX_OBJECT_COUNT];
+
     vulkan_pipeline pipeline;
 
 } vulkan_object_shader;
 
 typedef struct vulkan_context {
+
+    f32 frame_delta_time;
 
     // The framebuffer's current width
     u32 framebuffer_width;
@@ -215,3 +247,7 @@ typedef struct vulkan_context {
 
 } vulkan_context;
 
+typedef struct vulkan_texture_data {
+    vulkan_image image;
+    VkSampler sampler;
+} vulkan_texture_data;

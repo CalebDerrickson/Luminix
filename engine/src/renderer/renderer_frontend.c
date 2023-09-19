@@ -5,12 +5,16 @@
 #include "core/lmemory.h"
 #include "math/lmath.h"
 
+#include "resources/resource_types.h"
+
 typedef struct renderer_system_state {
     renderer_backend backend;
     mat4 projection;
     mat4 view;
     f32 near_clip; // = 0.01f;
     f32 far_clip; // = 1000.0f;
+
+    texture default_texture;
 } renderer_system_state;
 
 static renderer_system_state* state_ptr;
@@ -32,12 +36,53 @@ b8 renderer_system_initialize(u64* memory_requirement, void* state, const char* 
         return false;
     }
     
-    state_ptr->near_clip = 0.01f;
+    state_ptr->near_clip = 0.1f;
     state_ptr->far_clip = 1000.0f;
     state_ptr->projection = mat4_perspective(deg_to_rad(45.0f), 1280/720.0f, state_ptr->near_clip, state_ptr->far_clip);
 
     state_ptr->view = mat4_translation((vec3){0, 0, -30.0f});
     state_ptr->view = mat4_inverse(state_ptr->view);
+
+    // NOTE: Create default texture, a 256x256 blue/white checkerboard pattern.
+    // This is done in code to eliminate asset dependencies
+    LTRACE("Creating default texture...");
+    const u32 tex_dimension = 256;
+    const u32 channels = 4;
+    const u32 pixel_count = tex_dimension * tex_dimension;
+    u8 pixels[pixel_count * channels];
+
+    lset_memory(pixels, 255, sizeof(u8) * pixel_count * channels);
+
+    // Set each pixel
+    for (u64 row = 0; row < tex_dimension; row++) {
+        for (u64 col = 0; col < tex_dimension; col++) {
+            u64 index = (row * tex_dimension) + col;
+            u64 index_bpp = index * channels;
+            if (row % 2) {
+                if (col % 2) {
+                    pixels[index_bpp + 0] = 0;
+                    pixels[index_bpp + 1] = 0;
+                }    
+            } else {
+                if (!(col % 2)) {
+                    pixels[index_bpp + 0] = 0;
+                    pixels[index_bpp + 1] = 0;
+                }
+            }
+        }
+    }
+
+    renderer_create_texture(
+        "default",
+        false,
+        tex_dimension,
+        tex_dimension, 
+        channels,
+        pixels,
+        false,
+        &state_ptr->default_texture
+    );
+
     return true;
 }
 
@@ -46,6 +91,8 @@ void renderer_system_shutdown(void* state)
     if (!state_ptr) {
         return;
     }
+
+    renderer_destroy_texture(&state_ptr->default_texture);
 
     state_ptr->backend.shutdown(&state_ptr->backend);
     state_ptr = 0;
@@ -87,12 +134,18 @@ b8 renderer_draw_frame(render_packet* packet)
     
         state_ptr->backend.update_global_state(state_ptr->projection, state_ptr->view, vec3_set(0), vec4_set(1.0f), 0);
 
-        static f32 angle = 0.01f;
-        angle += 0.001f;
-        quat rotation = quat_from_axis_angle(vec3_forward(), angle, false);
-        mat4 model = quat_to_rotation_matrix(rotation, vec3_set(0));
+        mat4 model = mat4_translation((vec3){0, 0, 0});
+        // static f32 angle = 0.01f;
+        // angle += 0.001f;
+        // quat rotation = quat_from_axis_angle(vec3_forward(), angle, false);
+        // mat4 model = quat_to_rotation_matrix(rotation, vec3_set(0));
+        geometry_render_data data = {};
+        data.object_id = 0;     // TODO: Actual object id
+        data.model = model;
+        data.textures[0] = &state_ptr->default_texture;
 
-        state_ptr->backend.update_object(model);
+        state_ptr->backend.update_object(data);
+
         // End the frame if this fails, likely unrecoverable.
         b8 result = renderer_end_frame(packet->delta_time);
 
@@ -109,4 +162,23 @@ b8 renderer_draw_frame(render_packet* packet)
 void renderer_set_view(mat4 view)
 {
     state_ptr->view = view;
+}
+
+void renderer_create_texture(
+    const char* name, 
+    b8 auto_release, 
+    i32 width, 
+    i32 height, 
+    i32 channel_count, 
+    const u8* pixels, 
+    b8 has_transparency, 
+    struct texture* out_texture
+)
+{
+    state_ptr->backend.create_texture(name, auto_release, width, height, channel_count, pixels, has_transparency, out_texture);
+}
+
+void renderer_destroy_texture(struct texture* texture)
+{
+    state_ptr->backend.destroy_texture(texture);
 }
