@@ -27,3 +27,32 @@ void vulkan_image_destroy(
     vulkan_context* context,
     vulkan_image* image
 );
+
+
+/**
+ * Transitions the provided image from old_layout to new_layout.
+ */
+void vulkan_image_transition_layout(
+    vulkan_context* context,
+    vulkan_command_buffer* command_buffer,
+    vulkan_image* image,
+    VkFormat format,
+    VkImageLayout old_layout,
+    VkImageLayout new_layout
+);
+
+
+/**
+ * @brief Copies data in buffer to provided image
+ * 
+ * @param context The Vulkan context.
+ * @param command_buffer The command buffer to assign.
+ * @param image The image to copy the buffer's data to.
+ * @param buffer The buffer whose data will be copied.
+ */
+void vulkan_image_copy_from_buffer(
+    vulkan_context* context,
+    vulkan_command_buffer* command_buffer,
+    vulkan_image* image,
+    VkBuffer buffer
+);
