@@ -54,17 +54,17 @@ b8 renderer_system_initialize(u64* memory_requirement, void* state, const char* 
     lset_memory(pixels, 255, sizeof(u8) * pixel_count * channels);
 
     // Set each pixel
-    for(u64 row = 0; row < tex_dimension; row++) {
-        for(u64 col = 0; col < tex_dimension; col++) {
+    for (u64 row = 0; row < tex_dimension; row++) {
+        for (u64 col = 0; col < tex_dimension; col++) {
             u64 index = (row * tex_dimension) + col;
             u64 index_bpp = index * channels;
-            if(row % 2) {
-                if(col % 2) {
+            if (row % 2) {
+                if (col % 2) {
                     pixels[index_bpp + 0] = 0;
                     pixels[index_bpp + 1] = 0;
                 }    
             } else {
-                if(!(col % 2)) {
+                if (!(col % 2)) {
                     pixels[index_bpp + 0] = 0;
                     pixels[index_bpp + 1] = 0;
                 }
