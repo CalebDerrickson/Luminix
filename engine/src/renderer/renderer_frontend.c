@@ -68,7 +68,7 @@ b8 load_texture (const char* texture_name, texture* t)
         u64 total_size = temp_texture.width * temp_texture.height * required_channel_count;
         // Check for transparency
         b32 has_transparency = false;
-        for(u64 i = 0; i < total_size; i+= required_channel_count) {
+        for (u64 i = 0; i < total_size; i+= required_channel_count) {
             u8 a = data[i + 3];
             if (a < 255) {
                 has_transparency = true;
@@ -101,7 +101,7 @@ b8 load_texture (const char* texture_name, texture* t)
         // Destroy the old texture.
         renderer_destroy_texture(&old);
 
-        if(current_generation == INVALID_ID) {
+        if (current_generation == INVALID_ID) {
             t->generation = 0;
         } else {
             t->generation = current_generation + 1;
