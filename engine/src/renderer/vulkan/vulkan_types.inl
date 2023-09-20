@@ -57,6 +57,8 @@ typedef struct vulkan_device {
     VkPhysicalDeviceMemoryProperties memory;
 
     VkFormat depth_format;
+
+    b8 supports_device_local_host_visible;
 }   vulkan_device;
 
 typedef struct vulkan_image {
@@ -180,6 +182,9 @@ typedef struct vulkan_object_shader {
 
     // TODO: Make dynamic
     vulkan_object_shader_object_state object_states[VULKAN_OBJECT_MAX_OBJECT_COUNT];
+
+    // Pointers to default textures
+    texture* default_diffuse;
 
     vulkan_pipeline pipeline;
 

@@ -4,6 +4,7 @@
 #include <core/lmemory.h>
 
 #include <math/lmath.h>
+#include <core/event.h>
 
 // HACK: This should not be available outside the engine!
 #include <renderer/renderer_frontend.h>
@@ -43,7 +44,13 @@ b8 game_update(game* game_inst, f32 delta_time)
         LDEBUG("Allocations: %llu (%llu this frame)", alloc_count, alloc_count - prev_alloc_count);
     }
 
-
+    // TODO: temp
+    if (input_is_key_up('T') && input_was_key_down('T')) {
+        LDEBUG("Swapping texture!");
+        event_context context = {};
+        event_fire(EVENT_CODE_DEBUG0, game_inst, context);
+    }
+    // TODO: end temp
 
     // HACK: temp key to move around
     if (input_is_key_down('A') || input_is_key_down(KEY_LEFT)) {
