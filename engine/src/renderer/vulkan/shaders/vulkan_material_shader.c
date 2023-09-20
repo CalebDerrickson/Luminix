@@ -1,4 +1,4 @@
-#include "vulkan_object_shader.h"
+#include "vulkan_material_shader.h"
 #include "core/logger.h"
 #include "core/lmemory.h"
 
@@ -9,10 +9,10 @@
 #include "math/math_types.h"
 #include "math/lmath.h"
 
-#define BUILTIN_SHADER_NAME_OBJECT "Builtin.ObjectShader"
+#define BUILTIN_SHADER_NAME_MATERIAL "Builtin.MaterialShader"
 #include "renderer/vulkan/vulkan_buffer.h"
 
-b8 vulkan_object_shader_create(vulkan_context* context, texture* default_diffuse, vulkan_object_shader* out_shader)
+b8 vulkan_material_shader_create(vulkan_context* context, texture* default_diffuse, vulkan_material_shader* out_shader)
 {
     // Take a copy of the default texture pointers.
     out_shader->default_diffuse = default_diffuse;
@@ -25,13 +25,13 @@ b8 vulkan_object_shader_create(vulkan_context* context, texture* default_diffuse
         // Shader module creation
         if (!create_shader_module(
             context, 
-            BUILTIN_SHADER_NAME_OBJECT, 
+            BUILTIN_SHADER_NAME_MATERIAL, 
             stage_type_strs[i], 
             stage_types[i], 
             i, 
             out_shader->stages
         )) {
-            LERROR("Unable to create %s shader module for '%s'.", stage_type_strs[i], BUILTIN_SHADER_NAME_OBJECT);
+            LERROR("Unable to create %s shader module for '%s'.", stage_type_strs[i], BUILTIN_SHADER_NAME_MATERIAL);
             return false;
         }
 
@@ -74,13 +74,13 @@ b8 vulkan_object_shader_create(vulkan_context* context, texture* default_diffuse
 
     // Local/Object Descriptors
     const u32 local_sampler_count = 1;
-    VkDescriptorType descriptor_types[VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT] = {
+    VkDescriptorType descriptor_types[vulkan_material_shader_DESCRIPTION_COUNT] = {
         VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,          // Binding 0 - Uniform buffer
         VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER   // Binding 1 - Diffuse sampler layout.
     };
-    VkDescriptorSetLayoutBinding bindings[VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT];
-    lzero_memory(&bindings, sizeof(VkDescriptorSetLayoutBinding) * VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT);
-    for (u32 i = 0; i < VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT; i++) {
+    VkDescriptorSetLayoutBinding bindings[vulkan_material_shader_DESCRIPTION_COUNT];
+    lzero_memory(&bindings, sizeof(VkDescriptorSetLayoutBinding) * vulkan_material_shader_DESCRIPTION_COUNT);
+    for (u32 i = 0; i < vulkan_material_shader_DESCRIPTION_COUNT; i++) {
         bindings[i].binding = i;
         bindings[i].descriptorCount = 1;
         bindings[i].descriptorType = descriptor_types[i];
@@ -88,7 +88,7 @@ b8 vulkan_object_shader_create(vulkan_context* context, texture* default_diffuse
     }
 
     VkDescriptorSetLayoutCreateInfo layout_info = {VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO};
-    layout_info.bindingCount = VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT;
+    layout_info.bindingCount = vulkan_material_shader_DESCRIPTION_COUNT;
     layout_info.pBindings = bindings;
     
     VK_CHECK(vkCreateDescriptorSetLayout(
@@ -238,7 +238,7 @@ b8 vulkan_object_shader_create(vulkan_context* context, texture* default_diffuse
     return true;
 }
 
-void vulkan_object_shader_destroy(vulkan_context* context, struct vulkan_object_shader* shader)
+void vulkan_material_shader_destroy(vulkan_context* context, struct vulkan_material_shader* shader)
 {
     // Destroy object descriptor pool
     vkDestroyDescriptorPool(context->device.logical_device, shader->object_descriptor_pool, context->allocator);
@@ -267,7 +267,7 @@ void vulkan_object_shader_destroy(vulkan_context* context, struct vulkan_object_
 
 }
 
-void vulkan_object_shader_use(vulkan_context* context, struct vulkan_object_shader* shader)
+void vulkan_material_shader_use(vulkan_context* context, struct vulkan_material_shader* shader)
 {
     u32 image_index = context->image_index;
     vulkan_pipeline_bind(
@@ -278,7 +278,7 @@ void vulkan_object_shader_use(vulkan_context* context, struct vulkan_object_shad
 }
 
 
-void vulkan_object_shader_update_global_state(vulkan_context* context, struct vulkan_object_shader* shader, f32 delta_time)
+void vulkan_material_shader_update_global_state(vulkan_context* context, struct vulkan_material_shader* shader, f32 delta_time)
 {
     u32 image_index = context->image_index;
     VkCommandBuffer command_buffer = context->graphics_command_buffers[image_index].handle;
@@ -336,7 +336,7 @@ void vulkan_object_shader_update_global_state(vulkan_context* context, struct vu
 
 }
 
-void vulkan_object_shader_update_object(vulkan_context* context, struct vulkan_object_shader* shader, geometry_render_data data)
+void vulkan_material_shader_update_object(vulkan_context* context, struct vulkan_material_shader* shader, geometry_render_data data)
 {
     u32 image_index = context->image_index;
     VkCommandBuffer command_buffer = context->graphics_command_buffers[image_index].handle;
@@ -351,12 +351,12 @@ void vulkan_object_shader_update_object(vulkan_context* context, struct vulkan_o
     );
 
     // Obtain material data.
-    vulkan_object_shader_object_state* object_state = &shader->object_states[data.object_id];
+    vulkan_material_shader_object_state* object_state = &shader->object_states[data.object_id];
     VkDescriptorSet object_descriptor_set = object_state->descriptor_sets[image_index];
 
     // TODO: if needs update
-    VkWriteDescriptorSet descriptor_writes[VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT];
-    lzero_memory(descriptor_writes, sizeof(VkWriteDescriptorSet) * VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT);
+    VkWriteDescriptorSet descriptor_writes[vulkan_material_shader_DESCRIPTION_COUNT];
+    lzero_memory(descriptor_writes, sizeof(VkWriteDescriptorSet) * vulkan_material_shader_DESCRIPTION_COUNT);
     u32 descriptor_count = 0;
     u32 descriptor_index = 0;
 
@@ -458,15 +458,15 @@ void vulkan_object_shader_update_object(vulkan_context* context, struct vulkan_o
 
 }
 
-b8 vulkan_object_shader_acquire_resources(vulkan_context* context, struct vulkan_object_shader* shader, u32* out_object_id)
+b8 vulkan_material_shader_acquire_resources(vulkan_context* context, struct vulkan_material_shader* shader, u32* out_object_id)
 {
     // TODO: Free list
     *out_object_id = shader->object_uniform_buffer_index;
     shader->object_uniform_buffer_index++;
 
     u32 object_id = *out_object_id;
-    vulkan_object_shader_object_state* object_state = &shader->object_states[object_id];
-    for (u32 i = 0; i < VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT; i++) {
+    vulkan_material_shader_object_state* object_state = &shader->object_states[object_id];
+    for (u32 i = 0; i < vulkan_material_shader_DESCRIPTION_COUNT; i++) {
         for (u32 j = 0; j < 3; j++) {
             object_state->descriptor_states[i].generations[j] = INVALID_ID;
         }
@@ -499,9 +499,9 @@ b8 vulkan_object_shader_acquire_resources(vulkan_context* context, struct vulkan
 
 }
 
-void vulkan_object_shader_release_resources(vulkan_context* context, struct vulkan_object_shader* shader, u32 object_id)
+void vulkan_material_shader_release_resources(vulkan_context* context, struct vulkan_material_shader* shader, u32 object_id)
 {
-    vulkan_object_shader_object_state* object_state = &shader->object_states[object_id];
+    vulkan_material_shader_object_state* object_state = &shader->object_states[object_id];
 
     const u32 descriptor_set_count = 3;
     // Release object desctiptor sets.
@@ -517,7 +517,7 @@ void vulkan_object_shader_release_resources(vulkan_context* context, struct vulk
         return;
     }
 
-    for (u32 i = 0; i < VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT; i++) {
+    for (u32 i = 0; i < vulkan_material_shader_DESCRIPTION_COUNT; i++) {
         for (u32 j = 0; j < 3; j++) {
             object_state->descriptor_states[i].generations[j] = INVALID_ID;
         }
