@@ -406,7 +406,7 @@ void vulkan_material_shader_update_object(vulkan_context* context, struct vulkan
 
         // If the texture hasn't been loaded yet, use the default.
         // TODO: Determine which use the texture has and pull appropriate default based on that.
-        if(t->generation == INVALID_ID) {
+        if (t->generation == INVALID_ID) {
             t = texture_system_get_default_texture();
 
             // Reset the descriptor generation if using the default texture.
