@@ -2,6 +2,10 @@
 #include "core/lmemory.h"
 #include "lstring.h"
 
+#ifndef _MSC_VER
+#include <strings.h>
+#endif
+
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -22,6 +26,15 @@ u64 string_length(const char* str)
 b8 strings_equal(const char* str1, const char* str2)
 {
     return strcmp(str1, str2) == 0;
+}
+
+b8 strings_equali(const char* str1, const char* str2)
+{
+#if defined(__GNUC__)
+    return strcasecmp(str1, str2) == 0;
+#elif (defined _MSC_VER)
+    return _strcmpi(str1, str2) == 0;
+#endif
 }
 
 i32 string_format(char *dest, const char *format, ...) 

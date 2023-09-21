@@ -12,7 +12,7 @@
 // Max number of objects
 #define VULKAN_OBJECT_MAX_OBJECT_COUNT 1024
 
-#define VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT 2
+#define vulkan_material_shader_DESCRIPTION_COUNT 2
 
 // Checks the given expresion's return type value agains VK_SUCCESS
 #define VK_CHECK(expr)              \
@@ -144,17 +144,18 @@ typedef struct vulkan_pipeline {
 typedef struct vulkan_descriptor_state {
     // One per frame
     u32 generations[3];
+    u32 ids[3];
 } vulkan_descriptor_state;
 
-typedef struct vulkan_object_shader_object_state {
+typedef struct vulkan_material_shader_object_state {
     // Per frame
     VkDescriptorSet descriptor_sets[3];
 
     // Per descriptor
-    vulkan_descriptor_state descriptor_states[VULKAN_OBJECT_SHADER_DESCRIPTION_COUNT];
-} vulkan_object_shader_object_state;
+    vulkan_descriptor_state descriptor_states[vulkan_material_shader_DESCRIPTION_COUNT];
+} vulkan_material_shader_object_state;
 
-typedef struct vulkan_object_shader {
+typedef struct vulkan_material_shader {
     // vertex, fragment
     vulkan_shader_stage stages[OBJECT_SHADER_STAGE_COUNT];
 
@@ -181,14 +182,11 @@ typedef struct vulkan_object_shader {
     u32 object_uniform_buffer_index;
 
     // TODO: Make dynamic
-    vulkan_object_shader_object_state object_states[VULKAN_OBJECT_MAX_OBJECT_COUNT];
-
-    // Pointers to default textures
-    texture* default_diffuse;
+    vulkan_material_shader_object_state object_states[VULKAN_OBJECT_MAX_OBJECT_COUNT];
 
     vulkan_pipeline pipeline;
 
-} vulkan_object_shader;
+} vulkan_material_shader;
 
 typedef struct vulkan_context {
 
@@ -243,7 +241,7 @@ typedef struct vulkan_context {
 
     b8 recreating_swapchain;
 
-    vulkan_object_shader object_shader;
+    vulkan_material_shader material_shader;
 
     i32 (*find_memory_index)(u32 type_filter, u32 property_flags);
 

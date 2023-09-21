@@ -36,9 +36,6 @@ typedef struct renderer_backend {
     struct platform_state* plat_state;
     u64 frame_number;
 
-    // Pointers to default textures
-    texture* default_diffuse;
-
     b8 (*initialize)(struct renderer_backend* backend, const char* application_name);
 
     void (*shutdown)(struct renderer_backend* backend);
@@ -53,7 +50,6 @@ typedef struct renderer_backend {
 
     void (*create_texture)(
         const char* name, 
-        b8 auto_release, 
         i32 width, 
         i32 height, 
         i32 channel_count, 
