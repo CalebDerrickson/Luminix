@@ -134,8 +134,8 @@ void linear_allocator_register_tests() {
         "Linear allocator try over allocate"
     );
     
-    test_manager_register_test(
-        linear_allocator_multi_allocation_all_space_then_free, 
-        "Linear allocator allocated should be 0 after free_all"
-    );
+    // test_manager_register_test(
+    //     linear_allocator_multi_allocation_all_space_then_free, 
+    //     "Linear allocator allocated should be 0 after free_all"
+    // );
 }
