@@ -23,12 +23,12 @@ u64 hash_name(const char* name, u32 element_count)
 
 void hashtable_create(u64 element_size, u32 element_count, void* memory, b8 is_pointer_type, hashtable* out_hashtable)
 {
-    if(!memory || !out_hashtable) {
+    if (!memory || !out_hashtable) {
         LERROR("hashtable_create failed! Pointer to memory and out_hashtable are required.");
         return;
     }
 
-    if(!element_count || !element_size) {
+    if (!element_count || !element_size) {
         LERROR("element_size and element_count must be a positive non-zero-value.");
         return;
     }
@@ -43,7 +43,7 @@ void hashtable_create(u64 element_size, u32 element_count, void* memory, b8 is_p
 
 void hashtable_destroy(hashtable* table)
 {
-    if(table) {
+    if (table) {
         // TODO: If using allocator above, free memory here.
         lzero_memory(table, sizeof(hashtable));
     }
@@ -51,11 +51,11 @@ void hashtable_destroy(hashtable* table)
 
 b8 hashtable_set(hashtable* table, const char* name, void* value)
 {
-    if(!table || !name || !value) {
+    if (!table || !name || !value) {
         LERROR("hashtable_set requires table, name, and value to exist.");
         return false;
     }
-    if(table->is_pointer_type) {
+    if (table->is_pointer_type) {
         LERROR("hashtable_set should not be used with tables that have pointer types. Use hastable_set_ptr instead.");
         return false;
     }
@@ -67,11 +67,11 @@ b8 hashtable_set(hashtable* table, const char* name, void* value)
 
 b8 hashtable_set_ptr(hashtable* table, const char* name, void** value)
 {
-    if(!table || !name) {
+    if (!table || !name) {
         LERROR("hashtable_set_ptr requires table and name to exist.");
         return false;
     }
-    if(!table->is_pointer_type) {
+    if (!table->is_pointer_type) {
         LERROR("hashtable_set_ptr should not be used with tables that do not have pointer types. Use hastable_set instead.");
         return false;    
     }
@@ -83,11 +83,11 @@ b8 hashtable_set_ptr(hashtable* table, const char* name, void** value)
 
 b8 hashtable_get(hashtable* table, const char* name, void* out_value)
 {
-    if(!table || !name || !out_value) {
+    if (!table || !name || !out_value) {
         LWARN("hashtable_get requires table, name, and out_value to exist.");
         return false;
     }
-    if(table->is_pointer_type) {
+    if (table->is_pointer_type) {
         LERROR("hashtable_get should not be used with tables that have pointer types. Use hastable_get_ptr instead.");
         return false;
     }
@@ -99,11 +99,11 @@ b8 hashtable_get(hashtable* table, const char* name, void* out_value)
 
 b8 hashtable_get_ptr(hashtable* table, const char* name, void** out_value)
 {
-    if(!table || !name || !out_value) {
+    if (!table || !name || !out_value) {
         LWARN("hashtable_get_ptr requires table, name, and out_value to exist.");
         return false;
     }
-    if(!table->is_pointer_type) {
+    if (!table->is_pointer_type) {
         LERROR("hashtable_get_ptr should not be used with tables that do not have pointer types. Use hastable_get instead.");
         return false;
     }
@@ -115,16 +115,16 @@ b8 hashtable_get_ptr(hashtable* table, const char* name, void** out_value)
 
 b8 hashtable_fill(hashtable* table, void* value)
 {
-    if(!table || !value) {
+    if (!table || !value) {
         LWARN("hashtable_fill requires table and value to exist.");
         return false;
     }
-    if(table->is_pointer_type) {
+    if (table->is_pointer_type) {
         LERROR("hashtable_fill should not be used with tables that have pointer types.");
         return false;
     }
 
-    for(u32 i = 0; i < table->element_count; i++) {
+    for (u32 i = 0; i < table->element_count; i++) {
         lcopy_memory(table->memory + (table->element_size * i), value, table->element_size);
     }
 
