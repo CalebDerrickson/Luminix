@@ -166,7 +166,7 @@ b8 application_create(game* game_inst)
         app_state->texture_system_memory_requirement
     );
 
-    if(!texture_system_initialize(
+    if (!texture_system_initialize(
         &app_state->texture_system_memory_requirement,
         app_state->texture_system_state,
         texture_sys_config
