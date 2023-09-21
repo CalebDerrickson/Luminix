@@ -1,6 +1,7 @@
 #pragma once
 
 #include "math/math_types.h"
+#define MAX_TEXTURE_NAME_LENGTH 512
 
 typedef struct texture {
     u32 id;
@@ -8,8 +9,12 @@ typedef struct texture {
     u32 height;
     u8 channel_count;
     b8 has_transparency;
-
-    // How many times this texture has been loaded/updated
     u32 generation;
+    char name[MAX_TEXTURE_NAME_LENGTH];
     void* internal_data;
 } texture;
+
+typedef enum texture_use {
+    TEXTURE_USE_UNKNOWN = 0x00,
+    TEXTURE_USE_MAP_DIFFUSE = 0x01,
+} texture_use;
