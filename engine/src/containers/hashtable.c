@@ -17,6 +17,8 @@ u64 hash_name(const char* name, u32 element_count)
 
     // Mode it against the size of the table
     hash %= element_count;
+
+    return hash;
 }
 
 void hashtable_create(u64 element_size, u32 element_count, void* memory, b8 is_pointer_type, hashtable* out_hashtable)
@@ -101,7 +103,7 @@ b8 hashtable_get_ptr(hashtable* table, const char* name, void** out_value)
         LWARN("hashtable_get_ptr requires table, name, and out_value to exist.");
         return false;
     }
-    if(table->is_pointer_type) {
+    if(!table->is_pointer_type) {
         LERROR("hashtable_get_ptr should not be used with tables that do not have pointer types. Use hastable_get instead.");
         return false;
     }
