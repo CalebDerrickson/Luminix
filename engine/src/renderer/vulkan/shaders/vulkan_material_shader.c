@@ -3,19 +3,18 @@
 #include "core/lmemory.h"
 
 #include "renderer/vulkan/vulkan_pipeline.h"
-
 #include "renderer/vulkan/vulkan_shader_utils.h"
+#include "renderer/vulkan/vulkan_buffer.h"
+
+#include "systems/texture_system.h"
 
 #include "math/math_types.h"
 #include "math/lmath.h"
 
 #define BUILTIN_SHADER_NAME_MATERIAL "Builtin.MaterialShader"
-#include "renderer/vulkan/vulkan_buffer.h"
 
-b8 vulkan_material_shader_create(vulkan_context* context, texture* default_diffuse, vulkan_material_shader* out_shader)
+b8 vulkan_material_shader_create(vulkan_context* context, vulkan_material_shader* out_shader)
 {
-    // Take a copy of the default texture pointers.
-    out_shader->default_diffuse = default_diffuse;
 
     // Shader module init per stage
     char stage_type_strs[OBJECT_SHADER_STAGE_COUNT][5] = {"vert", "frag"};
@@ -403,18 +402,19 @@ void vulkan_material_shader_update_object(vulkan_context* context, struct vulkan
     for (u32 sampler_index = 0; sampler_index < sampler_count; ++sampler_index) {
         texture* t = data.textures[sampler_index];
         u32* descriptor_generation = &object_state->descriptor_states[descriptor_index].generations[image_index];
+        u32* descriptor_id = &object_state->descriptor_states[descriptor_index].ids[image_index];
 
         // If the texture hasn't been loaded yet, use the default.
         // TODO: Determine which use the texture has and pull appropriate default based on that.
         if(t->generation == INVALID_ID) {
-            t = shader->default_diffuse;
+            t = texture_system_get_default_texture();
 
             // Reset the descriptor generation if using the default texture.
             *descriptor_generation = INVALID_ID;
         }
 
         // Check if the descriptor needs updating first.
-        if (t && (*descriptor_generation != t->generation || *descriptor_generation == INVALID_ID)) {
+        if (t && (*descriptor_id != t->id || *descriptor_generation != t->generation || *descriptor_generation == INVALID_ID)) {
             vulkan_texture_data* internal_data = (vulkan_texture_data*)t->internal_data;
 
             // Assign view and sampler.
@@ -435,6 +435,7 @@ void vulkan_material_shader_update_object(vulkan_context* context, struct vulkan
             // Sync frame generation if not using a default texture
             if (t->generation != INVALID_ID) {
                 *descriptor_generation = t->generation;
+                *descriptor_id = t->id;
             }
             descriptor_index++;
         }
@@ -469,6 +470,7 @@ b8 vulkan_material_shader_acquire_resources(vulkan_context* context, struct vulk
     for (u32 i = 0; i < vulkan_material_shader_DESCRIPTION_COUNT; i++) {
         for (u32 j = 0; j < 3; j++) {
             object_state->descriptor_states[i].generations[j] = INVALID_ID;
+            object_state->descriptor_states[i].ids[j] = INVALID_ID;
         }
     }
 
@@ -519,6 +521,7 @@ void vulkan_material_shader_release_resources(vulkan_context* context, struct vu
 
     for (u32 i = 0; i < vulkan_material_shader_DESCRIPTION_COUNT; i++) {
         for (u32 j = 0; j < 3; j++) {
+            object_state->descriptor_states[i].generations[j] = INVALID_ID;
             object_state->descriptor_states[i].generations[j] = INVALID_ID;
         }
     }

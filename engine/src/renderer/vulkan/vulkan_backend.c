@@ -251,7 +251,7 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
     }
 
     // Create builtin shaders
-    if (!vulkan_material_shader_create(&context, backend->default_diffuse, &context.material_shader)) {
+    if (!vulkan_material_shader_create(&context, &context.material_shader)) {
         LERROR("Error loading built-in basic_lighting shader.");
         return false;
     }
@@ -875,7 +875,6 @@ b8 create_buffers(vulkan_context* context)
 
 void vulkan_renderer_create_texture(
     const char* name,
-    b8 auto_release,
     i32 width,
     i32 height,
     i32 channel_count,
