@@ -33,7 +33,7 @@ b8 strings_equali(const char* str1, const char* str2)
 #if defined(__GNUC__)
     return strcasecmp(str1, str2) == 0;
 #elif (defined _MSC_VER)
-    return _strcmpi(str1, str2);
+    return _strcmpi(str1, str2) == 0;
 #endif
 }
 
