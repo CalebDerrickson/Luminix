@@ -148,7 +148,7 @@ b8 renderer_draw_frame(render_packet* packet)
 
         // TODO: temporary.
         // Grab the default is does not exist.
-        if(!state_ptr->test_diffuse) {
+        if (!state_ptr->test_diffuse) {
             state_ptr->test_diffuse = texture_system_get_default_texture();
         }
 
