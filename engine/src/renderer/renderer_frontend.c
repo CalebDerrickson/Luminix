@@ -1,4 +1,4 @@
-#include "renderer/renderer_frontend.h"
+f#include "renderer/renderer_frontend.h"
 #include "renderer/renderer_backend.h"
 
 #include "core/logger.h"
@@ -152,10 +152,10 @@ b8 renderer_draw_frame(render_packet* packet)
 
         // TODO: temporary.
         // Create a default material if does not exist.
-        if(!state_ptr->test_material) {
+        if (!state_ptr->test_material) {
             // Automatic config
             state_ptr->test_material = material_system_acquire("test_material");
-            if(!state_ptr->test_material) {
+            if (!state_ptr->test_material) {
                 LWARN("Automatic material load failed, falling back to manual default material.");
                 // Manual config
                 material_config config;
