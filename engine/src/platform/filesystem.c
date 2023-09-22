@@ -62,12 +62,12 @@ void filesystem_close(file_handle* handle)
 
 LAPI b8 filesystem_read_line(file_handle* handle, u64 max_length, char** line_buf, u64* out_line_length)
 {
-    if(!handle->handle || !line_buf || !out_line_length || max_length <= 0) {
+    if (!handle->handle || !line_buf || !out_line_length || max_length <= 0) {
         return false;
     }
 
     char* buf = *line_buf;
-    if(fgets(buf, max_length, (FILE*)handle->handle) != 0) {
+    if (fgets(buf, max_length, (FILE*)handle->handle) != 0) {
         *out_line_length = strlen(*line_buf);
         return true;
     }
