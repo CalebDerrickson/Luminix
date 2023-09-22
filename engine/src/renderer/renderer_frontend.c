@@ -47,7 +47,7 @@ b8 event_on_debug_event(u16 code, void* sender, void* listener_inst, event_conte
     
     // Acquire the new texture
     state_ptr->test_material->diffuse_map.texture = texture_system_acquire(names[choice], true);
-    if(!state_ptr->test_material->diffuse_map.texture) {
+    if (!state_ptr->test_material->diffuse_map.texture) {
         LWARN("event_on_debug_event no texture! using default");
         state_ptr->test_material->diffuse_map.texture = texture_system_get_default_texture();
     }
