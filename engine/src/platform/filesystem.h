@@ -38,13 +38,15 @@ LAPI b8 filesystem_open(const char* path, file_modes mode, b8 binary, file_handl
 LAPI void filesystem_close(file_handle* handle);
 
 /**
- * @brief Reads to a newline or EOF. Allocates *line_buffer, which must be freed by the caller.
+ * @brief Reads up to a new line or EOF.
  * 
- * @param handle A pointer to a file_handle structure/
- * @param line_buffer A Pointer to a character array which will be allocated and populated by this method.
+ * @param handle A pointer to a file_handle struct.
+ * @param max_length The maximum length to be read from the line
+ * @param line_buf A pointer to a character array populated by this method. Must already be allocated.
+ * @param out_line_length A pointer to hold the line length read from the file.
  * @return True if successful; false otherwise
  */
-LAPI b8 filesystem_read_line(file_handle* handle, char** line_buffer);
+LAPI b8 filesystem_read_line(file_handle* handle, u64 max_length, char** line_buf, u64* out_line_length);
 
 /**
  * @brief Writes text to the provided file, appendending a '\n' afterwards.

@@ -314,11 +314,6 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
         indices
     );
 
-    u32 object_id = 0;
-    if (!vulkan_material_shader_acquire_resources(&context, &context.material_shader, &object_id)) {
-        LERROR("Failed to acquire shader resources.");
-        return false;
-    }
     // TODO: End test code
 
     LINFO("Vulkan Renderer initialized successfully.");
@@ -873,26 +868,14 @@ b8 create_buffers(vulkan_context* context)
     return true;
 }
 
-void vulkan_renderer_create_texture(
-    const char* name,
-    i32 width,
-    i32 height,
-    i32 channel_count,
-    const u8* pixels,
-    b8 has_transparency,
-    texture* out_texture
-)
+void vulkan_renderer_create_texture(const u8* pixels, texture* texture)
 {
-    out_texture->width = width;
-    out_texture->height = height;
-    out_texture->channel_count = channel_count;
-    out_texture->generation = INVALID_ID;
 
     // Internal data creation
     // TODO: Use an allocator for this
-    out_texture->internal_data = (vulkan_texture_data*)lallocate(sizeof(vulkan_texture_data), MEMORY_TAG_TEXTURE);
-    vulkan_texture_data* data = (vulkan_texture_data*)out_texture->internal_data;
-    VkDeviceSize image_size = width * height * channel_count;
+    texture->internal_data = (vulkan_texture_data*)lallocate(sizeof(vulkan_texture_data), MEMORY_TAG_TEXTURE);
+    vulkan_texture_data* data = (vulkan_texture_data*)texture->internal_data;
+    VkDeviceSize image_size = texture->width * texture->height * texture->channel_count;
 
     // NOTE: Assumes 8 bits per channel!
     VkFormat image_format = VK_FORMAT_R8G8B8A8_UNORM;
@@ -910,8 +893,8 @@ void vulkan_renderer_create_texture(
     vulkan_image_create(
         &context,
         VK_IMAGE_TYPE_2D,
-        width,
-        height,
+        texture->width,
+        texture->height,
         image_format,
         VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
@@ -978,8 +961,7 @@ void vulkan_renderer_create_texture(
         return;
     }
 
-    out_texture->has_transparency = has_transparency;
-    out_texture->generation++;
+    texture->generation++;
 }
 
 void vulkan_renderer_destroy_texture(texture* texture)
@@ -997,5 +979,36 @@ void vulkan_renderer_destroy_texture(texture* texture)
 
         lfree(texture->internal_data, sizeof(vulkan_texture_data), MEMORY_TAG_TEXTURE);
         lzero_memory(texture, sizeof(struct texture));
+    }
+}
+
+b8 vulkan_renderer_create_material(struct material* material)
+{
+    if(!material) {
+        LERROR("vulkan_renderer_create_material called with nullptr. Creation failed.");
+        return false;
+    } 
+
+    if(!vulkan_material_shader_acquire_resources(&context, &context.material_shader, material)) {
+        LERROR("vulkan_renderer_create_material - Failed to acquire shader resources.");
+        return false;
+    }
+
+    LTRACE("Renderer: Material Created.");
+    return true;
+}
+
+void vulkan_renderer_destroy_material(struct material* material)
+{
+    if(!material) {
+        LWARN("vulkan_renderer_destroy_material called with nullptr. Nothing was done.");
+        return;
+    }
+
+    if(material->internal_id != INVALID_ID) {
+        vulkan_material_shader_release_resources(&context, &context.material_shader, material);
+    }
+    else {
+        LWARN("vulkan_renderer_destroy_material called with internal_id = INVALID_ID. Nothing was done.");
     }
 }
