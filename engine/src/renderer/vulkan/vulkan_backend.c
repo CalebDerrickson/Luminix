@@ -314,11 +314,6 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
         indices
     );
 
-    u32 object_id = 0;
-    if (!vulkan_material_shader_acquire_resources(&context, &context.material_shader, &object_id)) {
-        LERROR("Failed to acquire shader resources.");
-        return false;
-    }
     // TODO: End test code
 
     LINFO("Vulkan Renderer initialized successfully.");
@@ -984,5 +979,36 @@ void vulkan_renderer_destroy_texture(texture* texture)
 
         lfree(texture->internal_data, sizeof(vulkan_texture_data), MEMORY_TAG_TEXTURE);
         lzero_memory(texture, sizeof(struct texture));
+    }
+}
+
+b8 vulkan_renderer_create_material(struct material* material)
+{
+    if(!material) {
+        LERROR("vulkan_renderer_create_material called with nullptr. Creation failed.");
+        return false;
+    } 
+
+    if(!vulkan_material_shader_acquire_resources(&context, &context.material_shader, material)) {
+        LERROR("vulkan_renderer_create_material - Failed to acquire shader resources.");
+        return false;
+    }
+
+    LTRACE("Renderer: Material Created.");
+    return true;
+}
+
+void vulkan_renderer_destroy_material(struct material* material)
+{
+    if(!material) {
+        LWARN("vulkan_renderer_destroy_material called with nullptr. Nothing was done.");
+        return;
+    }
+
+    if(material->internal_id != INVALID_ID) {
+        vulkan_material_shader_release_resources(&context, &context.material_shader, material);
+    }
+    else {
+        LWARN("vulkan_renderer_destroy_material called with internal_id = INVALID_ID. Nothing was done.");
     }
 }

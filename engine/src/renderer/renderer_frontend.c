@@ -8,6 +8,7 @@
 #include "resources/resource_types.h"
 
 #include "systems/texture_system.h"
+#include "systems/material_system.h"
 
 // TODO: temporary
 #include "core/lstring.h"
@@ -22,7 +23,7 @@ typedef struct renderer_system_state {
     f32 far_clip; // = 1000.0f;
 
 // TODO: temporary
-    texture* test_diffuse;
+    material* test_material;
 // TODO: end temporary
 } renderer_system_state;
 
@@ -45,7 +46,11 @@ b8 event_on_debug_event(u16 code, void* sender, void* listener_inst, event_conte
     choice %= 3;
     
     // Acquire the new texture
-    state_ptr->test_diffuse = texture_system_acquire(names[choice], true);
+    state_ptr->test_material->diffuse_map.texture = texture_system_acquire(names[choice], true);
+    if(!state_ptr->test_material->diffuse_map.texture) {
+        LWARN("event_on_debug_event no texture! using default");
+        state_ptr->test_material->diffuse_map.texture = texture_system_get_default_texture();
+    }
     
     // Release the old texture
     texture_system_release(old_name);
@@ -143,16 +148,26 @@ b8 renderer_draw_frame(render_packet* packet)
         // quat rotation = quat_from_axis_angle(vec3_forward(), angle, false);
         // mat4 model = quat_to_rotation_matrix(rotation, vec3_set(0));
         geometry_render_data data = {};
-        data.object_id = 0;     // TODO: Actual object id
         data.model = model;
 
         // TODO: temporary.
-        // Grab the default is does not exist.
-        if (!state_ptr->test_diffuse) {
-            state_ptr->test_diffuse = texture_system_get_default_texture();
+        // Create a default material if does not exist.
+        if(!state_ptr->test_material) {
+            // Automatic config
+            state_ptr->test_material = material_system_acquire("test_material");
+            if(!state_ptr->test_material) {
+                LWARN("Automatic material load failed, falling back to manual default material.");
+                // Manual config
+                material_config config;
+                string_ncopy(config.name, "test_material", MAX_MATERIAL_NAME_LENGTH);
+                config.auto_release = true;
+                config.diffuse_color = vec4_set(1.0f);  // White
+                string_ncopy(config.diffuse_map_name, DEFAULT_TEXTURE_NAME, MAX_TEXTURE_NAME_LENGTH);
+                state_ptr->test_material = material_system_acquire_from_config(config);
+            }
         }
 
-        data.textures[0] = state_ptr->test_diffuse;
+        data.material = state_ptr->test_material;
         state_ptr->backend.update_object(data);
 
         // End the frame. If this fails, likely unrecoverable.
@@ -181,4 +196,14 @@ void renderer_create_texture(const u8* pixels, struct texture* texture)
 void renderer_destroy_texture(struct texture* texture)
 {
     state_ptr->backend.destroy_texture(texture);
+}
+
+b8 renderer_create_material(struct material* material)
+{
+   return state_ptr->backend.create_material(material);
+}
+
+void renderer_destroy_material(struct material* material)
+{
+    state_ptr->backend.destroy_material(material);
 }

@@ -182,8 +182,10 @@ typedef struct vulkan_material_shader {
     // TODO: Manage a free list of some kind here instead.
     u32 object_uniform_buffer_index;
 
+    texture_use sampler_uses[VULKAN_MATERIAL_SHADER_SAMPLER_COUNT];
+
     // TODO: Make dynamic
-    vulkan_material_shader_instance_state object_states[VULKAN_MAX_MATERIAL_COUNT];
+    vulkan_material_shader_instance_state instance_states[VULKAN_MAX_MATERIAL_COUNT];
 
     vulkan_pipeline pipeline;
 
