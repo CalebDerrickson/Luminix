@@ -340,7 +340,7 @@ void vulkan_material_shader_update_global_state(vulkan_context* context, struct 
 
 void vulkan_material_shader_set_model(vulkan_context* context, struct vulkan_material_shader* shader, mat4 model)
 {
-    if(!context || !shader) {
+    if (!context || !shader) {
         return;
     }
 
@@ -361,7 +361,7 @@ void vulkan_material_shader_set_model(vulkan_context* context, struct vulkan_mat
 
 void vulkan_material_shader_apply_material(vulkan_context* context, struct vulkan_material_shader* shader, material* material)
 {
-    if(!context || !shader) {
+    if (!context || !shader) {
         return;
     }
 
