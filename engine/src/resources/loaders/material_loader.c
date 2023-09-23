@@ -110,17 +110,17 @@ b8 material_loader_load(struct resource_loader* self, const char* name, resource
 
 void material_loader_unload(struct resource_loader* self, resource* resource)
 {
-    if(!self || !resource) {
+    if (!self || !resource) {
         LWARN("material_loader_unload called with nullptr for self or resource.");
         return;
     }
 
     u32 path_length = string_length(resource->full_path);
-    if(path_length) {
+    if (path_length) {
         lfree(resource->full_path, sizeof(char) * path_length + 1, MEMORY_TAG_STRING);
     }
 
-    if(resource->data) {
+    if (resource->data) {
         lfree(resource->data, resource->data_size, MEMORY_TAG_MATERIAL_INSTANCE);
         resource->data = 0;
         resource->data_size = 0;
