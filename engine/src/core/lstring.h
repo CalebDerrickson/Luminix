@@ -26,6 +26,14 @@ LAPI i32 string_format(char* dest, const char* format, ...);
  */
 LAPI i32 string_format_v(char* dest, const char* format, void* va_listp);
 
+/**
+ * @brief Empties the provided string by setting the first character to 0. 
+ * 
+ * @param str The string to be emptied
+ * @return A pointer to the string
+ */
+LAPI char* string_empty(char* str);
+
 LAPI char* string_copy(char* dest, const char* source);
 
 LAPI char* string_ncopy(char* dest, const char* source, i64 length);
@@ -176,3 +184,4 @@ LAPI b8 string_to_u64(char* str, u64* i);
  * @return True if parsed successfully, false otherwise. 
  */
 LAPI b8 string_to_bool(char* str, b8* b);
+
