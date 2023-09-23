@@ -620,7 +620,7 @@ b8 vulkan_renderer_backend_end_frame(renderer_backend* backend, f32 delta_time)
     return true;
 }
 
-void vulkan_backend_update_object(geometry_render_data data)
+void vulkan_renderer_draw_geometry(geometry_render_data data)
 {
     vulkan_command_buffer* command_buffer = &context.graphics_command_buffers[context.image_index];
 
@@ -1011,4 +1011,16 @@ void vulkan_renderer_destroy_material(struct material* material)
     else {
         LWARN("vulkan_renderer_destroy_material called with internal_id = INVALID_ID. Nothing was done.");
     }
+}
+
+b8 vulkan_renderer_create_geometry(geometry* geometry, u32 vertex_count, const vertex_3d* vertices, u32 index_count, const u32* indices)
+{
+    
+
+}
+
+void vulkan_renderer_destroy_geometry(geometry* geometry)
+{
+
+
 }

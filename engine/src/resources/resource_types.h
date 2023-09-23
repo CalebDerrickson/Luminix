@@ -3,6 +3,7 @@
 #include "math/math_types.h"
 #define MAX_TEXTURE_NAME_LENGTH 512
 #define MAX_MATERIAL_NAME_LENGTH 512
+#define MAX_GEOMETRY_NAME_LENGTH 256
 
 typedef struct texture {
     u32 id;
@@ -33,3 +34,15 @@ typedef struct material {
     vec4 diffuse_color;
     texture_map diffuse_map;
 } material;
+
+/**
+ * @brief Represents actual geometry in the world. 
+ * Typically (but not always, depending on use) paired with a material.
+ */
+typedef struct geometry {
+    u32 id;
+    u32 internal_id;
+    u32 generation;
+    char name[MAX_GEOMETRY_NAME_LENGTH];
+    material* material;
+} geometry;

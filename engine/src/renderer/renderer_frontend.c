@@ -1,4 +1,4 @@
-f#include "renderer/renderer_frontend.h"
+#include "renderer/renderer_frontend.h"
 #include "renderer/renderer_backend.h"
 
 #include "core/logger.h"
@@ -167,8 +167,8 @@ b8 renderer_draw_frame(render_packet* packet)
             }
         }
 
-        data.material = state_ptr->test_material;
-        state_ptr->backend.update_object(data);
+        data.geometry->material = state_ptr->test_material;
+        state_ptr->backend.draw_geometry(data);
 
         // End the frame. If this fails, likely unrecoverable.
         b8 result = renderer_end_frame(packet->delta_time);
@@ -206,4 +206,14 @@ b8 renderer_create_material(struct material* material)
 void renderer_destroy_material(struct material* material)
 {
     state_ptr->backend.destroy_material(material);
+}
+
+b8 renderer_create_geometry(geometry* geometry, u32 vertex_count, const vertex_3d* vertices, u32 index_count, const u32* indices)
+{   
+    return state_ptr->backend.create_geometry(geometry, vertex_count, vertices, index_count, indices);
+}
+
+void renderer_destroy_geometry(geometry* geometry)
+{
+    state_ptr->backend.destroy_geometry(geometry);
 }

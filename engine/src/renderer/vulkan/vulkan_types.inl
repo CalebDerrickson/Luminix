@@ -9,17 +9,36 @@
 
 #define MATERIAL_SHADER_STAGE_COUNT 2
 
-// Max number of objects
+// Max number of material instances
+// TODO: Make this configurable
 #define VULKAN_MAX_MATERIAL_COUNT 1024
 
 #define VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT 2
 #define VULKAN_MATERIAL_SHADER_SAMPLER_COUNT 1
+
+// Max number of simultaneously uploaded geometries
+// TODO: Make this configurable
+#define VULKAN_MAX_GEOMETRY_COUNT 4096
 
 // Checks the given expresion's return type value agains VK_SUCCESS
 #define VK_CHECK(expr)              \
     {                               \
         LASSERT(expr == VK_SUCCESS);\
     }                               \
+
+/**
+ * @brief Internal buffer data for geometry
+ */
+typedef struct vulkan_geometry_data {
+    u32 id;
+    u32 generation;
+    u32 vertex_count;
+    u32 vertex_size;
+    u32 vertex_buffer_offset;
+    u32 index_count;
+    u32 index_size;
+    u32 index_buffer_offset;
+} vulkan_geometry_data;
 
 typedef struct vulkan_swapchain_support_info {
     VkSurfaceCapabilitiesKHR capabilities;
@@ -250,6 +269,9 @@ typedef struct vulkan_context {
 
     u64 geometry_vertex_offset;
     u64 geometry_index_offset;
+
+    // TODO: Make dynamic
+    vulkan_geometry_data geometries[VULKAN_MAX_GEOMETRY_COUNT];
 
 } vulkan_context;
 
