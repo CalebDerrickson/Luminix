@@ -271,7 +271,7 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
     }
 
     // Mark all geometries as invalid
-    for(u32 i = 0; i < VULKAN_MAX_GEOMETRY_COUNT; i++) {
+    for (u32 i = 0; i < VULKAN_MAX_GEOMETRY_COUNT; i++) {
         context.geometries[i].id = INVALID_ID;
     }
 
@@ -952,7 +952,7 @@ void vulkan_renderer_destroy_material(struct material* material)
 
 b8 vulkan_renderer_create_geometry(geometry* geometry, u32 vertex_count, const vertex_3d* vertices, u32 index_count, const u32* indices)
 {
-    if(!vertex_count || !vertices) {
+    if (!vertex_count || !vertices) {
         LERROR("vulkan_renderer_create geometry requires vertex data, and none was supplied, vertex_count = %d, vertices = %p", vertex_count, vertices);
         return false;
     }
@@ -962,7 +962,7 @@ b8 vulkan_renderer_create_geometry(geometry* geometry, u32 vertex_count, const v
     vulkan_geometry_data old_range;
 
     vulkan_geometry_data* internal_data = 0;
-    if(is_reupload) {
+    if (is_reupload) {
         internal_data = &context.geometries[geometry->internal_id];
 
         // Take a copy of the old range
@@ -974,7 +974,7 @@ b8 vulkan_renderer_create_geometry(geometry* geometry, u32 vertex_count, const v
         old_range.vertex_size = internal_data->vertex_size;
     } 
     else {
-        for(u32 i = 0; i < VULKAN_MAX_GEOMETRY_COUNT; i++) {
+        for (u32 i = 0; i < VULKAN_MAX_GEOMETRY_COUNT; i++) {
             if (context.geometries[i].id == INVALID_ID) {
                 // Found a free index.
                 geometry->internal_id = i;
@@ -985,7 +985,7 @@ b8 vulkan_renderer_create_geometry(geometry* geometry, u32 vertex_count, const v
         }
     }
 
-    if(!internal_data) {
+    if (!internal_data) {
         LFATAL("vulkan_renderer_create_geometry failed to find a free index for a new geometry upload. Adject config to allow for more.");
         return false;
     }
@@ -1013,7 +1013,7 @@ b8 vulkan_renderer_create_geometry(geometry* geometry, u32 vertex_count, const v
     context.geometry_vertex_offset += internal_data->vertex_size;
 
     // Index data, if applicable
-    if(index_count && indices) {
+    if (index_count && indices) {
         internal_data->index_buffer_offset = context.geometry_index_offset;
         internal_data->index_count = index_count;
         internal_data->index_size = sizeof(u32) * index_count;
@@ -1033,19 +1033,19 @@ b8 vulkan_renderer_create_geometry(geometry* geometry, u32 vertex_count, const v
         context.geometry_index_offset += internal_data->index_size;
     }
 
-    if(internal_data->generation == INVALID_ID) {
+    if (internal_data->generation == INVALID_ID) {
         internal_data->generation = 0;
     } 
     else {
         internal_data->generation++;
     }
 
-    if(is_reupload) {
+    if (is_reupload) {
         // Free vertex data
         free_data_range(&context.object_vertex_buffer, old_range.vertex_buffer_offset, old_range.vertex_size);
     
         // Free index data, if applicable
-        if(old_range.index_size > 0) {
+        if (old_range.index_size > 0) {
             free_data_range(&context.object_index_buffer, old_range.index_buffer_offset, old_range.index_size);
         }
     }
@@ -1055,7 +1055,7 @@ b8 vulkan_renderer_create_geometry(geometry* geometry, u32 vertex_count, const v
 
 void vulkan_renderer_destroy_geometry(geometry* geometry)
 {
-    if(!geometry || geometry->internal_id == INVALID_ID) {
+    if (!geometry || geometry->internal_id == INVALID_ID) {
         return;
     }
 
@@ -1066,7 +1066,7 @@ void vulkan_renderer_destroy_geometry(geometry* geometry)
     free_data_range(&context.object_vertex_buffer, internal_data->vertex_buffer_offset, internal_data->vertex_size);
 
     // Free index data, if applicable
-    if(internal_data->index_size > 0) {
+    if (internal_data->index_size > 0) {
         free_data_range(&context.object_index_buffer, internal_data->index_buffer_offset, internal_data->index_size);
     }
 
@@ -1079,7 +1079,7 @@ void vulkan_renderer_destroy_geometry(geometry* geometry)
 void vulkan_renderer_draw_geometry(geometry_render_data data)
 {
     // Ignore non-uploaded geometries.
-    if(data.geometry && data.geometry->internal_id == INVALID_ID) {
+    if (data.geometry && data.geometry->internal_id == INVALID_ID) {
         return;
     }
 
@@ -1092,7 +1092,7 @@ void vulkan_renderer_draw_geometry(geometry_render_data data)
     vulkan_material_shader_set_model(&context, &context.material_shader, data.model);
     material* m = 0;
     
-    if(data.geometry->material) {
+    if (data.geometry->material) {
         m = data.geometry->material;
     }
     else {
@@ -1106,7 +1106,7 @@ void vulkan_renderer_draw_geometry(geometry_render_data data)
     vkCmdBindVertexBuffers(command_buffer->handle, 0, 1, &context.object_vertex_buffer.handle, (VkDeviceSize*)offsets);
 
     // Draw indexed or non-indexed
-    if(buffer_data->index_count > 0) {
+    if (buffer_data->index_count > 0) {
         // Bind index buffer at offset.
         vkCmdBindIndexBuffer(command_buffer->handle, context.object_index_buffer.handle, buffer_data->index_buffer_offset, VK_INDEX_TYPE_UINT32);
 
