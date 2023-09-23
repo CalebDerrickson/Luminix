@@ -284,7 +284,7 @@ void destroy_default_textures(texture_system_state* state)
 
 b8 load_texture(const char* texture_name, texture* t)
 {
-resource img_resource;
+    resource img_resource;
     if (!resource_system_load(texture_name, RESOURCE_TYPE_IMAGE, &img_resource)) {
         LERROR("Failed to load image resource for texture '%s'", texture_name);
         return false;

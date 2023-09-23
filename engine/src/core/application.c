@@ -216,7 +216,7 @@ b8 application_create(game* game_inst)
     if(!resource_system_initialize(
         &app_state->resource_system_memory_requirement,
         app_state->resource_system_state,
-        resource_sys_config    
+        resource_sys_config
     )) {
         LFATAL("Failed to initialize resource system. Aborting application.");
         return false;

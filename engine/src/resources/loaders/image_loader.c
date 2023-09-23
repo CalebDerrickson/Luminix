@@ -9,11 +9,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "vendor/stb_image.h"
 
-// Private methods
 
 b8 image_loader_load(struct resource_loader* self, const char* name, resource* out_resource)
 {
-    if(!self || !name || !out_resource) {
+    if (!self || !name || !out_resource) {
         return false;
     }
 
@@ -30,7 +29,7 @@ b8 image_loader_load(struct resource_loader* self, const char* name, resource* o
     i32 channel_count;
 
     // For now, assume 8 bits per channel, 4 channels.
-    // TODO: Extend this to make it configurable.
+    // TODO: extend this to make it configurable.
     u8* data = stbi_load(
         full_file_path,
         &width,
@@ -41,18 +40,18 @@ b8 image_loader_load(struct resource_loader* self, const char* name, resource* o
 
     // Check for a failure reason. If there is one, abort, clear memory if allocated, return false.
     const char* fail_reason = stbi_failure_reason();
-    if(fail_reason) {
-        LERROR("Image resource loader failed to load file: '%s': %s", full_file_path, fail_reason);
-        // Clear the error so the next load doesn't faile.
+    if (fail_reason) {
+        LERROR("Image resource loader failed to load file '%s': %s", full_file_path, fail_reason);
+        // Clear the error so the next load doesn't fail.
         stbi__err(0, 0);
 
-        if(data) {
+        if (data) {
             stbi_image_free(data);
         }
         return false;
     }
 
-    if(!data) {
+    if (!data) {
         LERROR("Image resource loader failed to load file '%s'.", full_file_path);
         return false;
     }
@@ -65,7 +64,7 @@ b8 image_loader_load(struct resource_loader* self, const char* name, resource* o
     resource_data->pixels = data;
     resource_data->width = width;
     resource_data->height = height;
-    resource_data->channel_count = channel_count;
+    resource_data->channel_count = required_channel_count;
 
     out_resource->data = resource_data;
     out_resource->data_size = sizeof(image_resource_data);
