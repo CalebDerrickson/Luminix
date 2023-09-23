@@ -94,7 +94,7 @@ b8 event_on_debug_event(u16 code, void* sender, void* listener_inst, event_conte
     choice %= 3;
     
     // Acquire the new texture
-    if(!app_state->test_geometry) {
+    if (!app_state->test_geometry) {
         return true;
     }
 
@@ -258,7 +258,7 @@ b8 application_create(game* game_inst)
         &app_state->systems_allocator,
         app_state->material_system_memory_requirement 
     );
-    if(!geometry_system_initialize(
+    if (!geometry_system_initialize(
         &app_state->geometry_system_memory_requirement,
         app_state->geometry_system_state,
         geometry_sys_config
