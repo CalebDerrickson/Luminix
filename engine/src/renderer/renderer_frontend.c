@@ -101,7 +101,7 @@ b8 renderer_draw_frame(render_packet* packet)
     state_ptr->backend.update_global_state(state_ptr->projection, state_ptr->view, vec3_set(0), vec4_set(1.0f), 0);
     
     u32 count = packet->geometry_count;
-    for(u32 i = 0; i < count; i++) {
+    for (u32 i = 0; i < count; i++) {
         state_ptr->backend.draw_geometry(packet->geometries[i]);
     }
 
