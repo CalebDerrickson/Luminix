@@ -150,7 +150,7 @@ void geometry_system_release(geometry* geometry)
 geometry* geometry_system_get_default()
 {
     if(!state_ptr) {
-        LFATAL("geometry_system_get_default callled before system was initialized. Returning nullptr.");
+        LFATAL("geometry_system_get_default called before system was initialized. Returning nullptr.");
         return 0;
     }
 
@@ -216,8 +216,8 @@ geometry_config geometry_system_generate_plane_config(
             // Generate vertices
             f32 min_x = (x * seg_width) - half_width;
             f32 min_y = (y * seg_height) - half_height;
-            f32 max_x = min_x + half_width;
-            f32 max_y = min_y + half_height;
+            f32 max_x = min_x + seg_width;
+            f32 max_y = min_y + seg_height;
             f32 min_uvx = (x / (f32)x_segment_count) * tile_x;
             f32 min_uvy = (y / (f32)y_segment_count) * tile_y;
             f32 max_uvx = ((x + 1) / (f32)x_segment_count) * tile_x;
@@ -238,12 +238,12 @@ geometry_config geometry_system_generate_plane_config(
             v1->position.y = max_y;
             v1->texcoord.x = max_uvx;
             v1->texcoord.y = max_uvy;
-            
+
             v2->position.x = min_x;
             v2->position.y = max_y;
             v2->texcoord.x = min_uvx;
             v2->texcoord.y = max_uvy;
-            
+
             v3->position.x = max_x;
             v3->position.y = min_y;
             v3->texcoord.x = max_uvx;
@@ -285,27 +285,27 @@ b8 create_default_geometry(geometry_system_state* state)
     vertex_3d verts[4];
     lzero_memory(verts, sizeof(vertex_3d) * 4);
 
-    const f32 factor = 10.0f;
+    const f32 f = 10.0f;
 
-    verts[0].position.x = -0.5f * factor;    // 0    3
-    verts[0].position.y = -0.5f * factor;    //
-    verts[0].texcoord.x = -0.0f * factor;    //
-    verts[0].texcoord.x = -0.0f * factor;    // 2    1
+    verts[0].position.x = -0.5 * f;  // 0    3
+    verts[0].position.y = -0.5 * f;  //
+    verts[0].texcoord.x = 0.0f;      //
+    verts[0].texcoord.y = 0.0f;      // 2    1
 
-    verts[1].position.x =  0.5f * factor;
-    verts[1].position.y =  0.5f * factor;    
-    verts[1].texcoord.x =  1.0f;    
-    verts[1].texcoord.x =  1.0f;
+    verts[1].position.y = 0.5 * f;
+    verts[1].position.x = 0.5 * f;
+    verts[1].texcoord.x = 1.0f;
+    verts[1].texcoord.y = 1.0f;
 
-    verts[2].position.x = -0.5f * factor;
-    verts[2].position.y =  0.5f * factor;    
-    verts[2].texcoord.x =  0.0f;    
-    verts[2].texcoord.x =  1.0f;
+    verts[2].position.x = -0.5 * f;
+    verts[2].position.y = 0.5 * f;
+    verts[2].texcoord.x = 0.0f;
+    verts[2].texcoord.y = 1.0f;
 
-    verts[3].position.x =  0.5f * factor;
-    verts[3].position.y = -0.5f * factor;    
-    verts[3].texcoord.x =  1.0f;    
-    verts[3].texcoord.x =  0.0f;
+    verts[3].position.x = 0.5 * f;
+    verts[3].position.y = -0.5 * f;
+    verts[3].texcoord.x = 1.0f;
+    verts[3].texcoord.y = 0.0f;
 
     u32 indices[6] = {0, 1, 2, 0, 3, 1};
 

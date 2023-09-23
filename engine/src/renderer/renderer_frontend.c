@@ -19,47 +19,11 @@ typedef struct renderer_system_state {
     renderer_backend backend;
     mat4 projection;
     mat4 view;
-    f32 near_clip; // = 0.01f;
-    f32 far_clip; // = 1000.0f;
-
-// TODO: temporary
-    material* test_material;
-// TODO: end temporary
+    f32 near_clip;
+    f32 far_clip; 
 } renderer_system_state;
 
 static renderer_system_state* state_ptr;
-
-// TODO: temp
-b8 event_on_debug_event(u16 code, void* sender, void* listener_inst, event_context data)
-{
-    const char* names[3] = {
-        "cobblestone",
-        "dark_stone_tile",
-        "wack"
-    };
-    static i8 choice = 2;
-
-    // Save off the old name
-    const char* old_name = names[choice];
-
-    choice++;
-    choice %= 3;
-    
-    // Acquire the new texture
-    state_ptr->test_material->diffuse_map.texture = texture_system_acquire(names[choice], true);
-    if (!state_ptr->test_material->diffuse_map.texture) {
-        LWARN("event_on_debug_event no texture! using default");
-        state_ptr->test_material->diffuse_map.texture = texture_system_get_default_texture();
-    }
-    
-    // Release the old texture
-    texture_system_release(old_name);
-    
-    return true;
-}
-
-// TODO: end temp
-
 
 b8 renderer_system_initialize(u64* memory_requirement, void* state, const char* application_name) 
 {
@@ -68,10 +32,6 @@ b8 renderer_system_initialize(u64* memory_requirement, void* state, const char* 
         return false;
     }
     state_ptr = state;
-
-    // TODO: temp
-    event_register(EVENT_CODE_DEBUG0, state_ptr, event_on_debug_event);
-    // TODO: end temp
 
     // TODO: Make this configurable
     renderer_backend_create(RENDERER_BACKEND_TYPE_VULKAN, &state_ptr->backend);
@@ -97,10 +57,6 @@ void renderer_system_shutdown(void* state)
     if (!state_ptr) {
         return;
     }
-
-    // TODO: temp
-    event_unregister(EVENT_CODE_DEBUG0, state_ptr, event_on_debug_event);
-    // TODO: end temp
 
     state_ptr->backend.shutdown(&state_ptr->backend);
     state_ptr = 0;
@@ -138,46 +94,23 @@ void renderer_on_resized(u16 width, u16 height)
 b8 renderer_draw_frame(render_packet* packet)
 {
     // If the begin frame returned successfully, mid-frame operations may continue.
-    if (renderer_begin_frame(packet->delta_time)) {
+    if (!renderer_begin_frame(packet->delta_time)) {
+        return true;
+    }
     
-        state_ptr->backend.update_global_state(state_ptr->projection, state_ptr->view, vec3_set(0), vec4_set(1.0f), 0);
+    state_ptr->backend.update_global_state(state_ptr->projection, state_ptr->view, vec3_set(0), vec4_set(1.0f), 0);
+    
+    u32 count = packet->geometry_count;
+    for(u32 i = 0; i < count; i++) {
+        state_ptr->backend.draw_geometry(packet->geometries[i]);
+    }
 
-        mat4 model = mat4_translation((vec3){0, 0, 0});
-        // static f32 angle = 0.01f;
-        // angle += 0.001f;
-        // quat rotation = quat_from_axis_angle(vec3_forward(), angle, false);
-        // mat4 model = quat_to_rotation_matrix(rotation, vec3_set(0));
-        geometry_render_data data = {};
-        data.model = model;
+    // End the frame. If this fails, likely unrecoverable.
+    b8 result = renderer_end_frame(packet->delta_time);
 
-        // TODO: temporary.
-        // Create a default material if does not exist.
-        if (!state_ptr->test_material) {
-            // Automatic config
-            state_ptr->test_material = material_system_acquire("test_material");
-            if (!state_ptr->test_material) {
-                LWARN("Automatic material load failed, falling back to manual default material.");
-                // Manual config
-                material_config config;
-                string_ncopy(config.name, "test_material", MAX_MATERIAL_NAME_LENGTH);
-                config.auto_release = true;
-                config.diffuse_color = vec4_set(1.0f);  // White
-                string_ncopy(config.diffuse_map_name, DEFAULT_TEXTURE_NAME, MAX_TEXTURE_NAME_LENGTH);
-                state_ptr->test_material = material_system_acquire_from_config(config);
-            }
-        }
-
-        data.geometry->material = state_ptr->test_material;
-        state_ptr->backend.draw_geometry(data);
-
-        // End the frame. If this fails, likely unrecoverable.
-        b8 result = renderer_end_frame(packet->delta_time);
-
-        if (!result){
-            LERROR("renderer_end_frame failes. Application shutting down...");
-            return false;
-        }
-
+    if (!result){
+        LERROR("renderer_end_frame failes. Application shutting down...");
+        return false;
     }
 
     return true;

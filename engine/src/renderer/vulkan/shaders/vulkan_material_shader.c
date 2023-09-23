@@ -338,8 +338,12 @@ void vulkan_material_shader_update_global_state(vulkan_context* context, struct 
 
 }
 
-void vulkan_material_shader_update_object(vulkan_context* context, struct vulkan_material_shader* shader, geometry_render_data data)
+void vulkan_material_shader_set_model(vulkan_context* context, struct vulkan_material_shader* shader, mat4 model)
 {
+    if(!context || !shader) {
+        return;
+    }
+
     u32 image_index = context->image_index;
     VkCommandBuffer command_buffer = context->graphics_command_buffers[image_index].handle;
 
@@ -349,11 +353,23 @@ void vulkan_material_shader_update_object(vulkan_context* context, struct vulkan
         VK_SHADER_STAGE_VERTEX_BIT,
         0,
         sizeof(mat4), 
-        &data.model
+        &model
     );
+}
+
+
+
+void vulkan_material_shader_apply_material(vulkan_context* context, struct vulkan_material_shader* shader, material* material)
+{
+    if(!context || !shader) {
+        return;
+    }
+
+    u32 image_index = context->image_index;
+    VkCommandBuffer command_buffer = context->graphics_command_buffers[image_index].handle;
 
     // Obtain material data.
-    vulkan_material_shader_instance_state* object_state = &shader->instance_states[data.material->internal_id];
+    vulkan_material_shader_instance_state* object_state = &shader->instance_states[material->internal_id];
     VkDescriptorSet object_descriptor_set = object_state->descriptor_sets[image_index];
 
     // TODO: if needs update
@@ -364,7 +380,7 @@ void vulkan_material_shader_update_object(vulkan_context* context, struct vulkan
 
     // Descriptor 0 - Uniform buffer
     u32 range = sizeof(material_uniform_object);
-    u64 offset = sizeof(material_uniform_object) * data.material->internal_id;    // also the index into the array
+    u64 offset = sizeof(material_uniform_object) * material->internal_id;    // also the index into the array
     material_uniform_object obo;
 
     // // TODO: Get uniform diffuse color from a material.
@@ -372,14 +388,14 @@ void vulkan_material_shader_update_object(vulkan_context* context, struct vulkan
     // accumulator += context->frame_delta_time;
     // f32 s = (lsin(accumulator) + 1.0f) / 2.0f;      // Get a scale from -1, 1 -> 0, 1
     // obo.diffuse_color = vec4_make(s, s, s, 1.0f);
-    obo.diffuse_color = data.material->diffuse_color;
+    obo.diffuse_color = material->diffuse_color;
 
     // Load the data into the buffer
     vulkan_buffer_load_data(context, &shader->object_uniform_buffer, offset, range, 0, &obo);
 
     // Only do this if the descriptor has not yet been updated.
     u32* global_ubo_generation = &object_state->descriptor_states[descriptor_index].generations[image_index];
-    if (*global_ubo_generation == INVALID_ID || *global_ubo_generation != data.material->generation) {
+    if (*global_ubo_generation == INVALID_ID || *global_ubo_generation != material->generation) {
         VkDescriptorBufferInfo buffer_info;
         buffer_info.buffer = shader->object_uniform_buffer.handle;
         buffer_info.offset = offset;
@@ -396,7 +412,7 @@ void vulkan_material_shader_update_object(vulkan_context* context, struct vulkan
         descriptor_count++;
 
         // Update the frame generation. In this case it is only needed once since this is a buffer.
-        *global_ubo_generation = data.material->generation;
+        *global_ubo_generation = material->generation;
     }
 
     descriptor_index++;
@@ -411,7 +427,7 @@ void vulkan_material_shader_update_object(vulkan_context* context, struct vulkan
         switch (use)
         {
         case TEXTURE_USE_MAP_DIFFUSE :
-            t = data.material->diffuse_map.texture;
+            t = material->diffuse_map.texture;
             break;
         
         default:
@@ -522,6 +538,10 @@ void vulkan_material_shader_release_resources(vulkan_context* context, struct vu
     vulkan_material_shader_instance_state* instance_state = &shader->instance_states[material->internal_id];
 
     const u32 descriptor_set_count = 3;
+
+    // Wait for any pending opertaions using the descriptor set to finish.
+    vkDeviceWaitIdle(context->device.logical_device);
+
     // Release object desctiptor sets.
     VkResult result = vkFreeDescriptorSets(
         context->device.logical_device,

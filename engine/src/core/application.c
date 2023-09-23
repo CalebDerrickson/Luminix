@@ -8,6 +8,7 @@
 #include "core/event.h"
 #include "core/input.h"
 #include "core/clock.h"
+#include "core/lstring.h"
 
 #include "memory/linear_allocator.h"
 
@@ -16,6 +17,11 @@
 // systems
 #include "systems/texture_system.h"
 #include "systems/material_system.h"
+#include "systems/geometry_system.h"
+
+// TODO: Temporary
+#include "math/lmath.h"
+// TODO: End temporary
 
 typedef struct application_state {
     game* game_inst;
@@ -52,6 +58,13 @@ typedef struct application_state {
     // Material System
     u64 material_system_memory_requirement;
     void* material_system_state;
+    // Geometry System
+    u64 geometry_system_memory_requirement;
+    void* geometry_system_state;
+
+    // TODO: Temp
+    geometry* test_geometry;
+    // TODO: End Temp
 
 } application_state;
 
@@ -63,6 +76,40 @@ static application_state* app_state;
 b8 application_on_event(u16 code, void* sender, void* listener_inst, event_context context);
 b8 application_on_key(u16 code, void* sender, void* listener_inst, event_context context);
 b8 application_on_resize(u16 code, void* sender, void* listener_inst, event_context context);
+
+// TODO: Temporary
+b8 event_on_debug_event(u16 code, void* sender, void* listener_inst, event_context data)
+{
+    const char* names[3] = {
+        "cobblestone",
+        "dark_stone_tile",
+        "wack"
+    };
+    static i8 choice = 2;
+
+    // Save off the old name
+    const char* old_name = names[choice];
+
+    choice++;
+    choice %= 3;
+    
+    // Acquire the new texture
+    if(!app_state->test_geometry) {
+        return true;
+    }
+
+    app_state->test_geometry->material->diffuse_map.texture = texture_system_acquire(names[choice], true);
+    if (!app_state->test_geometry->material->diffuse_map.texture) {
+        LWARN("event_on_debug_event no texture! using default");
+        app_state->test_geometry->material->diffuse_map.texture = texture_system_get_default_texture();
+    }
+    
+    // Release the old texture
+    texture_system_release(old_name);
+    
+    return true;
+}
+// TODO: End Temporary
 
 b8 application_create(game* game_inst)
 {
@@ -125,6 +172,9 @@ b8 application_create(game* game_inst)
     event_register(EVENT_CODE_KEY_PRESSED, 0, application_on_key);
     event_register(EVENT_CODE_KEY_RELEASED, 0, application_on_key);
     event_register(EVENT_CODE_RESIZED, 0, application_on_resize);
+    // TODO: Temp
+    event_register(EVENT_CODE_DEBUG0, 0, event_on_debug_event);
+    // TODO: End temp
 
     // Platform
     platform_system_startup(&app_state->platform_system_memory_requirement, 0, 0, 0, 0, 0, 0);
@@ -196,6 +246,39 @@ b8 application_create(game* game_inst)
         return false;
     }
 
+    // Geometry system
+    geometry_system_config geometry_sys_config;
+    geometry_sys_config.max_geometry_count = 4096;
+    geometry_system_initialize(
+        &app_state->geometry_system_memory_requirement,
+        0,
+        geometry_sys_config
+    );
+    app_state->geometry_system_state = linear_allocator_allocate(
+        &app_state->systems_allocator,
+        app_state->material_system_memory_requirement 
+    );
+    if(!geometry_system_initialize(
+        &app_state->geometry_system_memory_requirement,
+        app_state->geometry_system_state,
+        geometry_sys_config
+    )) {
+        LFATAL("Failed to initialize geometry system. Application cannot continue.");
+        return false;
+    }
+    
+    // TODO: temp
+    geometry_config g_config = geometry_system_generate_plane_config(10.0f, 10.0f, 5, 5, 2.0f, 2.0f, "test_geometry", "test_material");
+    app_state->test_geometry = geometry_system_acquire_from_config(g_config, true);
+
+    // Clean up the allocations for geometry config.
+    lfree(g_config.vertices, sizeof(vertex_3d) * g_config.vertex_count, MEMORY_TAG_ARRAY);
+    lfree(g_config.indices, sizeof(u32) * g_config.index_count, MEMORY_TAG_ARRAY);
+
+    // Load up default geometry
+    // app_state->test_geometry = geometry_system_get_default();
+    // TODO: end temp
+
     // Initialize the game
     if (!app_state->game_inst->initialize(app_state->game_inst)) {
         LFATAL("Game failed to initilaize.");
@@ -258,6 +341,16 @@ b8 application_run()
             // TODO: refactor packet creation
             render_packet packet;
             packet.delta_time = delta;
+
+            // TODO: temp
+            geometry_render_data test_render;
+            test_render.geometry = app_state->test_geometry;
+            test_render.model = mat4_identity();
+
+            packet.geometry_count = 1;
+            packet.geometries = &test_render;
+            // TODO: end temp
+
             renderer_draw_frame(&packet);
 
 
@@ -300,7 +393,13 @@ b8 application_run()
     event_unregister(EVENT_CODE_KEY_RELEASED, 0, application_on_key);
     event_unregister(EVENT_CODE_RESIZED, 0, application_on_resize);
 
+    // TODO: temp
+    event_unregister(EVENT_CODE_DEBUG0, 0, event_on_debug_event);    
+    // TODO: end temp
+
     input_system_shutdown(app_state->input_system_state);
+
+    geometry_system_shutdown(app_state->geometry_system_state);
 
     material_system_shutdown(app_state->material_system_state);
 
