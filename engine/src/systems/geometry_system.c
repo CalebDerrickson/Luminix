@@ -200,11 +200,11 @@ geometry_config geometry_system_generate_plane_config(
     }
 
     geometry_config config;
-    config.vertex_count = x_segment_count * y_segment_count * 4; // 4 verts per segment
+    config.vertex_count = x_segment_count * y_segment_count * 4;  // 4 verts per segment
     config.vertices = lallocate(sizeof(vertex_3d) * config.vertex_count, MEMORY_TAG_ARRAY);
-    config.index_count = x_segment_count * y_segment_count * 6; // 6 indices per segment
+    config.index_count = x_segment_count * y_segment_count * 6;   // 6 indices per segment
     config.indices = lallocate(sizeof(u32) * config.index_count, MEMORY_TAG_ARRAY);
-
+    
     // TODO: This generates extra vertices, but we can always deduplicate them later.
     f32 seg_width = width / x_segment_count;
     f32 seg_height = height / y_segment_count;
@@ -250,7 +250,7 @@ geometry_config geometry_system_generate_plane_config(
             v3->texcoord.y = min_uvy;
 
             // Generate indices
-            u32 i_offset = ((y + x_segment_count) + x) * 6;
+            u32 i_offset = ((y * x_segment_count) + x) * 6;
             config.indices[i_offset + 0] = v_offset + 0;
             config.indices[i_offset + 1] = v_offset + 1;
             config.indices[i_offset + 2] = v_offset + 2;
@@ -282,6 +282,8 @@ geometry_config geometry_system_generate_plane_config(
 
 b8 create_default_geometry(geometry_system_state* state)
 {
+    LDEBUG("Creating default geometry...");
+
     vertex_3d verts[4];
     lzero_memory(verts, sizeof(vertex_3d) * 4);
 

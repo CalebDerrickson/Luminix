@@ -975,8 +975,8 @@ b8 vulkan_renderer_create_geometry(geometry* geometry, u32 vertex_count, const v
     } 
     else {
         for(u32 i = 0; i < VULKAN_MAX_GEOMETRY_COUNT; i++) {
-            if(context.geometries[i].id == INVALID_ID) {
-                // found a free index.
+            if (context.geometries[i].id == INVALID_ID) {
+                // Found a free index.
                 geometry->internal_id = i;
                 context.geometries[i].id = i;
                 internal_data = &context.geometries[i];
