@@ -68,7 +68,7 @@ i32 string_format_v(char *dest, const char *format, void *va_listp)
 
 char* string_empty(char* str)
 {
-    if(str) {
+    if (str) {
         str[0] = 0;
     }
     return str;
