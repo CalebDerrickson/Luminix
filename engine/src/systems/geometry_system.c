@@ -37,7 +37,7 @@ void destroy_geometry(geometry_system_state* state, geometry* g);
 
 b8 geometry_system_initialize(u64* memory_requirement, void* state, geometry_system_config config)
 {
-    if(config.max_geometry_count == 0) {
+    if (config.max_geometry_count == 0) {
         LFATAL("geometry_system_initialize - config.max_geometrY_count must be > 0");
         return false;
     }
@@ -47,7 +47,7 @@ b8 geometry_system_initialize(u64* memory_requirement, void* state, geometry_sys
     u64 array_requirement = sizeof(geometry) * config.max_geometry_count;
     *memory_requirement = struct_requirement + array_requirement;
 
-    if(!state) {
+    if (!state) {
         return true;
     }
 
@@ -60,13 +60,13 @@ b8 geometry_system_initialize(u64* memory_requirement, void* state, geometry_sys
 
     // Invalidate all geometries in the array.
     u32 count = state_ptr->config.max_geometry_count;
-    for(u32 i = 0; i < count; i++) {
+    for (u32 i = 0; i < count; i++) {
         state_ptr->registered_geometries[i].geometry.id = INVALID_ID;
         state_ptr->registered_geometries[i].geometry.internal_id = INVALID_ID;
         state_ptr->registered_geometries[i].geometry.generation = INVALID_ID;
     }
 
-    if(!create_default_geometry(state_ptr)) {
+    if (!create_default_geometry(state_ptr)) {
         LFATAL("Failed to create default geometry. Application cannot continue.");
         return false;
     }
@@ -81,7 +81,7 @@ void geometry_system_shutdown(void* state)
 
 geometry* geometry_system_acquire_by_id(u32 id)
 {
-    if(id == INVALID_ID || state_ptr->registered_geometries[id].geometry.id == INVALID_ID) {
+    if (id == INVALID_ID || state_ptr->registered_geometries[id].geometry.id == INVALID_ID) {
         // NOTE: Should return default geometry instead???
         LFATAL("geometry_system_acquire_by_id - cannot load invalid geometry id. Returning nullptr.")
         return 0;
@@ -94,8 +94,8 @@ geometry* geometry_system_acquire_by_id(u32 id)
 geometry* geometry_system_acquire_from_config(geometry_config config, b8 auto_release)
 {
     geometry* g = 0;
-    for(u32 i = 0; i < state_ptr->config.max_geometry_count; i++) {
-        if(state_ptr->registered_geometries[i].geometry.id == INVALID_ID) {
+    for (u32 i = 0; i < state_ptr->config.max_geometry_count; i++) {
+        if (state_ptr->registered_geometries[i].geometry.id == INVALID_ID) {
             // Found empty slot.
             state_ptr->registered_geometries[i].auto_release = auto_release;
             state_ptr->registered_geometries[i].reference_count = 1;
@@ -105,12 +105,12 @@ geometry* geometry_system_acquire_from_config(geometry_config config, b8 auto_re
         }
     }
 
-    if(!g) {
+    if (!g) {
         LERROR("unable to obtain free slot for geometry. Adject configuration to allow more space. Returning nulltpr.");
         return 0;
     }
 
-    if(!create_geometry(state_ptr, config, g)) {
+    if (!create_geometry(state_ptr, config, g)) {
         LERROR("Failed to create geometry. Returning nullptr.");
         return 0;
     }
@@ -120,7 +120,7 @@ geometry* geometry_system_acquire_from_config(geometry_config config, b8 auto_re
 
 void geometry_system_release(geometry* geometry)
 {
-    if( !geometry || geometry->id == INVALID_ID) {
+    if ( !geometry || geometry->id == INVALID_ID) {
         LWARN("geometry_system_acquire_by_id cannot release invalid geometry id. Nothing was done.")
         return;
     }
@@ -129,17 +129,17 @@ void geometry_system_release(geometry* geometry)
 
     // Take a copy of the id.
     u32 id = geometry->id;
-    if(ref->geometry.id != geometry->id) {
+    if (ref->geometry.id != geometry->id) {
         LFATAL("Geometry id mismatch. Check registration logic, as this should never occur.");
         return;
     }
 
-    if(ref->reference_count > 0) {
+    if (ref->reference_count > 0) {
         ref->reference_count--;
     }
 
     // Also blanks out the geometry id.
-    if(ref->reference_count < 1 && ref->auto_release) {
+    if (ref->reference_count < 1 && ref->auto_release) {
         destroy_geometry(state_ptr, &ref->geometry);
         ref->reference_count = 0;
         ref->auto_release = false;
@@ -149,7 +149,7 @@ void geometry_system_release(geometry* geometry)
 
 geometry* geometry_system_get_default()
 {
-    if(!state_ptr) {
+    if (!state_ptr) {
         LFATAL("geometry_system_get_default called before system was initialized. Returning nullptr.");
         return 0;
     }
@@ -169,32 +169,32 @@ geometry_config geometry_system_generate_plane_config(
     const char* material_name
 )
 {
-    if(width == 0) {
+    if (width == 0) {
         LWARN("width must be nonzero. Defaulting to one.");
         width = 1.0f;
     }
 
-    if(height == 0) {
+    if (height == 0) {
         LWARN("height must be nonzero. Defaulting to one.");
         height = 1.0f;
     }
     
-    if(x_segment_count < 1) {
+    if (x_segment_count < 1) {
         LWARN("x_segment_count must be a positive number. Defaulting to one.");
         x_segment_count = 1;
     }
     
-    if(y_segment_count < 1) {
+    if (y_segment_count < 1) {
         LWARN("y_segment_count must be a positive number. Defaulting to one.");
         y_segment_count = 1;
     }
     
-    if(tile_x == 0) {
+    if (tile_x == 0) {
         LWARN("tile_x must be nonzero. Defaulting to one.");
         tile_x = 1.0f;
     }
     
-    if(tile_y == 0) {
+    if (tile_y == 0) {
         LWARN("tile_y must be nonzero. Defaulting to one.");
         tile_y = 1.0f;
     }
@@ -211,8 +211,8 @@ geometry_config geometry_system_generate_plane_config(
     f32 half_width = width * 0.5f;
     f32 half_height = height * 0.5f;
 
-    for(u32 y = 0; y < y_segment_count; y++) {
-        for(u32 x = 0; x < x_segment_count; x++) {
+    for (u32 y = 0; y < y_segment_count; y++) {
+        for (u32 x = 0; x < x_segment_count; x++) {
             // Generate vertices
             f32 min_x = (x * seg_width) - half_width;
             f32 min_y = (y * seg_height) - half_height;
@@ -259,14 +259,14 @@ geometry_config geometry_system_generate_plane_config(
             config.indices[i_offset + 5] = v_offset + 1;
         }
     } 
-    if(name && string_length > 0) {
+    if (name && string_length > 0) {
         string_ncopy(config.name, name, MAX_GEOMETRY_NAME_LENGTH);
     }
     else {
         string_ncopy(config.name, DEFAULT_GEOMETRY_NAME, MAX_GEOMETRY_NAME_LENGTH);
     }
 
-    if(material_name && string_length(material_name) > 0) {
+    if (material_name && string_length(material_name) > 0) {
         string_ncopy(config.material_name, material_name, MAX_MATERIAL_NAME_LENGTH);
     }
     else {
@@ -313,7 +313,7 @@ b8 create_default_geometry(geometry_system_state* state)
 
     // Send the geometry off to the renderer to be uploaded to the GPU.
 
-    if(!renderer_create_geometry(&state->default_geometry, 4, verts, 6, indices)) {
+    if (!renderer_create_geometry(&state->default_geometry, 4, verts, 6, indices)) {
         LFATAL("Failed to create default geometry. Application cannot continue.");
         return false;
     }
@@ -327,7 +327,7 @@ b8 create_default_geometry(geometry_system_state* state)
 b8 create_geometry(geometry_system_state* state, geometry_config config, geometry* g)
 {
     // Send the geometry off to the renderer to be uploaded to the GPU.
-    if(!renderer_create_geometry(g, config.vertex_count, config.vertices, config.index_count, config.indices)) {
+    if (!renderer_create_geometry(g, config.vertex_count, config.vertices, config.index_count, config.indices)) {
         // Validate the entry.
         state->registered_geometries[g->id].reference_count = 0;
         state->registered_geometries[g->id].auto_release = false;
@@ -339,9 +339,9 @@ b8 create_geometry(geometry_system_state* state, geometry_config config, geometr
     }
 
     // Actuire the material
-    if(string_length(config.material_name) > 0) {
+    if (string_length(config.material_name) > 0) {
         g->material = material_system_acquire(config.material_name);
-        if(!g->material) {
+        if (!g->material) {
             g->material = material_system_get_default();
         }
     }
@@ -359,7 +359,7 @@ void destroy_geometry(geometry_system_state* state, geometry* g)
     string_empty(g->name);
 
     // Release the material
-    if(g->material && string_length(g->material->name) > 0) {
+    if (g->material && string_length(g->material->name) > 0) {
         material_system_release(g->material->name);
         g->material = 0;
     }
