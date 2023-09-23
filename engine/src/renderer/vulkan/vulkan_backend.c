@@ -420,11 +420,10 @@ b8 vulkan_renderer_backend_begin_frame(renderer_backend* backend, f32 delta_time
 
     // Wait for the execution of the current frame to complete.
     // The fence being free will allow this one to move on. 
-    // I don't know why UINT64_MAX shows up as an error
     if (!vulkan_fence_wait(
         &context,
         &context.in_flight_fences[context.current_frame],
-        UINT64_MAX
+        __UINT64_MAX__
     )) {
         LWARN("In-flight fence wait failure!");
         return false;
@@ -432,18 +431,17 @@ b8 vulkan_renderer_backend_begin_frame(renderer_backend* backend, f32 delta_time
 
     // Acquire the next image from the swapchain. Pass along the semaphore that should be signaled when this completes.
     // this same semaphore will later be waited on by the queue submission to ensure this image is available.
-    // I don't know why UINT64_MAX shows up as an error
     if (!vulkan_swapchain_acquire_next_image_index(
         &context,
         &context.swapchain,
-        UINT64_MAX,
+        __UINT64_MAX__,
         context.image_available_semaphores[context.current_frame],
         0,
         &context.image_index
     )) {
         return false;
     }
-
+    
     // Begin recording commands
     vulkan_command_buffer* command_buffer = &context.graphics_command_buffers[context.image_index];
     vulkan_command_buffer_reset(command_buffer);
@@ -515,12 +513,11 @@ b8 vulkan_renderer_backend_end_frame(renderer_backend* backend, f32 delta_time)
     vulkan_command_buffer_end(command_buffer);
 
     // Make sure the previous frame is not using this image (its fence is being waited on)
-    // I don't know why UINT64_MAX shows up as an error
     if (context.images_in_flight[context.image_index] != VK_NULL_HANDLE) {
         vulkan_fence_wait(
             &context,
             context.images_in_flight[context.image_index],
-            UINT64_MAX
+            __UINT64_MAX__
         );
     }
 
