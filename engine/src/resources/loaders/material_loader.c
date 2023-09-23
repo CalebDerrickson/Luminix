@@ -57,7 +57,7 @@ b8 material_loader_load(struct resource_loader* self, const char* name, resource
         // Split into var/value
         i32 equal_index = string_index_of(trimmed, '=');
         if (equal_index == -1) {
-            LARN("Potential formatting issue found in file '%s': '=' token not found. Skipping line %ui.", full_file_path, line_number);
+            LWARN("Potential formatting issue found in file '%s': '=' token not found. Skipping line %ui.", full_file_path, line_number);
             line_number++;
             continue;
         }

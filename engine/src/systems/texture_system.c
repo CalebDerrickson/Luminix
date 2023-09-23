@@ -284,9 +284,9 @@ void destroy_default_textures(texture_system_state* state)
 
 b8 load_texture(const char* texture_name, texture* t)
 {
-    resource img_resource;
-    if(!resource_system_load(texture_name, RESOURCE_TYPE_IMAGE, &img_resource)) {
-        LERROR("Failed to load image resource for texture '%s'.", texture_name);
+resource img_resource;
+    if (!resource_system_load(texture_name, RESOURCE_TYPE_IMAGE, &img_resource)) {
+        LERROR("Failed to load image resource for texture '%s'", texture_name);
         return false;
     }
 
@@ -297,7 +297,6 @@ b8 load_texture(const char* texture_name, texture* t)
     temp_texture.width = resource_data->width;
     temp_texture.height = resource_data->height;
     temp_texture.channel_count = resource_data->channel_count;
-
 
     u32 current_generation = t->generation;
     t->generation = INVALID_ID;
@@ -312,20 +311,20 @@ b8 load_texture(const char* texture_name, texture* t)
             break;
         }
     }
-    
-    // Take a copy of the name
+
+    // Take a copy of the name.
     string_ncopy(temp_texture.name, texture_name, MAX_TEXTURE_NAME_LENGTH);
     temp_texture.generation = INVALID_ID;
     temp_texture.has_transparency = has_transparency;
 
     // Acquire internal texture resources and upload to GPU.
     renderer_create_texture(resource_data->pixels, &temp_texture);
-
     // Take a copy of the old texture.
     texture old = *t;
 
     // Assign the temp texture to the pointer.
     *t = temp_texture;
+
 
     // Destroy the old texture.
     renderer_destroy_texture(&old);
