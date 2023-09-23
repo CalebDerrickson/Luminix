@@ -268,7 +268,7 @@ b8 application_create(game* game_inst)
     }
     
     // TODO: temp
-    geometry_config g_config = geometry_system_generate_plane_config(10.0f, 10.0f, 5, 5, 2.0f, 2.0f, "test_geometry", "test_material");
+    geometry_config g_config = geometry_system_generate_plane_config(10.0f, 5.0f, 5, 5, 5.0f, 2.0f, "test_geometry", "test_material");
     app_state->test_geometry = geometry_system_acquire_from_config(g_config, true);
 
     // Clean up the allocations for geometry config.
