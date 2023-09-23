@@ -36,7 +36,7 @@ b8 binary_loader_load(struct resource_loader* self, const char* name, resource* 
     }
 
     // TODO: Should be using an allocator here.
-    u8* resource_data = kallocate(sizeof(u8) * file_size, MEMORY_TAG_ARRAY);
+    u8* resource_data = lallocate(sizeof(u8) * file_size, MEMORY_TAG_ARRAY);
     u64 read_size = 0;
     if (!filesystem_read_all_bytes(&f, resource_data, &read_size)) {
         LERROR("Unable to binary read file: %s.", full_file_path);
