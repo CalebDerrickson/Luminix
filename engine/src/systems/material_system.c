@@ -126,21 +126,21 @@ material* material_system_acquire(const char* name)
 {
     // Load material configuration from resource
     resource material_resource;
-    if(!resource_system_load(name, RESOURCE_TYPE_MATERIAL, &material_resource)) {
+    if (!resource_system_load(name, RESOURCE_TYPE_MATERIAL, &material_resource)) {
         LERROR("Failed to load material resource, returning nullptr.");
         return 0;
     }
 
     // Now acquire from loaded config.
     material* m;
-    if(material_resource.data) {
+    if (material_resource.data) {
         m = material_system_acquire_from_config(*(material_config*)material_resource.data);
     }
 
     // Clean up
     resource_system_unload(&material_resource);
 
-    if(!m) {
+    if (!m) {
         LERROR("Failed to load material resource, returning nullptr.");
     }
 
