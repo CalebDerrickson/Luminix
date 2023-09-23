@@ -213,7 +213,7 @@ b8 application_create(game* game_inst)
         app_state->resource_system_memory_requirement
     );
 
-    if(!resource_system_initialize(
+    if (!resource_system_initialize(
         &app_state->resource_system_memory_requirement,
         app_state->resource_system_state,
         resource_sys_config
