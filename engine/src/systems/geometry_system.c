@@ -38,7 +38,7 @@ void destroy_geometry(geometry_system_state* state, geometry* g);
 b8 geometry_system_initialize(u64* memory_requirement, void* state, geometry_system_config config)
 {
     if (config.max_geometry_count == 0) {
-        LFATAL("geometry_system_initialize - config.max_geometrY_count must be > 0");
+        LFATAL("geometry_system_initialize - config.max_geometry_count must be > 0");
         return false;
     }
 
@@ -106,7 +106,7 @@ geometry* geometry_system_acquire_from_config(geometry_config config, b8 auto_re
     }
 
     if (!g) {
-        LERROR("unable to obtain free slot for geometry. Adject configuration to allow more space. Returning nulltpr.");
+        LERROR("Unable to obtain free slot for geometry. Adjust configuration to allow more space. Returning nulltpr.");
         return 0;
     }
 
