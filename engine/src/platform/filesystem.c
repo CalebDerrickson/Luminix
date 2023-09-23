@@ -62,7 +62,7 @@ void filesystem_close(file_handle* handle)
 
 b8 filesystem_size(file_handle* handle, u64* out_size)
 {
-    if(!handle->handle) {
+    if (!handle->handle) {
         return false;
     }
 
@@ -121,13 +121,13 @@ b8 filesystem_read(file_handle* handle, u64 data_size, void* out_data, u64* out_
 
 b8 filesystem_read_all_bytes(file_handle* handle, u8* out_bytes, u64* out_bytes_read)
 {
-    if(!handle->handle || !out_bytes || !out_bytes_read) {
+    if (!handle->handle || !out_bytes || !out_bytes_read) {
         return false;
     }
     
     // File size
     u64 size = 0;
-    if(!filesystem_size(handle, &size)) {
+    if (!filesystem_size(handle, &size)) {
         return false;
     }
     
@@ -137,13 +137,13 @@ b8 filesystem_read_all_bytes(file_handle* handle, u8* out_bytes, u64* out_bytes_
 
 b8 filesystem_read_all_text(file_handle* handle, char* out_text, u64* out_bytes_read)
 {
-    if(!handle->handle || !out_text || !out_bytes_read) {
+    if (!handle->handle || !out_text || !out_bytes_read) {
         return false;
     }
     
     // File size
     u64 size = 0;
-    if(!filesystem_size(handle, &size)) {
+    if (!filesystem_size(handle, &size)) {
         return false;
     }
     
