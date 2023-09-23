@@ -69,6 +69,16 @@
         "vulkan_types.inl": "c",
         "lstring.h": "c",
         "logger.h": "c",
-        "sstream": "c"
+        "sstream": "c",
+        "xutility": "c",
+        "compare": "c",
+        "format": "c",
+        "functional": "c",
+        "future": "c",
+        "memory": "c",
+        "ratio": "c",
+        "xmemory": "c",
+        "xstring": "c",
+        "xtr1common": "c"
     }
 }
