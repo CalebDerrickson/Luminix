@@ -984,12 +984,12 @@ void vulkan_renderer_destroy_texture(texture* texture)
 
 b8 vulkan_renderer_create_material(struct material* material)
 {
-    if(!material) {
+    if (!material) {
         LERROR("vulkan_renderer_create_material called with nullptr. Creation failed.");
         return false;
     } 
 
-    if(!vulkan_material_shader_acquire_resources(&context, &context.material_shader, material)) {
+    if (!vulkan_material_shader_acquire_resources(&context, &context.material_shader, material)) {
         LERROR("vulkan_renderer_create_material - Failed to acquire shader resources.");
         return false;
     }
@@ -1000,12 +1000,12 @@ b8 vulkan_renderer_create_material(struct material* material)
 
 void vulkan_renderer_destroy_material(struct material* material)
 {
-    if(!material) {
+    if (!material) {
         LWARN("vulkan_renderer_destroy_material called with nullptr. Nothing was done.");
         return;
     }
 
-    if(material->internal_id != INVALID_ID) {
+    if (material->internal_id != INVALID_ID) {
         vulkan_material_shader_release_resources(&context, &context.material_shader, material);
     }
     else {

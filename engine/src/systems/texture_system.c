@@ -80,7 +80,7 @@ b8 texture_system_initialize(u64* memory_requirement, void* state, texture_syste
 
     // Invalidate all textures in the array.
     u32 count = state_ptr->config.max_texture_count;
-    for(u32 i = 0; i < count; i++) {
+    for (u32 i = 0; i < count; i++) {
         state_ptr->registered_textures[i].id = INVALID_ID;
         state_ptr->registered_textures[i].generation = INVALID_ID;
     }
@@ -98,7 +98,7 @@ void texture_system_shutdown(void* state)
     }
 
     // Destroy all loaded textures
-    for(u32 i = 0; i < state_ptr->config.max_texture_count; i++) {
+    for (u32 i = 0; i < state_ptr->config.max_texture_count; i++) {
         texture* t = &state_ptr->registered_textures[i];
         if (t->generation != INVALID_ID) {
             renderer_destroy_texture(t);
@@ -137,7 +137,7 @@ texture* texture_system_acquire(const char* name, b8 auto_release)
         // This means no texture exists here. Find a free index first.
         u32 count = state_ptr->config.max_texture_count;
         texture* t = 0;
-        for(u32 i = 0; i < count; i++) {
+        for (u32 i = 0; i < count; i++) {
             if (state_ptr->registered_textures[i].id == INVALID_ID) {
                 // A free slot has been found. Use its index as the handle.
                 ref.handle = i;

@@ -114,7 +114,7 @@ void material_system_shutdown(void* state)
 
     // Invalidate all materials in the array.
     u32 count = s->config.max_material_count;
-    for(u32 i = 0; i < count; i++) {
+    for (u32 i = 0; i < count; i++) {
         if (s->registered_materials[i].id != INVALID_ID) {
             destroy_material(&s->registered_materials[i]);
         }
