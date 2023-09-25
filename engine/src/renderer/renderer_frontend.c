@@ -89,7 +89,7 @@ b8 renderer_draw_frame(render_packet* packet)
     }
     
     // World renderpass 
-    if(!state_ptr->backend.begin_renderpass(&state_ptr->backend, BUILTIN_RENDERPASS_WORLD)) {
+    if (!state_ptr->backend.begin_renderpass(&state_ptr->backend, BUILTIN_RENDERPASS_WORLD)) {
         LERROR("backend.begin_renderpass -> BUILTIN_RENDERPASS_WORLD failed. Application shutting down...");
         return false;
     }
@@ -103,13 +103,13 @@ b8 renderer_draw_frame(render_packet* packet)
     }
 
     // End world renderpass
-    if(!state_ptr->backend.end_renderpass(&state_ptr->backend, BUILTIN_RENDERPASS_WORLD)) {
+    if (!state_ptr->backend.end_renderpass(&state_ptr->backend, BUILTIN_RENDERPASS_WORLD)) {
         LERROR("backend.end_renderpass -> BUILTIN_RENDERPASS_WORLD failed. Application shutting down...");
         return false;
     }
 
     // UI renderpass
-    if(!state_ptr->backend.begin_renderpass(&state_ptr->backend, BUILTIN_RENDERPASS_UI)) {
+    if (!state_ptr->backend.begin_renderpass(&state_ptr->backend, BUILTIN_RENDERPASS_UI)) {
         LERROR("backend.begin_renderpass -> BUILTIN_RENDERPASS_UI failed. Application shutting down...");
         return false;
     }
@@ -124,7 +124,7 @@ b8 renderer_draw_frame(render_packet* packet)
     }
 
     // End world renderpass
-    if(!state_ptr->backend.end_renderpass(&state_ptr->backend, BUILTIN_RENDERPASS_UI)) {
+    if (!state_ptr->backend.end_renderpass(&state_ptr->backend, BUILTIN_RENDERPASS_UI)) {
         LERROR("backend.end_renderpass -> BUILTIN_RENDERPASS_UI failed. Application shutting down...");
         return false;
     }
