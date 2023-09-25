@@ -61,7 +61,7 @@ void vulkan_renderpass_create(
 
     // Depth attachment, if there is one
     b8 do_clear_depth = (out_renderpass->clear_flags & RENDERPASS_CLEAR_DEPTH_BUFFER_FLAG) != 0;
-    if(do_clear_depth)
+    if (do_clear_depth)
     {
         VkAttachmentDescription depth_attachment = {};
         depth_attachment.format = context->device.depth_format;
@@ -164,13 +164,13 @@ void vulkan_renderpass_begin(
     lzero_memory(clear_values, sizeof(VkClearValue) * 2);
 
     b8 do_clear_color = (renderpass->clear_flags & RENDERPASS_CLEAR_COLOR_BUFFER_FLAG) != 0;
-    if(do_clear_color) {
+    if (do_clear_color) {
         lcopy_memory(clear_values[begin_info.clearValueCount].color.float32, renderpass->clear_color.elements, sizeof(f32) * 4);
         begin_info.clearValueCount++;
     }
 
     b8 do_clear_depth = (renderpass->clear_flags & RENDERPASS_CLEAR_DEPTH_BUFFER_FLAG) != 0;
-    if(do_clear_depth) {
+    if (do_clear_depth) {
         lcopy_memory(clear_values[begin_info.clearValueCount].color.float32, renderpass->clear_color.elements, sizeof(f32) * 4);
         clear_values[begin_info.clearValueCount].depthStencil.depth = renderpass->depth;
 
