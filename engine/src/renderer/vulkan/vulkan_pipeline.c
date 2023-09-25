@@ -54,7 +54,7 @@ b8 vulkan_graphics_pipeline_create(
 
     // Depth and stencil testing.
     VkPipelineDepthStencilStateCreateInfo depth_stencil = {VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO};
-    if(depth_test_enabled)
+    if (depth_test_enabled)
     {
         depth_stencil.depthTestEnable = VK_TRUE;
         depth_stencil.depthWriteEnable = VK_TRUE;
