@@ -79,6 +79,13 @@
         "ratio": "c",
         "xmemory": "c",
         "xstring": "c",
-        "xtr1common": "c"
+        "xtr1common": "c",
+        "ostream": "c",
+        "algorithm": "c",
+        "map": "c",
+        "set": "c",
+        "xhash": "c",
+        "xtree": "c",
+        "iterator": "c"
     }
 }

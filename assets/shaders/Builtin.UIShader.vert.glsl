@@ -22,6 +22,8 @@ layout(location = 1) out struct dto {
 } out_dto;
 
 void main() {
-    out_dto.tex_coord = in_texcoord;
+    // NOTE: Intentionally flip y texture coordinate. This, along with flipped ortho matrix, puts [0, 0] in the top-left
+    // instead of botton-left and adjusts texture cooordinates to show in the right direction..
+    out_dto.tex_coord = vec2(in_texcoord.x, 1.0f - in_texcoord.y);
     gl_Position = global_ubo.projection * global_ubo.view * u_push_constants.model * vec4(in_position, 1.0);
 }
