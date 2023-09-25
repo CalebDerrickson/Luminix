@@ -8,6 +8,7 @@
 #include "math/lmath.h"
 
 #include "platform/filesystem.h"
+#include "loader_utils.h"
 
 b8 material_loader_load(struct resource_loader* self, const char* name, resource* out_resource)
 {

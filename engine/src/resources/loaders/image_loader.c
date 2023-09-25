@@ -5,6 +5,7 @@
 #include "core/lstring.h"
 #include "resources/resource_types.h"
 #include "systems/resource_system.h"
+#include "loader_utils.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "vendor/stb_image.h"
