@@ -53,22 +53,10 @@ b8 binary_loader_load(struct resource_loader* self, const char* name, resource* 
     return true;    
 }
 
-void binary_loader_unload(struct resource_loader* self, resource* resource) {
-    if (!self || !resource) {
+void binary_loader_unload(struct resource_loader* self, resource* resource) 
+{
+    if(!resource_unload(self, resource, MEMORY_TAG_ARRAY)) {
         LWARN("binary_loader_unload called with nullptr for self or resource.");
-        return;
-    }
-
-    u32 path_length = string_length(resource->full_path);
-    if (path_length) {
-        lfree(resource->full_path, sizeof(char) * path_length + 1, MEMORY_TAG_STRING);
-    }
-
-    if (resource->data) {
-        lfree(resource->data, resource->data_size, MEMORY_TAG_ARRAY);
-        resource->data = 0;
-        resource->data_size = 0;
-        resource->loader_id = INVALID_ID;
     }
 }
 

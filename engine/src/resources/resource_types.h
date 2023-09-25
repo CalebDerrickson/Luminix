@@ -30,13 +30,6 @@ typedef struct image_resource_data {
     u8* pixels;
 } image_resource_data;
 
-typedef struct material_config {
-    char name[MAX_MATERIAL_NAME_LENGTH];
-    b8 auto_release;
-    vec4 diffuse_color;
-    char diffuse_map_name[MAX_TEXTURE_NAME_LENGTH];
-} material_config;
-
 typedef struct texture {
     u32 id;
     u32 width;
@@ -58,10 +51,24 @@ typedef struct texture_map {
     texture_use use;
 } texture_map;
 
+typedef enum material_type {
+    MATERIAL_TYPE_WORLD,
+    MATERIAL_TYPE_UI
+} material_type;
+
+typedef struct material_config {
+    char name[MAX_MATERIAL_NAME_LENGTH];
+    material_type type;
+    b8 auto_release;
+    vec4 diffuse_color;
+    char diffuse_map_name[MAX_TEXTURE_NAME_LENGTH];
+} material_config;
+
 typedef struct material {
     u32 id;
     u32 generation;
     u32 internal_id;
+    material_type type;
     char name[MAX_MATERIAL_NAME_LENGTH];
     vec4 diffuse_color;
     texture_map diffuse_map;
