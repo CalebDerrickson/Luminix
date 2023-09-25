@@ -10,9 +10,13 @@ void vulkan_renderer_backend_on_resized(renderer_backend* backend, u16 width, u1
 
 b8 vulkan_renderer_backend_begin_frame(renderer_backend* backend, f32 delta_time);
 
-void vulkan_renderer_update_global_state(mat4 projection, mat4 view, vec3 view_position, vec4 ambient_color, i32 mode);
+void vulkan_renderer_update_global_world_state(mat4 projection, mat4 view, vec3 view_position, vec4 ambient_color, i32 mode);
+void vulkan_renderer_update_global_ui_state(mat4 projection, mat4 view, i32 mode);
 
 b8 vulkan_renderer_backend_end_frame(renderer_backend* backend, f32 delta_time);
+
+b8 vulkan_renderer_begin_renderpass(struct renderer_backend* backend, u8 renderpass_id);
+b8 vulkan_renderer_end_renderpass(struct renderer_backend* backend, u8 renderpass_id);
 
 void vulkan_renderer_draw_geometry(geometry_render_data data);
 
