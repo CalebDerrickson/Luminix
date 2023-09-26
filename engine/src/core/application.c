@@ -306,13 +306,14 @@ b8 application_create(game* game_inst)
     lfree(g_config.vertices, sizeof(vertex_3d) * g_config.vertex_count, MEMORY_TAG_ARRAY);
     lfree(g_config.indices, sizeof(u32) * g_config.index_count, MEMORY_TAG_ARRAY);
 
- geometry_config ui_config;
+    // Load up some test UI geometry.
+    geometry_config ui_config;
     ui_config.vertex_size = sizeof(vertex_2d);
     ui_config.vertex_count = 4;
     ui_config.index_size = sizeof(u32);
     ui_config.index_count = 6;
-    string_ncopy(ui_config.material_name, "test_ui_material", MATERIAL_NAME_MAX_LENGTH);
-    string_ncopy(ui_config.name, "test_ui_geometry", GEOMETRY_NAME_MAX_LENGTH);
+    string_ncopy(ui_config.material_name, "test_ui_material", MAX_MATERIAL_NAME_LENGTH);
+    string_ncopy(ui_config.name, "test_ui_geometry", MAX_GEOMETRY_NAME_LENGTH);
 
     const f32 f = 512.0f;
     vertex_2d uiverts [4];
@@ -415,7 +416,6 @@ b8 application_run()
             geometry_render_data test_render;
             test_render.geometry = app_state->test_geometry;
             test_render.model = mat4_identity();
-
             packet.geometry_count = 1;
             packet.geometries = &test_render;
 

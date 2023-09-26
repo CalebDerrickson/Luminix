@@ -168,8 +168,6 @@ geometry* geometry_system_get_default_2d()
     return &state_ptr->default_2d_geometry;
 }
 
-
-
 geometry_config geometry_system_generate_plane_config(
     f32 width, 
     f32 height, 
@@ -215,7 +213,7 @@ geometry_config geometry_system_generate_plane_config(
     config.vertex_size = sizeof(vertex_3d);
     config.vertex_count = x_segment_count * y_segment_count * 4;  // 4 verts per segment
     config.vertices = lallocate(sizeof(vertex_3d) * config.vertex_count, MEMORY_TAG_ARRAY);
-    config.index_size = sizeof(vertex_2d);
+    config.index_size = sizeof(u32);
     config.index_count = x_segment_count * y_segment_count * 6;   // 6 indices per segment
     config.indices = lallocate(sizeof(u32) * config.index_count, MEMORY_TAG_ARRAY);
     
@@ -326,7 +324,6 @@ b8 create_default_geometries(geometry_system_state* state)
     u32 indices[6] = {0, 1, 2, 0, 3, 1};
 
     // Send the geometry off to the renderer to be uploaded to the GPU.
-
     if (!renderer_create_geometry(&state->default_geometry, sizeof(vertex_3d), 4, verts, sizeof(u32), 6, indices)) {
         LFATAL("Failed to create default geometry. Application cannot continue.");
         return false;
@@ -335,32 +332,34 @@ b8 create_default_geometries(geometry_system_state* state)
     // Acquire the default material.
     state->default_geometry.material = material_system_get_default();
 
+    // Create default 2d geometry.
     vertex_2d verts2d[4];
-    verts[0].position.x = -0.5 * f;  // 0    3
-    verts[0].position.y = -0.5 * f;  //
-    verts[0].texcoord.x = 0.0f;      //
-    verts[0].texcoord.y = 0.0f;      // 2    1
+    lzero_memory(verts2d, sizeof(vertex_2d) * 4);
+    verts2d[0].position.x = -0.5 * f;  // 0    3
+    verts2d[0].position.y = -0.5 * f;  //
+    verts2d[0].texcoord.x = 0.0f;      //
+    verts2d[0].texcoord.y = 0.0f;      // 2    1
 
-    verts[1].position.y = 0.5 * f;
-    verts[1].position.x = 0.5 * f;
-    verts[1].texcoord.x = 1.0f;
-    verts[1].texcoord.y = 1.0f;
+    verts2d[1].position.y = 0.5 * f;
+    verts2d[1].position.x = 0.5 * f;
+    verts2d[1].texcoord.x = 1.0f;
+    verts2d[1].texcoord.y = 1.0f;
 
-    verts[2].position.x = -0.5 * f;
-    verts[2].position.y = 0.5 * f;
-    verts[2].texcoord.x = 0.0f;
-    verts[2].texcoord.y = 1.0f;
+    verts2d[2].position.x = -0.5 * f;
+    verts2d[2].position.y = 0.5 * f;
+    verts2d[2].texcoord.x = 0.0f;
+    verts2d[2].texcoord.y = 1.0f;
 
-    verts[3].position.x = 0.5 * f;
-    verts[3].position.y = -0.5 * f;
-    verts[3].texcoord.x = 1.0f;
-    verts[3].texcoord.y = 0.0f;
+    verts2d[3].position.x = 0.5 * f;
+    verts2d[3].position.y = -0.5 * f;
+    verts2d[3].texcoord.x = 1.0f;
+    verts2d[3].texcoord.y = 0.0f;
 
     // Indices (NOTE: counter-clockwise)
     u32 indices2d[6] = {2, 1, 0, 3, 0, 1};
 
-
-    if (!renderer_create_geometry(&state->default_geometry, sizeof(vertex_2d), 4, verts2d, sizeof(u32), 6, indices2d)) {
+    // Send the geometry off to the renderer to be uploaded to the GPU.
+    if (!renderer_create_geometry(&state->default_2d_geometry, sizeof(vertex_2d), 4, verts2d, sizeof(u32), 6, indices2d)) {
         LFATAL("Failed to create default 2d geometry. Application cannot continue.");
         return false;
     }

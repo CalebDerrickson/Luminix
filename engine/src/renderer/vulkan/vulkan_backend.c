@@ -1229,7 +1229,7 @@ void vulkan_renderer_draw_geometry(geometry_render_data data)
         m = material_system_get_default();
     }
 
-    switch(m->type)
+    switch (m->type) 
     {
     case MATERIAL_TYPE_WORLD:
         vulkan_material_shader_set_model(&context, &context.material_shader, data.model);
