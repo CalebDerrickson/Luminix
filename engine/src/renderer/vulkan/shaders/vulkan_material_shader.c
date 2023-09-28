@@ -383,13 +383,13 @@ void vulkan_material_shader_apply_material(vulkan_context* context, struct vulka
     // Descriptor 0 - Uniform buffer
     u32 range = sizeof(vulkan_material_shader_instance_ubo);
     u64 offset = sizeof(vulkan_material_shader_instance_ubo) * material->internal_id;    // also the index into the array
-    vulkan_material_shader_instance_ubo intstance_ubo;
+    vulkan_material_shader_instance_ubo instance_ubo;
 
     // Get diffuse color from a material. 
-    intstance_ubo.diffuse_color = material->diffuse_color;
+    instance_ubo.diffuse_color = material->diffuse_color;
 
     // Load the data into the buffer
-    vulkan_buffer_load_data(context, &shader->object_uniform_buffer, offset, range, 0, &intstance_ubo);
+    vulkan_buffer_load_data(context, &shader->object_uniform_buffer, offset, range, 0, &instance_ubo);
 
     // Only do this if the descriptor has not yet been updated.
     u32* global_ubo_generation = &object_state->descriptor_states[descriptor_index].generations[image_index];

@@ -373,7 +373,15 @@ b8 create_default_geometries(geometry_system_state* state)
 b8 create_geometry(geometry_system_state* state, geometry_config config, geometry* g)
 {
     // Send the geometry off to the renderer to be uploaded to the GPU.
-    if (!renderer_create_geometry(g, config.vertex_size, config.vertex_count, config.vertices, config.index_size, config.index_count, config.indices)) {
+    if (!renderer_create_geometry(
+        g, 
+        config.vertex_size, 
+        config.vertex_count, 
+        config.vertices, 
+        config.index_size, 
+        config.index_count, 
+        config.indices
+    )) {
         // Validate the entry.
         state->registered_geometries[g->id].reference_count = 0;
         state->registered_geometries[g->id].auto_release = false;
@@ -383,6 +391,7 @@ b8 create_geometry(geometry_system_state* state, geometry_config config, geometr
 
         return false;
     }
+    
 
     // Actuire the material
     if (string_length(config.material_name) > 0) {

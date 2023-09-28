@@ -345,8 +345,6 @@ b8 application_create(game* game_inst)
     // Get UI geometry from config.
     app_state->test_ui_geometry = geometry_system_acquire_from_config(ui_config, true);
 
-    // Load up default geometry
-    // app_state->test_geometry = geometry_system_get_default();
     // TODO: end temp
 
     // Initialize the game

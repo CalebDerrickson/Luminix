@@ -227,9 +227,10 @@ b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* appl
     vulkan_renderpass_create(
         &context,
         &context.ui_renderpass,
-        (vec4) {0, 0, context.framebuffer_width, context.framebuffer_height},
-        (vec4) {0.0f, 0.0f, 0.0f, 0.0f},
-        1.0f, 0,
+        (vec4){0, 0, context.framebuffer_width, context.framebuffer_height},
+        (vec4){0.0f, 0.0f, 0.0f, 0.0f},
+        1.0f,
+        0,
         RENDERPASS_CLEAR_NONE_FLAG,
         true, 
         false
@@ -515,13 +516,13 @@ void vulkan_renderer_update_global_ui_state(
 )
 {
     vulkan_command_buffer* command_buffer = &context.graphics_command_buffers[context.image_index];
-    
+
     vulkan_ui_shader_use(&context, &context.ui_shader);
 
-    context.material_shader.global_ubo.projection = projection;
-    context.material_shader.global_ubo.view = view;
-    
-    // TODO: Other ubo properties
+    context.ui_shader.global_ubo.projection = projection;
+    context.ui_shader.global_ubo.view = view;
+
+    // TODO: other ubo properties
 
     vulkan_ui_shader_update_global_state(&context, &context.ui_shader, context.frame_delta_time);
 }
@@ -613,7 +614,6 @@ b8 vulkan_renderer_begin_renderpass(struct renderer_backend* backend, u8 renderp
         renderpass = &context.main_renderpass;
         framebuffer = context.world_framebuffers[context.image_index];
         break;
-    
     case BUILTIN_RENDERPASS_UI:
         renderpass = &context.ui_renderpass;
         framebuffer = context.swapchain.framebuffers[context.image_index];
@@ -747,15 +747,10 @@ void create_command_buffers(renderer_backend* backend)
 
 void regenerate_framebuffers()
 {
-    u32 swapchain_image_count = context.swapchain.image_count;
-    for (u32 i = 0; i < swapchain_image_count; i++) 
+    u32 image_count = context.swapchain.image_count;
+    for (u32 i = 0; i < image_count; ++i) 
     {
-
-        VkImageView world_attachments[2] = {
-            context.swapchain.views[i],
-            context.swapchain.depth_attachment.view
-        };
-
+        VkImageView world_attachments[2] = {context.swapchain.views[i], context.swapchain.depth_attachment.view};
         VkFramebufferCreateInfo framebuffer_create_info = {VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO};
         framebuffer_create_info.renderPass = context.main_renderpass.handle;
         framebuffer_create_info.attachmentCount = 2;
@@ -765,13 +760,13 @@ void regenerate_framebuffers()
         framebuffer_create_info.layers = 1;
 
         VK_CHECK(vkCreateFramebuffer(
-            context.device.logical_device,
-            &framebuffer_create_info,
-            context.allocator,
+            context.device.logical_device, 
+            &framebuffer_create_info, 
+            context.allocator, 
             &context.world_framebuffers[i]
         ));
 
-        // Swapchain framebuffers (UI pass). Outputs to swapchain images.
+        // Swapchain framebuffers (UI pass). Outputs to swapchain images
         VkImageView ui_attachments[1] = {context.swapchain.views[i]};
         VkFramebufferCreateInfo sc_framebuffer_create_info = {VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO};
         sc_framebuffer_create_info.renderPass = context.ui_renderpass.handle;
@@ -780,15 +775,14 @@ void regenerate_framebuffers()
         sc_framebuffer_create_info.width = context.framebuffer_width;
         sc_framebuffer_create_info.height = context.framebuffer_height;
         sc_framebuffer_create_info.layers = 1;
-        
+
         VK_CHECK(vkCreateFramebuffer(
-            context.device.logical_device,
-            &sc_framebuffer_create_info,
-            context.allocator,
+            context.device.logical_device, 
+            &sc_framebuffer_create_info, 
+            context.allocator, 
             &context.swapchain.framebuffers[i]
         ));
     }
-
 }
 
 b8 recreate_swapchain(renderer_backend* backend)
@@ -1132,13 +1126,13 @@ b8 vulkan_renderer_create_geometry(geometry* geometry, u32 vertex_size, u32 vert
     u32 total_size = vertex_count * vertex_size;
 
     upload_data_range(
-        &context, 
-        pool, 
-        0, 
-        queue, 
-        &context.object_vertex_buffer, 
-        internal_data->vertex_buffer_offset, 
-        total_size, 
+        &context,
+        pool,
+        0,
+        queue,
+        &context.object_vertex_buffer,
+        internal_data->vertex_buffer_offset,
+        total_size,
         vertices
     );
 
@@ -1150,7 +1144,7 @@ b8 vulkan_renderer_create_geometry(geometry* geometry, u32 vertex_size, u32 vert
         internal_data->index_buffer_offset = context.geometry_index_offset;
         internal_data->index_count = index_count;
         internal_data->index_element_size = sizeof(u32);
-        total_size = vertex_count * vertex_size;
+        total_size = index_count * index_size;
 
         upload_data_range(
             &context, 
@@ -1231,17 +1225,17 @@ void vulkan_renderer_draw_geometry(geometry_render_data data)
 
     switch (m->type) 
     {
-    case MATERIAL_TYPE_WORLD:
-        vulkan_material_shader_set_model(&context, &context.material_shader, data.model);
-        vulkan_material_shader_apply_material(&context, &context.material_shader, m);
-        break;
-    case MATERIAL_TYPE_UI:
-        vulkan_ui_shader_set_model(&context, &context.ui_shader, data.model);
-        vulkan_ui_shader_apply_material(&context, &context.ui_shader, m);
-        break;
-    default:
-        LERROR("vulkan_renderer_draw_geometry - unknown material type : %i", m->type);
-        return;
+        case MATERIAL_TYPE_WORLD:
+            vulkan_material_shader_set_model(&context, &context.material_shader, data.model);
+            vulkan_material_shader_apply_material(&context, &context.material_shader, m);
+            break;
+        case MATERIAL_TYPE_UI:
+            vulkan_ui_shader_set_model(&context, &context.ui_shader, data.model);
+            vulkan_ui_shader_apply_material(&context, &context.ui_shader, m);
+            break;
+        default:
+            LERROR("vulkan_renderer_draw_geometry - unknown material type: %i", m->type);
+            return;
     }
 
 
