@@ -29,7 +29,7 @@ typedef struct platform_state {
 
 static platform_state* state_ptr;
 
-static void platform_console_write_file(FILE* file, const char* message, u8 colour);
+static void platform_console_write_file(FILE* file, const char* message, u8 color);
 
 static void platform_error_callback(int error, const char* description);
 static void platform_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -127,18 +127,18 @@ void* platform_set_memory(void* dest, i32 value, u64 size) {
     return memset(dest, value, size);
 }
 
-void platform_console_write(const char* message, u8 colour) {
-    platform_console_write_file(stdout, message, colour);
+void platform_console_write(const char* message, u8 color) {
+    platform_console_write_file(stdout, message, color);
 }
 
-void platform_console_write_error(const char* message, u8 colour) {
-    platform_console_write_file(stderr, message, colour);
+void platform_console_write_error(const char* message, u8 color) {
+    platform_console_write_file(stderr, message, color);
 }
 
-static void platform_console_write_file(FILE* file, const char* message, u8 colour) {
-    // Colours: FATAL, ERROR, WARN, INFO, DEBUG, TRACE.
-    const char* colour_strings[] = {"0;41", "1;31", "1;33", "1;32", "1;34", "1;30"};
-    fprintf(file, "\033[%sm%s\033[0m", colour_strings[colour], message);
+static void platform_console_write_file(FILE* file, const char* message, u8 color) {
+    // colors: FATAL, ERROR, WARN, INFO, DEBUG, TRACE.
+    const char* color_strings[] = {"0;41", "1;31", "1;33", "1;32", "1;34", "1;30"};
+    fprintf(file, "\033[%sm%s\033[0m", color_strings[color], message);
 }
 
 f64 platform_get_absolute_time(void) {

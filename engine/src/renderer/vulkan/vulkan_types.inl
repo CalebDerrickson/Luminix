@@ -330,7 +330,7 @@ typedef struct vulkan_context {
     VkSemaphore* image_available_semaphores;
 
     // darray 
-    VkSemaphore* queue_complete_seamphores;
+    VkSemaphore* queue_complete_semaphores;
 
     u32 in_flight_fence_count;
     VkFence in_flight_fences[2];

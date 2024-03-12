@@ -87,9 +87,9 @@ b8 material_loader_load(struct resource_loader* self, const char* name, resource
             string_ncopy(resource_data->diffuse_map_name, trimmed_value, MAX_TEXTURE_NAME_LENGTH);
         } 
         else if (strings_equali(trimmed_var_name, "diffuse_color")) {
-            // Parse the colour
+            // Parse the color
             if (!string_to_vec4(trimmed_value, &resource_data->diffuse_color)) {
-                LWARN("Error parsing diffuse_colour in file '%s'. Using default of white instead.", full_file_path);
+                LWARN("Error parsing diffuse_color in file '%s'. Using default of white instead.", full_file_path);
                 // NOTE: already assigned above, no need to have it here.
             }
         }

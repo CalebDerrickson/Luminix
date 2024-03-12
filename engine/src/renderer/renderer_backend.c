@@ -7,7 +7,7 @@ b8 renderer_backend_create(renderer_backend_type type, renderer_backend* out_ren
         return false;
     }
     
-    out_renderer_backend->initialize = vulkan_renderer_backend_initilize;
+    out_renderer_backend->initialize = vulkan_renderer_backend_initialize;
     out_renderer_backend->shutdown = vulkan_renderer_backend_shutdown;
     out_renderer_backend->begin_frame = vulkan_renderer_backend_begin_frame;
     out_renderer_backend->update_global_world_state = vulkan_renderer_update_global_world_state;
