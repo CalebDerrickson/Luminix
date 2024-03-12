@@ -506,7 +506,7 @@ b8 vulkan_renderer_backend_end_frame(renderer_backend* backend, f32 delta_time) 
     submit_info.pWaitSemaphores = &context.image_available_semaphores[context.current_frame];
 
     // Each semaphore waits on the corresponding pipeline stage to complete. 1:1 ratio.
-    // VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT prevents subsequent colour attachment
+    // VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT prevents subsequent color attachment
     // writes from executing until the semaphore signals (i.e. one frame is presented at a time)
     VkPipelineStageFlags flags[1] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
     submit_info.pWaitDstStageMask = flags;

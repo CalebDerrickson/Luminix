@@ -68,7 +68,7 @@ b8 vulkan_material_shader_create(vulkan_context* context, vulkan_material_shader
         context->device.logical_device,
         &global_pool_info,
         context->allocator,
-        &out_shader->golbal_descriptor_pool
+        &out_shader->global_descriptor_pool
     ));
 
     // sampler uses
@@ -216,7 +216,7 @@ b8 vulkan_material_shader_create(vulkan_context* context, vulkan_material_shader
     };
 
     VkDescriptorSetAllocateInfo alloc_info = {VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO};
-    alloc_info.descriptorPool = out_shader->golbal_descriptor_pool;
+    alloc_info.descriptorPool = out_shader->global_descriptor_pool;
     alloc_info.descriptorSetCount = 3;
     alloc_info.pSetLayouts = global_layouts;
 
@@ -231,7 +231,7 @@ b8 vulkan_material_shader_create(vulkan_context* context, vulkan_material_shader
         context,
         sizeof(vulkan_material_shader_instance_ubo) * VULKAN_MAX_MATERIAL_COUNT,
         VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | device_local_bits,
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
         true,
         &out_shader->object_uniform_buffer
     )) {
@@ -258,7 +258,7 @@ void vulkan_material_shader_destroy(vulkan_context* context, struct vulkan_mater
     vulkan_pipeline_destroy(context, &shader->pipeline);
 
     // Destroy global descriptor pool
-    vkDestroyDescriptorPool(context->device.logical_device, shader->golbal_descriptor_pool, context->allocator);
+    vkDestroyDescriptorPool(context->device.logical_device, shader->global_descriptor_pool, context->allocator);
 
     // Destroy descriptor set layouts
     vkDestroyDescriptorSetLayout(context->device.logical_device, shader->global_descriptor_set_layout, context->allocator);
@@ -556,7 +556,7 @@ void vulkan_material_shader_release_resources(vulkan_context* context, struct vu
     for (u32 i = 0; i < VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT; i++) {
         for (u32 j = 0; j < 3; j++) {
             instance_state->descriptor_states[i].generations[j] = INVALID_ID;
-            instance_state->descriptor_states[i].generations[j] = INVALID_ID;
+            instance_state->descriptor_states[i].ids[j] = INVALID_ID;
         }
     }
 

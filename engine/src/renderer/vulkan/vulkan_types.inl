@@ -192,13 +192,16 @@ typedef struct vulkan_material_shader_instance_ubo {
     vec4 v_reserved0;       // 16 bytes
     vec4 v_reserved1;       // 16 bytes
     vec4 v_reserved2;       // 16 bytes
+    mat4 m_reserved0;       // 64 bytes, reserved for future use
+    mat4 m_reserved1;       // 64 bytes, reserved for future use
+    mat4 m_reserved2;       // 64 bytes, reserved for future use
 } vulkan_material_shader_instance_ubo;
 
 typedef struct vulkan_material_shader {
     // vertex, fragment
     vulkan_shader_stage stages[MATERIAL_SHADER_STAGE_COUNT];
 
-    VkDescriptorPool golbal_descriptor_pool;
+    VkDescriptorPool global_descriptor_pool;
     VkDescriptorSetLayout global_descriptor_set_layout;
     
     // One descriptor set per frame - max 3 for triple buffering.
@@ -255,6 +258,9 @@ typedef struct vulkan_ui_shader_instance_ubo {
     vec4 v_reserved0;    // 16 bytes, reserved for future use
     vec4 v_reserved1;    // 16 bytes, reserved for future use
     vec4 v_reserved2;    // 16 bytes, reserved for future use
+    mat4 m_reserved0;    // 64 bytes, reserved for future use
+    mat4 m_reserved1;    // 64 bytes, reserved for future use
+    mat4 m_reserved2;    // 64 bytes, reserved for future use
 } vulkan_ui_shader_instance_ubo;
 
 typedef struct vulkan_ui_shader {
