@@ -91,6 +91,9 @@
         "set": "c",
         "xhash": "c",
         "xtree": "c",
-        "iterator": "c"
+        "iterator": "c",
+        "optional": "c",
+        "system_error": "c",
+        "xlocmon": "c"
     }
 }

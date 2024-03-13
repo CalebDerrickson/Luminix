@@ -81,7 +81,7 @@ b8 vulkan_material_shader_create(vulkan_context* context, vulkan_material_shader
     };
     VkDescriptorSetLayoutBinding bindings[VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT];
     lzero_memory(&bindings, sizeof(VkDescriptorSetLayoutBinding) * VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT);
-    for (u32 i = 0; i < VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT; i++) {
+    for (u32 i = 0; i < VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT; ++i) {
         bindings[i].binding = i;
         bindings[i].descriptorCount = 1;
         bindings[i].descriptorType = descriptor_types[i];
@@ -264,7 +264,7 @@ void vulkan_material_shader_destroy(vulkan_context* context, struct vulkan_mater
     vkDestroyDescriptorSetLayout(context->device.logical_device, shader->global_descriptor_set_layout, context->allocator);
 
     // Destroy shader modules
-    for (u32 i = 0; i < MATERIAL_SHADER_STAGE_COUNT; i++) {
+    for (u32 i = 0; i < MATERIAL_SHADER_STAGE_COUNT; ++i) {
         vkDestroyShaderModule(context->device.logical_device, shader->stages[i].handle, context->allocator);
         shader->stages[i].handle = 0;
     }
@@ -497,8 +497,8 @@ b8 vulkan_material_shader_acquire_resources(vulkan_context* context, struct vulk
     shader->object_uniform_buffer_index++;
 
     vulkan_material_shader_instance_state* object_state = &shader->instance_states[material->internal_id];
-    for (u32 i = 0; i < VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT; i++) {
-        for (u32 j = 0; j < 3; j++) {
+    for (u32 i = 0; i < VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT; ++i) {
+        for (u32 j = 0; j < 3; ++j) {
             object_state->descriptor_states[i].generations[j] = INVALID_ID;
             object_state->descriptor_states[i].ids[j] = INVALID_ID;
         }
@@ -553,8 +553,8 @@ void vulkan_material_shader_release_resources(vulkan_context* context, struct vu
         return;
     }
 
-    for (u32 i = 0; i < VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT; i++) {
-        for (u32 j = 0; j < 3; j++) {
+    for (u32 i = 0; i < VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT; ++i) {
+        for (u32 j = 0; j < 3; ++j) {
             instance_state->descriptor_states[i].generations[j] = INVALID_ID;
             instance_state->descriptor_states[i].ids[j] = INVALID_ID;
         }

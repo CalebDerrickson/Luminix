@@ -1,7 +1,18 @@
 @ECHO OFF
-REM Building Everything
+REM Build Everything
 
-@REM ECHO "Building Everything..."
+ECHO "Building everything..."
+
+
+@REM PUSHD engine
+@REM CALL build.bat
+@REM POPD
+@REM IF %ERRORLEVEL% NEQ 0 (echo Error:%ERRORLEVEL% && exit)
+
+@REM PUSHD testbed
+@REM CALL build.bat
+@REM POPD
+@REM IF %ERRORLEVEL% NEQ 0 (echo Error:%ERRORLEVEL% && exit)
 
 REM Engine
 make -f "Makefile.engine.windows.mak" all

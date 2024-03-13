@@ -6,4 +6,4 @@
 
 struct resource_loader;
 
-b8 resource_unload(struct resource_loader* self, resource* resource, memory_tag);
+b8 resource_unload(struct resource_loader* self, resource* resource, memory_tag tag);
