@@ -212,7 +212,7 @@ void vulkan_device_destroy(vulkan_context* context)
 
     if (context->device.swapchain_support.present_modes) {
         lfree(context->device.swapchain_support.present_modes,
-        sizeof(VkSurfaceFormatKHR) * context->device.swapchain_support.present_mode_count,
+        sizeof(VkPresentModeKHR) * context->device.swapchain_support.present_mode_count,
         MEMORY_TAG_RENDERER);
         context->device.swapchain_support.present_modes = 0;
         context->device.swapchain_support.present_mode_count = 0;

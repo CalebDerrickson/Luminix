@@ -4,9 +4,9 @@
 
 b8 vulkan_material_shader_create(vulkan_context* context, vulkan_material_shader* out_shader);
 
-void vulkan_material_shader_destroy(vulkan_context* context, vulkan_material_shader* shader);
+void vulkan_material_shader_destroy(vulkan_context* context, struct vulkan_material_shader* shader);
 
-void vulkan_material_shader_use(vulkan_context* context, vulkan_material_shader* shader);
+void vulkan_material_shader_use(vulkan_context* context, struct vulkan_material_shader* shader);
 
 void vulkan_material_shader_update_global_state(vulkan_context* context, struct vulkan_material_shader* shader, f32 delta_time);
 

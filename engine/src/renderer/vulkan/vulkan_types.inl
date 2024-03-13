@@ -274,7 +274,7 @@ typedef struct vulkan_ui_shader {
     VkDescriptorSet global_descriptor_sets[3];
 
     // Global uniform object.
-    vulkan_material_shader_global_ubo global_ubo;
+    vulkan_ui_shader_global_ubo global_ubo;
 
     // Global uniform buffer.
     vulkan_buffer global_uniform_buffer;
