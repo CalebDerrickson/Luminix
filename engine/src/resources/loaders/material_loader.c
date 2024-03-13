@@ -32,6 +32,7 @@ b8 material_loader_load(struct resource_loader* self, const char* name, resource
     // TODO: Should be using an allocator here.
     material_config* resource_data = lallocate(sizeof(material_config), MEMORY_TAG_MATERIAL_INSTANCE);
     // Set some defaults.
+    resource_data->type = MATERIAL_TYPE_WORLD;
     resource_data->auto_release = true;
     resource_data->diffuse_color = vec4_set(1.0f);  // white.
     resource_data->diffuse_map_name[0] = 0;
@@ -58,7 +59,7 @@ b8 material_loader_load(struct resource_loader* self, const char* name, resource
         // Split into var/value
         i32 equal_index = string_index_of(trimmed, '=');
         if (equal_index == -1) {
-            LWARN("Potential formatting issue found in file '%s': '=' token not found. Skipping line %ui.", full_file_path, line_number);
+            LWARN("Potential formatting issue found in file '%s': '=' token not found. Skipping line %u.", full_file_path, line_number);
             line_number++;
             continue;
         }
@@ -86,10 +87,16 @@ b8 material_loader_load(struct resource_loader* self, const char* name, resource
             string_ncopy(resource_data->diffuse_map_name, trimmed_value, MAX_TEXTURE_NAME_LENGTH);
         } 
         else if (strings_equali(trimmed_var_name, "diffuse_color")) {
-            // Parse the colour
+            // Parse the color
             if (!string_to_vec4(trimmed_value, &resource_data->diffuse_color)) {
-                LWARN("Error parsing diffuse_colour in file '%s'. Using default of white instead.", full_file_path);
+                LWARN("Error parsing diffuse_color in file '%s'. Using default of white instead.", full_file_path);
                 // NOTE: already assigned above, no need to have it here.
+            }
+        }
+        else if (strings_equali(trimmed_var_name, "type")) {
+            // TODO: Other material types.
+            if (strings_equali(trimmed_value, "ui")) {
+                resource_data->type = MATERIAL_TYPE_UI;
             }
         }
 

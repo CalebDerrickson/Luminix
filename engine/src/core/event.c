@@ -41,7 +41,7 @@ void event_system_shutdown()
     }
 
     // Free the events arrays. Objects pointed to should be destroyed on their own.
-    for (u16 i = 0; i < MAX_MESSAGE_CODES; i++) {
+    for (u16 i = 0; i < MAX_MESSAGE_CODES; ++i) {
         if (state_ptr->registered[i].events != 0) {
             darray_destroy(state_ptr->registered[i].events);
             state_ptr->registered[i].events = 0;
@@ -61,7 +61,7 @@ b8 event_register(u16 code, void* listener, PFN_on_event on_event)
     }
 
     u64 registered_count = darray_length(state_ptr->registered[code].events);
-    for (u64 i = 0; i < registered_count; i++){
+    for (u64 i = 0; i < registered_count; ++i){
         if (state_ptr->registered[code].events[i].listener == listener) {
             // TODO: warn
             return false;
@@ -90,7 +90,7 @@ b8 event_unregister(u16 code, void* listener, PFN_on_event on_event)
     }
 
     u64 registered_count = darray_length(state_ptr->registered[code].events);
-    for (u64 i = 0; i < registered_count; i++) {
+    for (u64 i = 0; i < registered_count; ++i) {
         registered_event e = state_ptr->registered[code].events[i];
         if (e.listener == listener && e.callback == on_event) {
             registered_event popped_event;
@@ -114,7 +114,7 @@ b8 event_fire(u16 code, void* sender, event_context context)
     }
     
     u64 registered_count = darray_length(state_ptr->registered[code].events);
-    for (u64 i = 0; i < registered_count; i++) {
+    for (u64 i = 0; i < registered_count; ++i) {
         registered_event e = state_ptr->registered[code].events[i];
         if (e.callback(code, sender, e.listener, context)) {
             // Message has been handled, do not send to other listeners.

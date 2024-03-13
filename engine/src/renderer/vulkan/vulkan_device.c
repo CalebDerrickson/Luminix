@@ -212,7 +212,7 @@ void vulkan_device_destroy(vulkan_context* context)
 
     if (context->device.swapchain_support.present_modes) {
         lfree(context->device.swapchain_support.present_modes,
-        sizeof(VkSurfaceFormatKHR) * context->device.swapchain_support.present_mode_count,
+        sizeof(VkPresentModeKHR) * context->device.swapchain_support.present_mode_count,
         MEMORY_TAG_RENDERER);
         context->device.swapchain_support.present_modes = 0;
         context->device.swapchain_support.present_mode_count = 0;
@@ -292,7 +292,7 @@ b8 vulkan_device_detect_depth_format(vulkan_device* device)
         VK_FORMAT_D24_UNORM_S8_UINT};
 
     u32 flags = VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
-    for (u64 i = 0; i < candidate_count; i++) {
+    for (u64 i = 0; i < candidate_count; ++i) {
         VkFormatProperties properties;
         vkGetPhysicalDeviceFormatProperties(
             device->physical_device, 
@@ -323,7 +323,7 @@ b8 select_physical_device(vulkan_context* context)
 
     VkPhysicalDevice physical_devices[MAX_DEVICE_COUNT];
     VK_CHECK(vkEnumeratePhysicalDevices(context->instance, &physical_device_count, physical_devices));
-    for (u32 i = 0; i < physical_device_count; i++) {
+    for (u32 i = 0; i < physical_device_count; ++i) {
         VkPhysicalDeviceProperties properties;
         vkGetPhysicalDeviceProperties(physical_devices[i], &properties);
 
@@ -335,7 +335,7 @@ b8 select_physical_device(vulkan_context* context)
         
         // Checks if device supports local/host visible combo
         b8 supports_device_local_host_visible = false;
-        for (u32 i = 0; i < memory.memoryTypeCount; i++) {
+        for (u32 i = 0; i < memory.memoryTypeCount; ++i) {
             // Check each memory type to see if its bit is set to 1.
             if (
                 ((memory.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) != 0) &&
@@ -415,7 +415,7 @@ b8 select_physical_device(vulkan_context* context)
             );
 
             // Memory information
-            for (u32 j = 0; j < memory.memoryHeapCount; j++) {
+            for (u32 j = 0; j < memory.memoryHeapCount; ++j) {
                 f32 memory_size_gib = (((f32)memory.memoryHeaps[j].size) / 1024.f / 1024.f / 1024.f);
                 if (memory.memoryHeaps[j].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) {
                     LINFO("Local GPU memory: %.2f GiB", memory_size_gib);

@@ -116,14 +116,14 @@ void string_mid(char* dest, const char* source, i32 start, i32 length)
         return;
     }
     if (length > 0) {
-        for (u64 i = 0, j = 0; j < length && source[i]; i++, j++){
+        for (u64 i = start, j = 0; j < length && source[i]; ++i, ++j){
             dest[j] = source[i];
         }
         dest[start + length] = 0;
     } else {
         // If a negative value is passed, proceed to the end of the string.
         u64 j = 0;
-        for (u64 i = start; source[i]; i++, j++) {
+        for (u64 i = start; source[i]; ++i, ++j) {
             dest[j] = source[i];
         }
         dest[start + j] = 0;
@@ -137,7 +137,7 @@ i32 string_index_of(char* str, char c)
     }
     u32 length = string_length(str);
     if (length > 0) {
-        for (u32 i = 0; i < length; i++) {
+        for (u32 i = 0; i < length; ++i) {
             if (str[i] == c) {
                 return i;
             } 

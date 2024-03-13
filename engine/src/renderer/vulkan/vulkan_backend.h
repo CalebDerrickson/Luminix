@@ -3,7 +3,7 @@
 #include "renderer/renderer_backend.h"
 #include "resources/resource_types.h"
 
-b8 vulkan_renderer_backend_initilize(renderer_backend* backend, const char* application_name);
+b8 vulkan_renderer_backend_initialize(renderer_backend* backend, const char* application_name);
 void vulkan_renderer_backend_shutdown(renderer_backend* backend);
 
 void vulkan_renderer_backend_on_resized(renderer_backend* backend, u16 width, u16 height);
@@ -26,5 +26,5 @@ void vulkan_renderer_destroy_texture(texture* texture);
 b8 vulkan_renderer_create_material(struct material* material);
 void vulkan_renderer_destroy_material(struct material* material);
 
-b8 vulkan_renderer_create_geometry(geometry* geometry, u32 vertex_count, const vertex_3d* vertices, u32 index_count, const u32* indices);
+b8 vulkan_renderer_create_geometry(geometry* geometry, u32 vertex_size, u32 vertex_count, const void* vertices, u32 index_size, u32 index_count, const void* indices);
 void vulkan_renderer_destroy_geometry(geometry* geometry);

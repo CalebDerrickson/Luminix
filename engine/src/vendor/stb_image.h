@@ -6229,7 +6229,7 @@ static void *stbi__psd_load(stbi__context *s, int *x, int *y, int *comp, int req
          p = out+channel;
          if (channel >= channelCount) {
             // Fill this channel with default data.
-            for (i = 0; i < pixelCount; i++, p += 4)
+            for (i = 0; i < pixelCount; ++i, p += 4)
                *p = (channel == 3 ? 255 : 0);
          } else {
             // Read the RLE data.
@@ -6251,26 +6251,26 @@ static void *stbi__psd_load(stbi__context *s, int *x, int *y, int *comp, int req
             if (bitdepth == 16 && bpc == 16) {
                stbi__uint16 *q = ((stbi__uint16 *) out) + channel;
                stbi__uint16 val = channel == 3 ? 65535 : 0;
-               for (i = 0; i < pixelCount; i++, q += 4)
+               for (i = 0; i < pixelCount; ++i, q += 4)
                   *q = val;
             } else {
                stbi_uc *p = out+channel;
                stbi_uc val = channel == 3 ? 255 : 0;
-               for (i = 0; i < pixelCount; i++, p += 4)
+               for (i = 0; i < pixelCount; ++i, p += 4)
                   *p = val;
             }
          } else {
             if (ri->bits_per_channel == 16) {    // output bpc
                stbi__uint16 *q = ((stbi__uint16 *) out) + channel;
-               for (i = 0; i < pixelCount; i++, q += 4)
+               for (i = 0; i < pixelCount; ++i, q += 4)
                   *q = (stbi__uint16) stbi__get16be(s);
             } else {
                stbi_uc *p = out+channel;
                if (bitdepth == 16) {  // input bpc
-                  for (i = 0; i < pixelCount; i++, p += 4)
+                  for (i = 0; i < pixelCount; ++i, p += 4)
                      *p = (stbi_uc) (stbi__get16be(s) >> 8);
                } else {
-                  for (i = 0; i < pixelCount; i++, p += 4)
+                  for (i = 0; i < pixelCount; ++i, p += 4)
                      *p = stbi__get8(s);
                }
             }
@@ -6782,7 +6782,7 @@ static stbi_uc *stbi__gif_load_next(stbi__context *s, stbi__gif *g, int *comp, i
    int pcount;
    STBI_NOTUSED(req_comp);
 
-   // on first frame, any non-written pixels get the background colour (non-transparent)
+   // on first frame, any non-written pixels get the background color (non-transparent)
    first_frame = 0;
    if (g->out == 0) {
       if (!stbi__gif_header(s, g, comp,0)) return 0; // stbi__g_failure_reason set by stbi__gif_header
@@ -6796,7 +6796,7 @@ static stbi_uc *stbi__gif_load_next(stbi__context *s, stbi__gif *g, int *comp, i
          return stbi__errpuc("outofmem", "Out of memory");
 
       // image is treated as "transparent" at the start - ie, nothing overwrites the current background;
-      // background colour is only used for pixels that are not rendered first frame, after that "background"
+      // background color is only used for pixels that are not rendered first frame, after that "background"
       // color refers to the color that was there the previous frame.
       memset(g->out, 0x00, 4 * pcount);
       memset(g->background, 0x00, 4 * pcount); // state of the background (starts transparent)
@@ -7266,12 +7266,12 @@ static float *stbi__hdr_load(stbi__context *s, int *x, int *y, int *comp, int re
                   count -= 128;
                   if ((count == 0) || (count > nleft)) { STBI_FREE(hdr_data); STBI_FREE(scanline); return stbi__errpf("corrupt", "bad RLE data in HDR"); }
                   for (z = 0; z < count; ++z)
-                     scanline[i++ * 4 + k] = value;
+                     scanline[++i * 4 + k] = value;
                } else {
                   // Dump
                   if ((count == 0) || (count > nleft)) { STBI_FREE(hdr_data); STBI_FREE(scanline); return stbi__errpf("corrupt", "bad RLE data in HDR"); }
                   for (z = 0; z < count; ++z)
-                     scanline[i++ * 4 + k] = stbi__get8(s);
+                     scanline[++i * 4 + k] = stbi__get8(s);
                }
             }
          }

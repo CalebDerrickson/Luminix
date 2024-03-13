@@ -111,7 +111,7 @@ void create(vulkan_context* context, u32 width, u32 height, vulkan_swapchain* sw
 
     // Choose a swap surface format.
     b8 found = false;
-    for (u32 i = 0; i < context->device.swapchain_support.format_count; i++) {
+    for (u32 i = 0; i < context->device.swapchain_support.format_count; ++i) {
         VkSurfaceFormatKHR format = context->device.swapchain_support.formats[i];
         // Preferred formats. This should hold for all GPUs. 
         if (format.format == VK_FORMAT_B8G8R8A8_UNORM
@@ -127,7 +127,7 @@ void create(vulkan_context* context, u32 width, u32 height, vulkan_swapchain* sw
     }
 
     VkPresentModeKHR present_mode = VK_PRESENT_MODE_FIFO_KHR;
-    for (u32 i = 0; i < context->device.swapchain_support.present_mode_count; i++) {
+    for (u32 i = 0; i < context->device.swapchain_support.present_mode_count; ++i) {
         VkPresentModeKHR mode = context->device.swapchain_support.present_modes[i];
         if (mode == VK_PRESENT_MODE_MAILBOX_KHR) {
             present_mode = mode;
@@ -279,7 +279,7 @@ void destroy(vulkan_context* context, vulkan_swapchain* swapchain)
 
     // Only destroy the views, not the images, since those are owned by the swapchain
     // and are thus destroyed when it is.
-    for (u32 i = 0; i < swapchain->image_count; i++) {
+    for (u32 i = 0; i < swapchain->image_count; ++i) {
         vkDestroyImageView(context->device.logical_device, swapchain->views[i], context->allocator);
     }
 

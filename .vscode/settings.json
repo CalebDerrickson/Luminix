@@ -8,8 +8,7 @@
     "editor.fontFamily": "Liberation Mono",
     "editor.fontSize": 16,
     "editor.fontWeight": "1",
-    "workbench.editor.showTabs": true,
-    "workbench.activityBar.visible": true,
+    "workbench.editor.showTabs": "multiple",
     "workbench.colorCustomizations": {
         "editorCursor.foreground": "#00ff33",
         "editor.lineHighlightBackground": "#111144"
@@ -32,22 +31,25 @@
         {
             "text": "TODO:",
             "color": "red",
-            "backgroundColor": "rgba(0,0,0,0)"
+            "backgroundColor": "rgba(0,0,0,0)",
+            "overviewRulerColor": "rgba(0, 0, 0, 0)"
         },
         {
             "text": "HACK:",
             "color": "#ff6600",
-            "backgroundColor": "rgba(0,0,0,0)"
+            "backgroundColor": "rgba(0,0,0,0)",
+            "overviewRulerColor": "rgba(0, 0, 0, 0)"
         },
         {
             "text": "NOTE:",
             "color": "green",
-            "backgroundColor": "rgba(0,0,0,0)"
+            "backgroundColor": "rgba(0,0,0,0)",
+            "overviewRulerColor": "rgba(0, 0, 0, 0)"
         }
     ],
     "todohighlight.defaultStyle": {
         "color": "red",
-        "backgroundColor": "#ffab00",
+        // "backgroundColor": "#ffab00",
         "overviewRulerColor": "rgba(0,0,0,0)",
         "isWholeLine": false,
     },
@@ -79,6 +81,9 @@
         "ratio": "c",
         "xmemory": "c",
         "xstring": "c",
+        "initializer_list": "c",
+        "loader_utils.h": "c",
+        "lmath.h": "c",
         "xtr1common": "c",
         "ostream": "c",
         "algorithm": "c",
@@ -86,6 +91,9 @@
         "set": "c",
         "xhash": "c",
         "xtree": "c",
-        "iterator": "c"
+        "iterator": "c",
+        "optional": "c",
+        "system_error": "c",
+        "xlocmon": "c"
     }
 }

@@ -124,7 +124,7 @@ b8 hashtable_fill(hashtable* table, void* value)
         return false;
     }
 
-    for (u32 i = 0; i < table->element_count; i++) {
+    for (u32 i = 0; i < table->element_count; ++i) {
         lcopy_memory(table->memory + (table->element_size * i), value, table->element_size);
     }
 

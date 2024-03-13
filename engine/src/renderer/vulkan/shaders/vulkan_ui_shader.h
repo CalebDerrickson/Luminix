@@ -4,9 +4,9 @@
 
 b8 vulkan_ui_shader_create(vulkan_context* context, vulkan_ui_shader* out_shader);
 
-void vulkan_ui_shader_destroy(vulkan_context* context, vulkan_ui_shader* shader);
+void vulkan_ui_shader_destroy(vulkan_context* context, struct vulkan_ui_shader* shader);
 
-void vulkan_ui_shader_use(vulkan_context* context, vulkan_ui_shader* shader);
+void vulkan_ui_shader_use(vulkan_context* context, struct vulkan_ui_shader* shader);
 
 void vulkan_ui_shader_update_global_state(vulkan_context* context, struct vulkan_ui_shader* shader, f32 delta_time);
 

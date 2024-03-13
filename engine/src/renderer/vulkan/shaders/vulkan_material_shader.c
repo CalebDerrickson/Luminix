@@ -68,7 +68,7 @@ b8 vulkan_material_shader_create(vulkan_context* context, vulkan_material_shader
         context->device.logical_device,
         &global_pool_info,
         context->allocator,
-        &out_shader->golbal_descriptor_pool
+        &out_shader->global_descriptor_pool
     ));
 
     // sampler uses
@@ -81,7 +81,7 @@ b8 vulkan_material_shader_create(vulkan_context* context, vulkan_material_shader
     };
     VkDescriptorSetLayoutBinding bindings[VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT];
     lzero_memory(&bindings, sizeof(VkDescriptorSetLayoutBinding) * VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT);
-    for (u32 i = 0; i < VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT; i++) {
+    for (u32 i = 0; i < VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT; ++i) {
         bindings[i].binding = i;
         bindings[i].descriptorCount = 1;
         bindings[i].descriptorType = descriptor_types[i];
@@ -216,7 +216,7 @@ b8 vulkan_material_shader_create(vulkan_context* context, vulkan_material_shader
     };
 
     VkDescriptorSetAllocateInfo alloc_info = {VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO};
-    alloc_info.descriptorPool = out_shader->golbal_descriptor_pool;
+    alloc_info.descriptorPool = out_shader->global_descriptor_pool;
     alloc_info.descriptorSetCount = 3;
     alloc_info.pSetLayouts = global_layouts;
 
@@ -231,7 +231,7 @@ b8 vulkan_material_shader_create(vulkan_context* context, vulkan_material_shader
         context,
         sizeof(vulkan_material_shader_instance_ubo) * VULKAN_MAX_MATERIAL_COUNT,
         VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | device_local_bits,
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
         true,
         &out_shader->object_uniform_buffer
     )) {
@@ -258,13 +258,13 @@ void vulkan_material_shader_destroy(vulkan_context* context, struct vulkan_mater
     vulkan_pipeline_destroy(context, &shader->pipeline);
 
     // Destroy global descriptor pool
-    vkDestroyDescriptorPool(context->device.logical_device, shader->golbal_descriptor_pool, context->allocator);
+    vkDestroyDescriptorPool(context->device.logical_device, shader->global_descriptor_pool, context->allocator);
 
     // Destroy descriptor set layouts
     vkDestroyDescriptorSetLayout(context->device.logical_device, shader->global_descriptor_set_layout, context->allocator);
 
     // Destroy shader modules
-    for (u32 i = 0; i < MATERIAL_SHADER_STAGE_COUNT; i++) {
+    for (u32 i = 0; i < MATERIAL_SHADER_STAGE_COUNT; ++i) {
         vkDestroyShaderModule(context->device.logical_device, shader->stages[i].handle, context->allocator);
         shader->stages[i].handle = 0;
     }
@@ -383,13 +383,13 @@ void vulkan_material_shader_apply_material(vulkan_context* context, struct vulka
     // Descriptor 0 - Uniform buffer
     u32 range = sizeof(vulkan_material_shader_instance_ubo);
     u64 offset = sizeof(vulkan_material_shader_instance_ubo) * material->internal_id;    // also the index into the array
-    vulkan_material_shader_instance_ubo intstance_ubo;
+    vulkan_material_shader_instance_ubo instance_ubo;
 
     // Get diffuse color from a material. 
-    intstance_ubo.diffuse_color = material->diffuse_color;
+    instance_ubo.diffuse_color = material->diffuse_color;
 
     // Load the data into the buffer
-    vulkan_buffer_load_data(context, &shader->object_uniform_buffer, offset, range, 0, &intstance_ubo);
+    vulkan_buffer_load_data(context, &shader->object_uniform_buffer, offset, range, 0, &instance_ubo);
 
     // Only do this if the descriptor has not yet been updated.
     u32* global_ubo_generation = &object_state->descriptor_states[descriptor_index].generations[image_index];
@@ -497,8 +497,8 @@ b8 vulkan_material_shader_acquire_resources(vulkan_context* context, struct vulk
     shader->object_uniform_buffer_index++;
 
     vulkan_material_shader_instance_state* object_state = &shader->instance_states[material->internal_id];
-    for (u32 i = 0; i < VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT; i++) {
-        for (u32 j = 0; j < 3; j++) {
+    for (u32 i = 0; i < VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT; ++i) {
+        for (u32 j = 0; j < 3; ++j) {
             object_state->descriptor_states[i].generations[j] = INVALID_ID;
             object_state->descriptor_states[i].ids[j] = INVALID_ID;
         }
@@ -553,10 +553,10 @@ void vulkan_material_shader_release_resources(vulkan_context* context, struct vu
         return;
     }
 
-    for (u32 i = 0; i < VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT; i++) {
-        for (u32 j = 0; j < 3; j++) {
+    for (u32 i = 0; i < VULKAN_MATERIAL_SHADER_DESCRIPTOR_COUNT; ++i) {
+        for (u32 j = 0; j < 3; ++j) {
             instance_state->descriptor_states[i].generations[j] = INVALID_ID;
-            instance_state->descriptor_states[i].generations[j] = INVALID_ID;
+            instance_state->descriptor_states[i].ids[j] = INVALID_ID;
         }
     }
 
