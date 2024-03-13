@@ -251,7 +251,7 @@ b8 load_material(material_config config, material* m) {
             m->diffuse_map.texture = texture_system_get_default_texture();
         }
     } else {
-        // NOTE: Only set for clarity, as call to kzero_memory above does this already.
+        // NOTE: Only set for clarity, as call to lzero_memory above does this already.
         m->diffuse_map.use = TEXTURE_USE_UNKNOWN;
         m->diffuse_map.texture = 0;
     }

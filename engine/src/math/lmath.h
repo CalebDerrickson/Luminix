@@ -2,37 +2,37 @@
 
 #include "defines.h"
 #include "math_types.h"
+
 #include "core/lmemory.h"
 
-#define L_PI 3.14159265358979323846f
-#define L_2_PI 2.0f * L_PI
-#define L_PI_2 0.5f * L_PI
-#define L_PI_4 0.25f * L_PI 
-#define L_PI_INV 1.0f / L_PI
-#define L_2_PI_INV 1.0f / L_2_PI
-#define L_SQRT_2 1.41421356237309504880f
-#define L_SQRT_3 1.73205080756887729352f
-#define L_SQRT_2_INV 0.70710678118654752440f
-#define L_SQRT_3_INV 0.57735026918962576450f
-#define L_DEG2RAD_FACTOR L_PI / 180.0f
-#define L_RAD2DEG_FACTOR 180.0f / L_PI
+#define K_PI 3.14159265358979323846f
+#define K_PI_2 2.0f * K_PI
+#define K_HALF_PI 0.5f * K_PI
+#define K_QUARTER_PI 0.25f * K_PI
+#define K_ONE_OVER_PI 1.0f / K_PI
+#define K_ONE_OVER_TWO_PI 1.0f / K_PI_2
+#define K_SQRT_TWO 1.41421356237309504880f
+#define K_SQRT_THREE 1.73205080756887729352f
+#define K_SQRT_ONE_OVER_TWO 0.70710678118654752440f
+#define K_SQRT_ONE_OVER_THREE 0.57735026918962576450f
+#define K_DEG2RAD_MULTIPLIER K_PI / 180.0f
+#define K_RAD2DEG_MULTIPLIER 180.0f / K_PI
 
-// The factor to convert seconds to milliseconds
-#define L_SEC_TO_MS_FACTOR 1000.0f
+// The multiplier to convert seconds to milliseconds.
+#define K_SEC_TO_MS_MULTIPLIER 1000.0f
 
-// The factor to convert milliseconds to seconds
-#define L_MS_TO_SEC_FACTOR 0.001f
+// The multiplier to convert milliseconds to seconds.
+#define K_MS_TO_SEC_MULTIPLIER 0.001f
 
-// A huge number to mimic infinity
-#define L_INF 1e30f
+// A huge number that should be larger than any valid number used.
+#define K_INFINITY 1e30f
 
-// Smallest positive number where 1.0 + FLOAT_EPS != 1
-#define L_EPS 1.192092896e-07f
+// Smallest positive number where 1.0 + FLOAT_EPSILON != 0
+#define K_FLOAT_EPSILON 1.192092896e-07f
 
-// --------------------------------------
-// General Math functions
-// --------------------------------------
-
+// ------------------------------------------
+// General math functions
+// ------------------------------------------
 LAPI f32 lsin(f32 x);
 LAPI f32 lcos(f32 x);
 LAPI f32 ltan(f32 x);
@@ -40,207 +40,190 @@ LAPI f32 lacos(f32 x);
 LAPI f32 lsqrt(f32 x);
 LAPI f32 labsf(f32 x);
 
+/**
+ * Indicates if the value is a power of 2. 0 is considered _not_ a power of 2.
+ * @param value The value to be interpreted.
+ * @returns True if a power of 2, otherwise false.
+ */
+LINLINE b8 is_power_of_2(u64 value) {
+    return (value != 0) && ((value & (value - 1)) == 0);
+}
+
 LAPI i32 lrandom();
 LAPI i32 lrandom_in_range(i32 min, i32 max);
 
 LAPI f32 flrandom();
 LAPI f32 flrandom_in_range(f32 min, f32 max);
 
+// ------------------------------------------
+// Vector 2
+// ------------------------------------------
 
 /**
- * @brief Indicates if the value is a power of 2. 0 is _not_ a power of 2.
- * @param value The value to be considered.
- * @returns True if value is a power of 2; False otherwise  
- */
-LINLINE b8 is_power_of_2(u64 value) 
-{
-    return (value != 0) && ((value & (value - 1)) == 0);
-}
-
-// --------------------------------------
-// Vector 2 
-// --------------------------------------
-
-/**
- * @brief Creates and retuns a new 2-element vector
- * using the supplied values.
+ * @brief Creates and returns a new 2-element vector using the supplied values.
  * 
  * @param x The x value.
  * @param y The y value.
- * @returns A new vec2.
+ * @return A new 2-element vector.
  */
-LINLINE vec2 vec2_make(f32 x, f32 y)
-{
-    return (vec2){x, y};
+LINLINE vec2 vec2_create(f32 x, f32 y) {
+    vec2 out_vector;
+    out_vector.x = x;
+    out_vector.y = y;
+    return out_vector;
 }
 
 /**
- * @brief Creates and returns a 2-component vector populated with the given value. 
+ * @brief Creates and returns a 2-component vector with all components set to 0.0f.
  */
-LINLINE vec2 vec2_set(f32 value)
-{
-    return (vec2){value, value};
+LINLINE vec2 vec2_zero() {
+    return (vec2){0.0f, 0.0f};
 }
 
 /**
- * @brief Creates and returns a 2-component vector pointing up. 
+ * @brief Creates and returns a 2-component vector with all components set to 1.0f.
  */
-LINLINE vec2 vec2_up()
-{
+LINLINE vec2 vec2_one() {
+    return (vec2){1.0f, 1.0f};
+}
+
+/**
+ * @brief Creates and returns a 2-component vector pointing up (0, 1).
+ */
+LINLINE vec2 vec2_up() {
     return (vec2){0.0f, 1.0f};
 }
 
 /**
- * @brief Creates and returns a 2-component vector pointing down. 
+ * @brief Creates and returns a 2-component vector pointing down (0, -1).
  */
-LINLINE vec2 vec2_down()
-{
+LINLINE vec2 vec2_down() {
     return (vec2){0.0f, -1.0f};
 }
 
 /**
- * @brief Creates and returns a 2-component vector pointing left. 
+ * @brief Creates and returns a 2-component vector pointing left (-1, 0).
  */
-LINLINE vec2 vec2_left()
-{
+LINLINE vec2 vec2_left() {
     return (vec2){-1.0f, 0.0f};
 }
 
 /**
- * @brief Creates and returns a 2-component vector pointing right. 
+ * @brief Creates and returns a 2-component vector pointing right (1, 0).
  */
-LINLINE vec2 vec2_right()
-{
+LINLINE vec2 vec2_right() {
     return (vec2){1.0f, 0.0f};
 }
 
 /**
- * @brief Adds vector_1 and vector_2 and returns a copy of the result
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The resulting vector.
+ * @brief Adds vector_1 to vector_0 and returns a copy of the result.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @return The resulting vector. 
  */
-LINLINE vec2 vec2_add(vec2 vector_1, vec2 vector_2)
-{
+LINLINE vec2 vec2_add(vec2 vector_0, vec2 vector_1) {
     return (vec2){
-        vector_1.x + vector_2.x,
-        vector_1.y + vector_2.y
-    };
+        vector_0.x + vector_1.x,
+        vector_0.y + vector_1.y};
 }
 
 /**
- * @brief Subtracts vector_2 from vector_1 and returns a copy of the result
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The resulting vector.
+ * @brief Subtracts vector_1 from vector_0 and returns a copy of the result.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @return The resulting vector. 
  */
-LINLINE vec2 vec2_subtract(vec2 vector_1, vec2 vector_2)
-{
+LINLINE vec2 vec2_sub(vec2 vector_0, vec2 vector_1) {
     return (vec2){
-        vector_1.x - vector_2.x,
-        vector_1.y - vector_2.y
-    };
+        vector_0.x - vector_1.x,
+        vector_0.y - vector_1.y};
 }
 
 /**
- * @brief Multiplies vector_1 and vector_2 and returns a copy of the result
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The resulting vector.
+ * @brief Multiplies vector_0 by vector_1 and returns a copy of the result.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @return The resulting vector. 
  */
-LINLINE vec2 vec2_mult(vec2 vector_1, vec2 vector_2)
-{
+LINLINE vec2 vec2_mul(vec2 vector_0, vec2 vector_1) {
     return (vec2){
-        vector_1.x * vector_2.x,
-        vector_1.y * vector_2.y
-    };
+        vector_0.x * vector_1.x,
+        vector_0.y * vector_1.y};
 }
 
 /**
- * @brief Divides vector_2 from vector_1 and returns a copy of the result
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The resulting vector.
+ * @brief Divides vector_0 by vector_1 and returns a copy of the result.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @return The resulting vector. 
  */
-LINLINE vec2 vec2_div(vec2 vector_1, vec2 vector_2)
-{
+LINLINE vec2 vec2_div(vec2 vector_0, vec2 vector_1) {
     return (vec2){
-        vector_1.x / vector_2.x,
-        vector_1.y / vector_2.y
-    };
+        vector_0.x / vector_1.x,
+        vector_0.y / vector_1.y};
 }
 
 /**
- * @brief Dots vector_1 and vector_2 and returns a copy of the result
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The scalar product.
+ * @brief Returns the squared length of the provided vector.
+ * 
+ * @param vector The vector to retrieve the squared length of.
+ * @return The squared length.
  */
-LINLINE f32 vec2_dot(vec2 vector_1, vec2 vector_2)
-{
-    return vector_1.x * vector_2.x + 
-           vector_1.y * vector_2.y;
+LINLINE f32 vec2_length_squared(vec2 vector) {
+    return vector.x * vector.x + vector.y * vector.y;
 }
 
 /**
- * @brief Crosses vector_2 to vector_1 and returns a copy of the result
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The resulting vector.
+ * @brief Returns the length of the provided vector.
+ * 
+ * @param vector The vector to retrieve the length of.
+ * @return The length.
  */
-LINLINE vec3 vec2_cross(vec2 vector_1, vec2 vector_2)
-{
-    f32 term1 = vector_1.x * vector_2.y;
-    f32 term2 = vector_2.x * vector_1.y;
-    return (vec3){0.0f, 0.0f, term1 - term2};
+LINLINE f32 vec2_length(vec2 vector) {
+    return lsqrt(vec2_length_squared(vector));
 }
 
 /**
- * @brief Returns the length of the vector
- * @param vector The given vector
- * @returns Its length squared
- */
-LINLINE f32 vec2_length(vec2 vector)
-{
-    return lsqrt(vec2_dot(vector, vector));
-}
-
-/**
- * @brief Normalizes the provided vector
+ * @brief Normalizes the provided vector in place to a unit vector.
+ * 
  * @param vector A pointer to the vector to be normalized.
- * @return The normalized vector
  */
-LINLINE void vec2_normalize(vec2* vector)
-{
-    const f32 length = vec2_dot(*vector, *vector);
+LINLINE void vec2_normalize(vec2* vector) {
+    const f32 length = vec2_length(*vector);
     vector->x /= length;
     vector->y /= length;
 }
 
 /**
- * @brief Returns a normalized copy of the provided vector
- * @param vector A pointer to the vector to be normalized.
- * @return A normalized copy of the provided vector.
+ * @brief Returns a normalized copy of the supplied vector.
+ * 
+ * @param vector The vector to be normalized.
+ * @return A normalized copy of the supplied vector 
  */
-LINLINE vec2 vec2_normalized(vec2 vector)
-{
+LINLINE vec2 vec2_normalized(vec2 vector) {
     vec2_normalize(&vector);
     return vector;
 }
 
 /**
- * @brief Compares vector_1 and vector_2 and ensures the difference is less than tolerance
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @param tolerance The difference tolerance. Typically L_EPS or similar
- * @return True if within tolerance; false otherwise
+ * @brief Compares all elements of vector_0 and vector_1 and ensures the difference
+ * is less than tolerance.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @param tolerance The difference tolerance. Typically K_FLOAT_EPSILON or similar.
+ * @return True if within tolerance; otherwise false. 
  */
-LINLINE b8 vec2_compare(vec2 vector_1, vec2 vector_2, f32 tolerance)
-{
-    if (labsf(vector_1.x - vector_2.x) > tolerance) {
+LINLINE b8 vec2_compare(vec2 vector_0, vec2 vector_1, f32 tolerance) {
+    if (labsf(vector_0.x - vector_1.x) > tolerance) {
         return false;
     }
-    if (labsf(vector_1.y - vector_2.y) > tolerance) {
+
+    if (labsf(vector_0.y - vector_1.y) > tolerance) {
         return false;
     }
 
@@ -248,39 +231,22 @@ LINLINE b8 vec2_compare(vec2 vector_1, vec2 vector_2, f32 tolerance)
 }
 
 /**
- * @brief Returns the distance between vector_1 and vector_2 
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The distance between them
+ * @brief Returns the distance between vector_0 and vector_1.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @return The distance between vector_0 and vector_1.
  */
-LINLINE f32 vec2_distance(vec2 vector_1, vec2 vector_2)
-{
+LINLINE f32 vec2_distance(vec2 vector_0, vec2 vector_1) {
     vec2 d = (vec2){
-        vector_1.x - vector_2.x,
-        vector_1.y - vector_2.y
-    };
+        vector_0.x - vector_1.x,
+        vector_0.y - vector_1.y};
     return vec2_length(d);
 }
 
-/**
- * @brief Multiplies all elements of vector by a scalar
- * @param vector The vector
- * @param scalar The scalar
- * @returns A copy of the resulting vector.
- */
-LINLINE vec2 vec2_mul_scalar(vec2 vector, f32 scalar)
-{
-    return (vec2){
-        vector.x * scalar,
-        vector.y * scalar
-    };
-}
-
-
-// --------------------------------------
+// ------------------------------------------
 // Vector 3
-// --------------------------------------
-
+// ------------------------------------------
 
 /**
  * @brief Creates and returns a new 3-element vector using the supplied values.
@@ -288,262 +254,283 @@ LINLINE vec2 vec2_mul_scalar(vec2 vector, f32 scalar)
  * @param x The x value.
  * @param y The y value.
  * @param z The z value.
- * 
- * @returns A Vector-3 of the provided values.
+ * @return A new 3-element vector.
  */
-LINLINE vec3 vec3_make(f32 x, f32 y, f32 z)
-{
+LINLINE vec3 vec3_create(f32 x, f32 y, f32 z) {
     return (vec3){x, y, z};
 }
 
 /**
- * @brief Creates and returns a new 3-element vector using the supplied value.
- * @param value The provided value.
+ * @brief Returns a new vec3 containing the x, y and z components of the 
+ * supplied vec4, essentially dropping the w component.
  * 
- * @returns A Vector-3 of the provided value.
+ * @param vector The 4-component vector to extract from.
+ * @return A new vec3 
  */
-LINLINE vec3 vec3_set(f32 value)
-{
-    return (vec3){value, value, value};
+LINLINE vec3 vec3_from_vec4(vec4 vector) {
+    return (vec3){vector.x, vector.y, vector.z};
 }
 
 /**
- * @brief Returns a new vec4 using vector as the x, y, and z components and w for w
+ * @brief Returns a new vec4 using vector as the x, y and z components and w for w.
+ * 
  * @param vector The 3-component vector.
  * @param w The w component.
- * @returns A new vec4
+ * @return A new vec4 
  */
-LINLINE vec4 vec3_to_vec4(vec3 vector, f32 w)
-{
+LINLINE vec4 vec3_to_vec4(vec3 vector, f32 w) {
     return (vec4){vector.x, vector.y, vector.z, w};
 }
 
 /**
- * @brief Creates and returns a 3-component vector pointing up (0, 1, 0). 
+ * @brief Creates and returns a 3-component vector with all components set to 0.0f.
  */
-LINLINE vec3 vec3_up()
-{
+LINLINE vec3 vec3_zero() {
+    return (vec3){0.0f, 0.0f, 0.0f};
+}
+
+/**
+ * @brief Creates and returns a 3-component vector with all components set to 1.0f.
+ */
+LINLINE vec3 vec3_one() {
+    return (vec3){1.0f, 1.0f, 1.0f};
+}
+
+LINLINE vec3 vec3_set(f32 val) {
+    return (vec3){val, val, val};
+}
+
+
+/**
+ * @brief Creates and returns a 3-component vector pointing up (0, 1, 0).
+ */
+LINLINE vec3 vec3_up() {
     return (vec3){0.0f, 1.0f, 0.0f};
 }
 
 /**
- * @brief Creates and returns a 3-component vector pointing down (0, -1, 0). 
+ * @brief Creates and returns a 3-component vector pointing down (0, -1, 0).
  */
-LINLINE vec3 vec3_down()
-{
+LINLINE vec3 vec3_down() {
     return (vec3){0.0f, -1.0f, 0.0f};
 }
 
 /**
- * @brief Creates and returns a 3-component vector pointing left (-1, 0, 0). 
+ * @brief Creates and returns a 3-component vector pointing left (-1, 0, 0).
  */
-LINLINE vec3 vec3_left()
-{
+LINLINE vec3 vec3_left() {
     return (vec3){-1.0f, 0.0f, 0.0f};
 }
 
 /**
- * @brief Creates and returns a 3-component vector pointing right (1, 0, 0). 
+ * @brief Creates and returns a 3-component vector pointing right (1, 0, 0).
  */
-LINLINE vec3 vec3_right()
-{
+LINLINE vec3 vec3_right() {
     return (vec3){1.0f, 0.0f, 0.0f};
 }
 
 /**
- * @brief Creates and returns a 3-component vector pointing forward (0, 0, -1). 
+ * @brief Creates and returns a 3-component vector pointing forward (0, 0, -1).
  */
-LINLINE vec3 vec3_forward()
-{
+LINLINE vec3 vec3_forward() {
     return (vec3){0.0f, 0.0f, -1.0f};
 }
 
 /**
- * @brief Creates and returns a 3-component vector pointing backward (0, 0, 1). 
+ * @brief Creates and returns a 3-component vector pointing backward (0, 0, 1).
  */
-LINLINE vec3 vec3_backward()
-{
-    return (vec3){0.0f, -1.0f, 0.0f};
+LINLINE vec3 vec3_back() {
+    return (vec3){0.0f, 0.0f, 1.0f};
 }
 
 /**
- * @brief Adds vector_1 and vector_2 and returns a copy of the result
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The resulting vector.
+ * @brief Adds vector_1 to vector_0 and returns a copy of the result.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @return The resulting vector. 
  */
-LINLINE vec3 vec3_add(vec3 vector_1, vec3 vector_2)
-{
+LINLINE vec3 vec3_add(vec3 vector_0, vec3 vector_1) {
     return (vec3){
-        vector_1.x + vector_2.x,
-        vector_1.y + vector_2.y,
-        vector_1.z + vector_2.z,
-    };
+        vector_0.x + vector_1.x,
+        vector_0.y + vector_1.y,
+        vector_0.z + vector_1.z};
 }
 
 /**
- * @brief Subtracts vector_2 from vector_1 and returns a copy of the result
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The resulting vector.
+ * @brief Subtracts vector_1 from vector_0 and returns a copy of the result.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @return The resulting vector. 
  */
-LINLINE vec3 vec3_subtract(vec3 vector_1, vec3 vector_2)
-{
+LINLINE vec3 vec3_sub(vec3 vector_0, vec3 vector_1) {
     return (vec3){
-        vector_1.x - vector_2.x,
-        vector_1.y - vector_2.y,
-        vector_1.z - vector_2.z,
-    };
+        vector_0.x - vector_1.x,
+        vector_0.y - vector_1.y,
+        vector_0.z - vector_1.z};
 }
 
 /**
- * @brief Multiplies vector_1 and vector_2 and returns a copy of the result
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The resulting vector.
+ * @brief Multiplies vector_0 by vector_1 and returns a copy of the result.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @return The resulting vector. 
  */
-LINLINE vec3 vec3_mult(vec3 vector_1, vec3 vector_2)
-{
+LINLINE vec3 vec3_mul(vec3 vector_0, vec3 vector_1) {
     return (vec3){
-        vector_1.x * vector_2.x,
-        vector_1.y * vector_2.y,
-        vector_1.z * vector_2.z,
-    };
+        vector_0.x * vector_1.x,
+        vector_0.y * vector_1.y,
+        vector_0.z * vector_1.z};
 }
 
 /**
- * @brief Divides vector_2 from vector_1 and returns a copy of the result
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The resulting vector.
+ * @brief Multiplies all elements of vector_0 by scalar and returns a copy of the result.
+ * 
+ * @param vector_0 The vector to be multiplied.
+ * @param scalar The scalar value.
+ * @return A copy of the resulting vector.
  */
-LINLINE vec3 vec3_div(vec3 vector_1, vec3 vector_2)
-{
+LINLINE vec3 vec3_mul_scalar(vec3 vector_0, f32 scalar) {
     return (vec3){
-        vector_1.x / vector_2.x,
-        vector_1.y / vector_2.y,
-        vector_1.z / vector_2.z,
-    };
+        vector_0.x * scalar,
+        vector_0.y * scalar,
+        vector_0.z * scalar};
 }
 
-
 /**
- * @brief Returns the cross product of vector_1 and vector_2 
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The resulting vector.
+ * @brief Divides vector_0 by vector_1 and returns a copy of the result.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @return The resulting vector. 
  */
-LINLINE vec3 vec3_cross(vec3 vector_1, vec3 vector_2)
-{
-    f32 term1 = vector_1.y * vector_2.z - vector_1.z * vector_2.y;
-    f32 term2 = vector_1.x * vector_2.z - vector_1.z * vector_2.x;
-    f32 term3 = vector_1.x * vector_2.y - vector_1.y * vector_2.x;
-    return (vec3){term1, term2, term3};
+LINLINE vec3 vec3_div(vec3 vector_0, vec3 vector_1) {
+    return (vec3){
+        vector_0.x / vector_1.x,
+        vector_0.y / vector_1.y,
+        vector_0.z / vector_1.z};
 }
 
 /**
- * @brief Returns the dot product of vector_1 and vector_2 
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The resulting scalar.
+ * @brief Returns the squared length of the provided vector.
+ * 
+ * @param vector The vector to retrieve the squared length of.
+ * @return The squared length.
  */
-LINLINE f32 vec3_dot(vec3 vector_1, vec3 vector_2)
-{
-    return vector_1.x * vector_2.x +
-           vector_1.y * vector_2.y +
-           vector_1.z * vector_2.z;
+LINLINE f32 vec3_length_squared(vec3 vector) {
+    return vector.x * vector.x + vector.y * vector.y + vector.z * vector.z;
 }
 
 /**
- * @brief Returns the length of the vector
- * @param vector The given vector
- * @returns Its length squared
+ * @brief Returns the length of the provided vector.
+ * 
+ * @param vector The vector to retrieve the length of.
+ * @return The length.
  */
-LINLINE f32 vec3_length(vec3 vector)
-{
-    return lsqrt(vec3_dot(vector, vector));
+LINLINE f32 vec3_length(vec3 vector) {
+    return lsqrt(vec3_length_squared(vector));
 }
 
 /**
- * @brief Normalizes the provided vector
+ * @brief Normalizes the provided vector in place to a unit vector.
+ * 
  * @param vector A pointer to the vector to be normalized.
- * @return The normalized vector
  */
-LINLINE void vec3_normalize(vec3* vector)
-{
-    const f32 length = vec3_dot(*vector, *vector);
+LINLINE void vec3_normalize(vec3* vector) {
+    const f32 length = vec3_length(*vector);
     vector->x /= length;
     vector->y /= length;
     vector->z /= length;
 }
 
 /**
- * @brief Returns a normalized copy of the provided vector
- * @param vector A pointer to the vector to be normalized.
- * @return A normalized copy of the provided vector.
+ * @brief Returns a normalized copy of the supplied vector.
+ * 
+ * @param vector The vector to be normalized.
+ * @return A normalized copy of the supplied vector 
  */
-LINLINE vec3 vec3_normalized(vec3 vector)
-{
+LINLINE vec3 vec3_normalized(vec3 vector) {
     vec3_normalize(&vector);
     return vector;
 }
 
 /**
- * @brief Compares vector_1 and vector_2 and ensures the difference is less than tolerance
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @param tolerance The difference tolerance. Typically L_EPS or similar
- * @return True if within tolerance; false otherwise
+ * @brief Returns the dot product between the provided vectors. Typically used
+ * to calculate the difference in direction.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @return The dot product. 
  */
-LINLINE b8 vec3_compare(vec3 vector_1, vec3 vector_2, f32 tolerance)
-{
-    if (labsf(vector_1.x - vector_2.x) > tolerance) {
+LINLINE f32 vec3_dot(vec3 vector_0, vec3 vector_1) {
+    f32 p = 0;
+    p += vector_0.x * vector_1.x;
+    p += vector_0.y * vector_1.y;
+    p += vector_0.z * vector_1.z;
+    return p;
+}
+
+/**
+ * @brief Calculates and returns the cross product of the supplied vectors.
+ * The cross product is a new vector which is orthoganal to both provided vectors.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @return The cross product. 
+ */
+LINLINE vec3 vec3_cross(vec3 vector_0, vec3 vector_1) {
+    return (vec3){
+        vector_0.y * vector_1.z - vector_0.z * vector_1.y,
+        vector_0.z * vector_1.x - vector_0.x * vector_1.z,
+        vector_0.x * vector_1.y - vector_0.y * vector_1.x};
+}
+
+/**
+ * @brief Compares all elements of vector_0 and vector_1 and ensures the difference
+ * is less than tolerance.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @param tolerance The difference tolerance. Typically K_FLOAT_EPSILON or similar.
+ * @return True if within tolerance; otherwise false. 
+ */
+LINLINE const b8 vec3_compare(vec3 vector_0, vec3 vector_1, f32 tolerance) {
+    if (labsf(vector_0.x - vector_1.x) > tolerance) {
         return false;
     }
-    if (labsf(vector_1.y - vector_2.y) > tolerance) {
+
+    if (labsf(vector_0.y - vector_1.y) > tolerance) {
         return false;
     }
-    if (labsf(vector_1.z - vector_2.z) > tolerance) {
+
+    if (labsf(vector_0.z - vector_1.z) > tolerance) {
         return false;
     }
+
     return true;
 }
 
 /**
- * @brief Returns the distance between vector_1 and vector_2 
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The distance between them
+ * @brief Returns the distance between vector_0 and vector_1.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @return The distance between vector_0 and vector_1.
  */
-LINLINE f32 vec3_distance(vec3 vector_1, vec3 vector_2)
-{
+LINLINE f32 vec3_distance(vec3 vector_0, vec3 vector_1) {
     vec3 d = (vec3){
-        vector_1.x - vector_2.x,
-        vector_1.y - vector_2.y,
-        vector_1.z - vector_2.z
-    };
+        vector_0.x - vector_1.x,
+        vector_0.y - vector_1.y,
+        vector_0.z - vector_1.z};
     return vec3_length(d);
 }
 
-/**
- * @brief Multiplies all elements of vector by a scalar
- * @param vector The vector
- * @param scalar The scalar
- * @returns A copy of the resulting vector.
- */
-LINLINE vec3 vec3_mul_scalar(vec3 vector, f32 scalar)
-{
-    return (vec3){
-        vector.x * scalar,
-        vector.y * scalar,
-        vector.z * scalar
-    };
-}
 
-// --------------------------------------
+// ------------------------------------------
 // Vector 4
-// --------------------------------------
-
+// ------------------------------------------
 
 /**
  * @brief Creates and returns a new 4-element vector using the supplied values.
@@ -551,15 +538,12 @@ LINLINE vec3 vec3_mul_scalar(vec3 vector, f32 scalar)
  * @param x The x value.
  * @param y The y value.
  * @param z The z value.
- * 
- * @returns A Vector-4 of the provided values.
+ * @param w The w value.
+ * @return A new 4-element vector.
  */
-    
-LINLINE vec4 vec4_make(f32 x, f32 y, f32 z, f32 w)
-{
+LINLINE vec4 vec4_create(f32 x, f32 y, f32 z, f32 w) {
     vec4 out_vector;
-    
-#if defined(LUSE_SIMD)
+#if defined(KUSE_SIMD)
     out_vector.data = _mm_setr_ps(x, y, z, w);
 #else
     out_vector.x = x;
@@ -567,52 +551,29 @@ LINLINE vec4 vec4_make(f32 x, f32 y, f32 z, f32 w)
     out_vector.z = z;
     out_vector.w = w;
 #endif
-
     return out_vector;
 }
 
 /**
- * @brief Creates and returns a new 4-element vector using the supplied value.
- * @param value The provided value.
+ * @brief Returns a new vec3 containing the x, y and z components of the 
+ * supplied vec4, essentially dropping the w component.
  * 
- * @returns A Vector-4 of the provided value.
- */
-LINLINE vec4 vec4_set(f32 value)
-{
-    vec4 out_vector;
-    
-#if defined(LUSE_SIMD)
-    out_vector.data = _mm_setr_ps(value, value, value, value);
-#else
-    out_vector.x = value;
-    out_vector.y = value;
-    out_vector.z = value;
-    out_vector.w = value;
-#endif
-
-    return out_vector;
-}
-
-/**
- * @brief Returns a new vec3 containing the x, y, and z components of the
- * supplied vec4, essentially dropping the w-component.
  * @param vector The 4-component vector to extract from.
- * @return A new vec3
+ * @return A new vec3 
  */
-LINLINE vec3 vec4_to_vec3(vec4 vector)
-{
+LINLINE vec3 vec4_to_vec3(vec4 vector) {
     return (vec3){vector.x, vector.y, vector.z};
 }
 
 /**
- * @brief Returns a new vec4 using vector as the x, y, and z components and w for w
+ * @brief Returns a new vec4 using vector as the x, y and z components and w for w.
+ * 
  * @param vector The 3-component vector.
  * @param w The w component.
- * @returns A new vec4
+ * @return A new vec4 
  */
-LINLINE vec4 vec4_from_vec3(vec3 vector, f32 w)
-{
-#if defined (LUSE_SIMD)
+LINLINE vec4 vec4_from_vec3(vec3 vector, f32 w) {
+#if defined(KUSE_SIMD)
     vec4 out_vector;
     out_vector.data = _mm_setr_ps(x, y, z, w);
     return out_vector;
@@ -622,138 +583,150 @@ LINLINE vec4 vec4_from_vec3(vec3 vector, f32 w)
 }
 
 /**
- * @brief Adds vector_1 and vector_2 and returns a copy of the result
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The resulting vector.
+ * @brief Creates and returns a 3-component vector with all components set to 0.0f.
  */
-LINLINE vec4 vec4_add(vec4 vector_1, vec4 vector_2)
-{
-    vec4 res;
-    for (u32 i = 0; i < 4; ++i){
-        res.elements[i] = vector_1.elements[i] + vector_2.elements[i];
+LINLINE vec4 vec4_zero() {
+    return (vec4){0.0f, 0.0f, 0.0f, 0.0f};
+}
+
+/**
+ * @brief Creates and returns a 3-component vector with all components set to 1.0f.
+ */
+LINLINE vec4 vec4_one() {
+    return (vec4){1.0f, 1.0f, 1.0f, 1.0f};
+}
+
+LINLINE vec4 vec4_set(f32 val) {
+    return (vec4){val, val, val, val};
+}
+
+/**
+ * @brief Adds vector_1 to vector_0 and returns a copy of the result.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @return The resulting vector. 
+ */
+LINLINE vec4 vec4_add(vec4 vector_0, vec4 vector_1) {
+    vec4 result;
+     for (u64 i = 0; i < 4; ++i) {
+        result.elements[i] = vector_0.elements[i] + vector_1.elements[i];
     }
-    return res;
+    return result;
 }
 
 /**
- * @brief Subtracts vector_2 from vector_1 and returns a copy of the result
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The resulting vector.
+ * @brief Subtracts vector_1 from vector_0 and returns a copy of the result.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @return The resulting vector. 
  */
-LINLINE vec4 vec4_subtract(vec4 vector_1, vec4 vector_2)
-{
-    vec4 res;
-    for (u32 i = 0; i < 4; ++i){
-        res.elements[i] = vector_1.elements[i] - vector_2.elements[i];
+LINLINE vec4 vec4_sub(vec4 vector_0, vec4 vector_1) {
+    vec4 result;
+    for (u64 i = 0; i < 4; ++i) {
+        result.elements[i] = vector_0.elements[i] - vector_1.elements[i];
     }
-    return res;
+    return result;
 }
 
 /**
- * @brief Multiplies vector_1 and vector_2 and returns a copy of the result
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The resulting vector.
+ * @brief Multiplies vector_0 by vector_1 and returns a copy of the result.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @return The resulting vector. 
  */
-LINLINE vec4 vec4_mult(vec4 vector_1, vec4 vector_2)
-{
-    vec4 res;
-    for (u32 i = 0; i < 4; ++i){
-        res.elements[i] = vector_1.elements[i] * vector_2.elements[i];
+LINLINE vec4 vec4_mul(vec4 vector_0, vec4 vector_1) {
+    vec4 result;
+    for (u64 i = 0; i < 4; ++i) {
+        result.elements[i] = vector_0.elements[i] * vector_1.elements[i];
     }
-    return res;
+    return result;
 }
 
 /**
- * @brief Divides vector_2 from vector_1 and returns a copy of the result
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The resulting vector.
+ * @brief Divides vector_0 by vector_1 and returns a copy of the result.
+ * 
+ * @param vector_0 The first vector.
+ * @param vector_1 The second vector.
+ * @return The resulting vector. 
  */
-LINLINE vec4 vec4_div(vec4 vector_1, vec4 vector_2)
-{
-    vec4 res;
-    for (u32 i = 0; i < 4; ++i){
-        res.elements[i] = vector_1.elements[i] / vector_2.elements[i];
+LINLINE vec4 vec4_div(vec4 vector_0, vec4 vector_1) {
+    vec4 result;
+    for (u64 i = 0; i < 4; ++i) {
+        result.elements[i] = vector_0.elements[i] / vector_1.elements[i];
     }
-    return res;
+    return result;
 }
 
 /**
- * @brief Returns the dot product of vector_1 and vector_2 
- * @param vector_1 The first vector.
- * @param vector_2 The second vector. 
- * @return The resulting scalar.
+ * @brief Returns the squared length of the provided vector.
+ * 
+ * @param vector The vector to retrieve the squared length of.
+ * @return The squared length.
  */
-LINLINE f32 vec4_dot(vec4 vector_1, vec4 vector_2)
-{
-    f32 res = 0;
-    for (u32 i = 0; i < 4; ++i){
-        res += vector_1.elements[i] * vector_2.elements[i];
-    }
-    return res;
+LINLINE f32 vec4_length_squared(vec4 vector) {
+    return vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w;
 }
 
 /**
- * @brief Returns the length of the vector
- * @param vector The given vector
- * @returns Its length squared
+ * @brief Returns the length of the provided vector.
+ * 
+ * @param vector The vector to retrieve the length of.
+ * @return The length.
  */
-LINLINE f32 vec4_length(vec4 vector)
-{
-    return lsqrt(vec4_dot(vector, vector));
+LINLINE f32 vec4_length(vec4 vector) {
+    return lsqrt(vec4_length_squared(vector));
 }
 
 /**
- * @brief Normalizes the provided vector
+ * @brief Normalizes the provided vector in place to a unit vector.
+ * 
  * @param vector A pointer to the vector to be normalized.
- * @return The normalized vector
  */
-LINLINE void vec4_normalize(vec4* vector)
-{
-    const f32 length = vec4_dot(*vector, *vector);
-    for (u32 i = 0; i < 4; ++i){
-        vector->elements[i] /= length;
-    }
+LINLINE void vec4_normalize(vec4* vector) {
+    const f32 length = vec4_length(*vector);
+    vector->x /= length;
+    vector->y /= length;
+    vector->z /= length;
+    vector->w /= length;
 }
 
 /**
- * @brief Returns a normalized copy of the provided vector
- * @param vector A pointer to the vector to be normalized.
- * @return A normalized copy of the provided vector.
+ * @brief Returns a normalized copy of the supplied vector.
+ * 
+ * @param vector The vector to be normalized.
+ * @return A normalized copy of the supplied vector 
  */
-LINLINE vec4 vec4_normalized(vec4 vector)
-{
+LINLINE vec4 vec4_normalized(vec4 vector) {
     vec4_normalize(&vector);
     return vector;
 }
 
-LINLINE f32 vec4_dot_32(
+LINLINE f32 vec4_dot_f32(
     f32 a0, f32 a1, f32 a2, f32 a3,
-    f32 b0, f32 b1, f32 b2, f32 b3
-)
-{
-    f32 p = 0;
-    p += a0 * b0;
-    p += a1 * b1;
-    p += a2 * b2; 
-    p += a3 * b3;
-
+    f32 b0, f32 b1, f32 b2, f32 b3) {
+    f32 p;
+    p =
+        a0 * b0 +
+        a1 * b1 +
+        a2 * b2 +
+        a3 * b3;
     return p;
 }
 
 /**
- * @brief Creates and returns an identity matrix
+ * @brief Creates and returns an identity matrix:
  * 
  * {
- *  {1, 0, 0, 0},
- *  {0, 1, 0, 0},
- *  {0, 0, 1, 0},
- *  {0, 0, 0, 1}
+ *   {1, 0, 0, 0},
+ *   {0, 1, 0, 0},
+ *   {0, 0, 1, 0},
+ *   {0, 0, 0, 1}
  * }
- * @return A new identity matrix
+ * 
+ * @return A new identity matrix 
  */
 LINLINE mat4 mat4_identity() {
     mat4 out_matrix;
@@ -766,18 +739,17 @@ LINLINE mat4 mat4_identity() {
 }
 
 /**
- * @brief Returns the result of multiplying matrix1 and matrix2.
+ * @brief Returns the result of multiplying matrix_0 and matrix_1.
  * 
- * @param matrix1 The first matrix to be multiplied.
- * @param matrix2 The second matrix to be multiplied.
+ * @param matrix_0 The first matrix to be multiplied.
+ * @param matrix_1 The second matrix to be multiplied.
  * @return The result of the matrix multiplication.
  */
-LINLINE mat4 mat4_mul(mat4 matrix1, mat4 matrix2)
-{
+LINLINE mat4 mat4_mul(mat4 matrix_0, mat4 matrix_1) {
     mat4 out_matrix = mat4_identity();
 
-    const f32* m1_ptr = matrix1.data;
-    const f32* m2_ptr = matrix2.data;
+    const f32* m1_ptr = matrix_0.data;
+    const f32* m2_ptr = matrix_1.data;
     f32* dst_ptr = out_matrix.data;
 
     for (i32 i = 0; i < 4; ++i) {
@@ -789,29 +761,25 @@ LINLINE mat4 mat4_mul(mat4 matrix1, mat4 matrix2)
                 m1_ptr[3] * m2_ptr[12 + j];
             dst_ptr++;
         }
-        m1_ptr +=4;
+        m1_ptr += 4;
     }
     return out_matrix;
 }
 
 /**
- * @brief Creates and returns an orthographics matrix. Typically used to
- * render flat or 2D screens
+ * @brief Creates and returns an orthographic projection matrix. Typically used to
+ * render flat or 2D scenes.
  * 
  * @param left The left side of the view frustum.
- * @param right The right side of the view frustrum.
- * @param bottom The bottom side of the view frustrum.
- * @param top The top side of the view frustrum.
- * @param near_clip The near clippinf plane distance.
+ * @param right The right side of the view frustum.
+ * @param bottom The bottom side of the view frustum.
+ * @param top The top side of the view frustum.
+ * @param near_clip The near clipping plane distance.
  * @param far_clip The far clipping plane distance.
- * @return A new orthographics projection matrix.
+ * @return A new orthographic projection matrix. 
  */
-LINLINE mat4 mat4_orthographic(
-    f32 left, f32 right, f32 bottom, f32 top, 
-    f32 near_clip, f32 far_clip
-)
-{
-    mat4 out_matrix;
+LINLINE mat4 mat4_orthographic(f32 left, f32 right, f32 bottom, f32 top, f32 near_clip, f32 far_clip) {
+    mat4 out_matrix = mat4_identity();
 
     f32 lr = 1.0f / (left - right);
     f32 bt = 1.0f / (bottom - top);
@@ -819,8 +787,8 @@ LINLINE mat4 mat4_orthographic(
 
     out_matrix.data[0] = -2.0f * lr;
     out_matrix.data[5] = -2.0f * bt;
-    out_matrix.data[10] = -2.0f * nf;
-    
+    out_matrix.data[10] = 2.0f * nf;
+
     out_matrix.data[12] = (left + right) * lr;
     out_matrix.data[13] = (top + bottom) * bt;
     out_matrix.data[14] = (far_clip + near_clip) * nf;
@@ -828,17 +796,15 @@ LINLINE mat4 mat4_orthographic(
 }
 
 /**
- * @brief Creates and returns a perspective matrix. Typically used to render 3d screens.
+ * @brief Creates and returns a perspective matrix. Typically used to render 3d scenes.
  * 
- * @param fov_radians The field of view in radians
+ * @param fov_radians The field of view in radians.
  * @param aspect_ratio The aspect ratio.
  * @param near_clip The near clipping plane distance.
  * @param far_clip The far clipping plane distance.
- * 
- * @return A new perspective matrix.
+ * @return A new perspective matrix. 
  */
-LINLINE mat4 mat4_perspective(f32 fov_radians, f32 aspect_ratio, f32 near_clip, f32 far_clip)
-{
+LINLINE mat4 mat4_perspective(f32 fov_radians, f32 aspect_ratio, f32 near_clip, f32 far_clip) {
     f32 half_tan_fov = ltan(fov_radians * 0.5f);
     mat4 out_matrix;
     lzero_memory(out_matrix.data, sizeof(f32) * 16);
@@ -887,6 +853,33 @@ LINLINE mat4 mat4_look_at(vec3 position, vec3 target, vec3 up) {
     out_matrix.data[14] = vec3_dot(z_axis, position);
     out_matrix.data[15] = 1.0f;
 
+    return out_matrix;
+}
+
+/**
+ * @brief Returns a transposed copy of the provided matrix (rows->colums)
+ * 
+ * @param matrix The matrix to be transposed.
+ * @return A transposed copy of of the provided matrix.
+ */
+LINLINE mat4 mat4_transposed(mat4 matrix) {
+    mat4 out_matrix = mat4_identity();
+    out_matrix.data[0] = matrix.data[0];
+    out_matrix.data[1] = matrix.data[4];
+    out_matrix.data[2] = matrix.data[8];
+    out_matrix.data[3] = matrix.data[12];
+    out_matrix.data[4] = matrix.data[1];
+    out_matrix.data[5] = matrix.data[5];
+    out_matrix.data[6] = matrix.data[9];
+    out_matrix.data[7] = matrix.data[13];
+    out_matrix.data[8] = matrix.data[2];
+    out_matrix.data[9] = matrix.data[6];
+    out_matrix.data[10] = matrix.data[10];
+    out_matrix.data[11] = matrix.data[14];
+    out_matrix.data[12] = matrix.data[3];
+    out_matrix.data[13] = matrix.data[7];
+    out_matrix.data[14] = matrix.data[11];
+    out_matrix.data[15] = matrix.data[15];
     return out_matrix;
 }
 
@@ -951,33 +944,6 @@ LINLINE mat4 mat4_inverse(mat4 matrix) {
     o[14] = d * ((t18 * m[6] + t23 * m[14] + t15 * m[2]) - (t22 * m[14] + t14 * m[2] + t19 * m[6]));
     o[15] = d * ((t22 * m[10] + t16 * m[2] + t21 * m[6]) - (t20 * m[6] + t23 * m[10] + t17 * m[2]));
 
-    return out_matrix;
-}
-
-/**
- * @brief Returns a transposed copy of the provided matrix (rows->colums)
- * 
- * @param matrix The matrix to be transposed.
- * @return A transposed copy of of the provided matrix.
- */
-LINLINE mat4 mat4_transposed(mat4 matrix) {
-    mat4 out_matrix = mat4_identity();
-    out_matrix.data[0] = matrix.data[0];
-    out_matrix.data[1] = matrix.data[4];
-    out_matrix.data[2] = matrix.data[8];
-    out_matrix.data[3] = matrix.data[12];
-    out_matrix.data[4] = matrix.data[1];
-    out_matrix.data[5] = matrix.data[5];
-    out_matrix.data[6] = matrix.data[9];
-    out_matrix.data[7] = matrix.data[13];
-    out_matrix.data[8] = matrix.data[2];
-    out_matrix.data[9] = matrix.data[6];
-    out_matrix.data[10] = matrix.data[10];
-    out_matrix.data[11] = matrix.data[14];
-    out_matrix.data[12] = matrix.data[3];
-    out_matrix.data[13] = matrix.data[7];
-    out_matrix.data[14] = matrix.data[11];
-    out_matrix.data[15] = matrix.data[15];
     return out_matrix;
 }
 
@@ -1113,12 +1079,12 @@ LINLINE vec3 mat4_down(mat4 matrix) {
  * @return A 3-component directional vector.
  */
 LINLINE vec3 mat4_left(mat4 matrix) {
-    vec3 right;
-    right.x = -matrix.data[0];
-    right.y = -matrix.data[4];
-    right.z = -matrix.data[8];
-    vec3_normalize(&right);
-    return right;
+    vec3 left;
+    left.x = -matrix.data[0];
+    left.y = -matrix.data[4];
+    left.z = -matrix.data[8];
+    vec3_normalize(&left);
+    return left;
 }
 
 /**
@@ -1128,12 +1094,12 @@ LINLINE vec3 mat4_left(mat4 matrix) {
  * @return A 3-component directional vector.
  */
 LINLINE vec3 mat4_right(mat4 matrix) {
-    vec3 left;
-    left.x = matrix.data[0];
-    left.y = matrix.data[4];
-    left.z = matrix.data[8];
-    vec3_normalize(&left);
-    return left;
+    vec3 right;
+    right.x = matrix.data[0];
+    right.y = matrix.data[4];
+    right.z = matrix.data[8];
+    vec3_normalize(&right);
+    return right;
 }
 
 // ------------------------------------------
@@ -1326,7 +1292,7 @@ LINLINE quat quat_slerp(quat q_0, quat q_1, f32 percentage) {
  * @return The amount in radians.
  */
 LINLINE f32 deg_to_rad(f32 degrees) {
-    return degrees * L_DEG2RAD_FACTOR;
+    return degrees * K_DEG2RAD_MULTIPLIER;
 }
 
 /**
@@ -1336,5 +1302,5 @@ LINLINE f32 deg_to_rad(f32 degrees) {
  * @return The amount in degrees.
  */
 LINLINE f32 rad_to_deg(f32 radians) {
-    return radians * L_RAD2DEG_FACTOR;
+    return radians * K_RAD2DEG_MULTIPLIER;
 }

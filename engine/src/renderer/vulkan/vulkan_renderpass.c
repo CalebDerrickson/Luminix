@@ -56,7 +56,7 @@ void vulkan_renderpass_create(
     color_attachment_reference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
     // Color stencil data
-    subpass.colorAttachmentCount = 1;
+    subpass.colourAttachmentCount = 1;
     subpass.pColorAttachments = &color_attachment_reference;
 
     // Depth attachment, if there is one
