@@ -94,6 +94,7 @@
         "iterator": "c",
         "optional": "c",
         "system_error": "c",
-        "xlocmon": "c"
+        "xlocmon": "c",
+        "freelist_tests.h": "c"
     }
 }

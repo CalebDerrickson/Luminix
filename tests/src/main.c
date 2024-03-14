@@ -38,6 +38,7 @@
 
 #include "memory/linear_allocator_tests.h"
 #include "containers/hashtable_tests.h"
+#include "containers/freelist_tests.h"
 
 #include <core/logger.h>
 
@@ -49,9 +50,9 @@ int main()
     // TODO: Add test registration here
     linear_allocator_register_tests();
     hashtable_register_tests();
+    freelist_register_tests();
 
     LDEBUG("Starting tests...");
-
     // Execute tests
     test_manager_run_tests();
 
