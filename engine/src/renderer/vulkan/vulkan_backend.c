@@ -92,6 +92,7 @@ b8 vulkan_renderer_backend_initialize(renderer_backend* backend, const char* app
 
     // Obtain a list of required extensions
     const char** required_extensions = darray_create(const char*);
+
     darray_push(required_extensions, &VK_KHR_SURFACE_EXTENSION_NAME);  // Generic surface extension
     platform_get_required_extension_names(&required_extensions);       // Platform-specific extension(s)
 #if defined(_DEBUG)
@@ -119,7 +120,7 @@ b8 vulkan_renderer_backend_initialize(renderer_backend* backend, const char* app
     // The list of validation layers required.
     required_validation_layer_names = darray_create(const char*);
     darray_push(required_validation_layer_names, &"VK_LAYER_KHRONOS_validation");
-    // NOTE: enable this when needed for debugging.
+    // NOTE: Uncomment for debugging purposes. Will dump every Vulkan call to console
     // darray_push(required_validation_layer_names, &"VK_LAYER_LUNARG_api_dump");
     required_validation_layer_count = darray_length(required_validation_layer_names);
 
