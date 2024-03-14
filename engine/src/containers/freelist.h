@@ -72,7 +72,7 @@ LAPI b8 freelist_allocate_block_best(freelist* list, u32 size, u32* out_offset);
  * @param offset The offset to free at.
  * @return b8 True if successful; otherwise false. False should be treated as an error.
  */
-LAPI b8 freelist_free_block(freelist* list, u32 size, u32* offset);
+LAPI b8 freelist_free_block(freelist* list, u32 size, u32 offset);
 
 /**
  * @brief Clears the freelist

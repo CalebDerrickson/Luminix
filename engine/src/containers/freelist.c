@@ -134,7 +134,7 @@ b8 freelist_allocate_block_best(freelist* list, u32 size, u32* out_offset)
     return freelist_allocate_block(list, size, out_offset);
 }
 
-b8 freelist_free_block(freelist* list, u32 size, u32* offset)
+b8 freelist_free_block(freelist* list, u32 size, u32 offset)
 {
     if(!(list || list->memory || size)) {
         return false;
