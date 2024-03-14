@@ -61,7 +61,7 @@ void freelist_create(u32 total_size, u64* memory_requirement, void* memory, free
 
     // Invalidate the offset an dsize for all but the first node. The invalid
     // value will be checked for thwn seeking a new node from teh list. 
-    for(u32 i = 1; i < state->max_entries; i++) {
+    for (u32 i = 1; i < state->max_entries; i++) {
         state->nodes[i].offset = INVALID_ID;
         state->nodes[i].size = INVALID_ID;
     }
@@ -81,7 +81,7 @@ void freelist_destroy(freelist* list)
 
 b8 freelist_allocate_block(freelist* list, u32 size, u32* out_offset)
 {
-    if(!(list || out_offset || list->memory)) {
+    if (!(list || out_offset || list->memory)) {
         return false;
     }
 
@@ -89,7 +89,7 @@ b8 freelist_allocate_block(freelist* list, u32 size, u32* out_offset)
     freelist_node* node = state->head;
     freelist_node* prev = 0;
 
-    while(node) 
+    while (node) 
     {
         if (node->size == size) {
             // Exact match
@@ -136,7 +136,7 @@ b8 freelist_allocate_block_best(freelist* list, u32 size, u32* out_offset)
 
 b8 freelist_free_block(freelist* list, u32 size, u32 offset)
 {
-    if(!(list || list->memory || size)) {
+    if (!(list || list->memory || size)) {
         return false;
     }
 
@@ -144,7 +144,7 @@ b8 freelist_free_block(freelist* list, u32 size, u32 offset)
     freelist_node* node = state->head;
     freelist_node* prev = 0;
 
-    while(node) 
+    while (node) 
     {
         if (node->offset == offset) {
             // Can just append to this node.
@@ -231,7 +231,7 @@ u64 freelist_free_space(freelist* list)
     u64 running_total = 0;
     internal_state* state = list->memory;
     freelist_node* node = state->head;
-    while(node) {
+    while (node) {
         running_total += node->size;
         node = node->next;
     }
