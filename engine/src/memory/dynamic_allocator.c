@@ -49,6 +49,7 @@ b8 dynamic_allocator_create(u64 total_size, u64* memory_requirement, void* memor
 
     // The cold cast is fine, as this is what we're actually pointing to.
     dynamic_allocator_state* state = out_allocator->memory;
+    state->total_size = total_size;
     state->freelist_block = (void*) (out_allocator->memory + sizeof(dynamic_allocator_state));
     state->memory_block = (void*)(state->freelist_block + freelist_requirement);
 
