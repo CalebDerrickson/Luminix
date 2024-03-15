@@ -26,10 +26,26 @@ typedef enum memory_tag{
     MEMORY_TAG_MAX_TAGS
 } memory_tag;
 
+/** @brief The configuration for the memory system.*/
+typedef struct memory_system_configuration {
+    /** @brief The total memory size in bytes used by the internal allocator for this system. */
+    u64 total_alloc_size;
+} memory_system_configuration;
 
-LAPI void memory_system_initialize(u64* memory_requirement, void* state);
-LAPI void memory_system_shutdown(void* state);
 
+/**
+ * @brief Initializes the memory system.
+ * 
+ * @param config The configuration for this system.
+ * @return True if successful; false otherwise
+ */
+LAPI b8 memory_system_initialize(memory_system_configuration config);
+
+/**
+ * @brief Shuts down the memory system
+ * 
+ */
+LAPI void memory_system_shutdown();
 
 // These functions are designed to be called 
 // out of the engine, so LAPI is intended here.

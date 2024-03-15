@@ -84,7 +84,7 @@ b8 vulkan_renderer_backend_initialize(renderer_backend* backend, const char* app
     app_info.apiVersion = VK_API_VERSION_1_2;
     app_info.pApplicationName = application_name;
     app_info.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-    app_info.pEngineName = "Kohi Engine";
+    app_info.pEngineName = "Luminix Engine";
     app_info.engineVersion = VK_MAKE_VERSION(1, 0, 0);
 
     VkInstanceCreateInfo create_info = {VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO};
@@ -446,7 +446,7 @@ b8 vulkan_renderer_backend_begin_frame(renderer_backend* backend, f32 delta_time
 }
 
 void vulkan_renderer_update_global_world_state(mat4 projection, mat4 view, vec3 view_position, vec4 ambient_color, i32 mode) {
-    vulkan_command_buffer* command_buffer = &context.graphics_command_buffers[context.image_index];
+    // vulkan_command_buffer* command_buffer = &context.graphics_command_buffers[context.image_index];
 
     vulkan_material_shader_use(&context, &context.material_shader);
 
@@ -459,7 +459,7 @@ void vulkan_renderer_update_global_world_state(mat4 projection, mat4 view, vec3 
 }
 
 void vulkan_renderer_update_global_ui_state(mat4 projection, mat4 view, i32 mode) {
-    vulkan_command_buffer* command_buffer = &context.graphics_command_buffers[context.image_index];
+    // vulkan_command_buffer* command_buffer = &context.graphics_command_buffers[context.image_index];
 
     vulkan_ui_shader_use(&context, &context.ui_shader);
 

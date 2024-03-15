@@ -5,15 +5,15 @@
 
 
 typedef struct freelist_node {
-    u32 offset;
-    u32 size;
+    u64 offset;
+    u64 size;
     struct freelist_node* next;
 } freelist_node;
 
 // Internal state of the entire freelist. 
 typedef struct internal_state {
-    u32 total_size;
-    u32 max_entries;
+    u64 total_size;
+    u64 max_entries;
     freelist_node* head;
     freelist_node* nodes;
 } internal_state;
@@ -26,13 +26,12 @@ void return_node(freelist* list, freelist_node* node);
 // Function definitions
 
 // Public functions
-void freelist_create(u32 total_size, u64* memory_requirement, void* memory, freelist* out_list)
+void freelist_create(u64 total_size, u64* memory_requirement, void* memory, freelist* out_list)
 {
     // Enough space to hold state, plus the array for all the nodes.
     // NOTE: Might have a remainder; okay if so.
-    u32 max_entries = (total_size / sizeof(void*));
-
-    *memory_requirement = sizeof(internal_state) + (sizeof(freelist_node)* max_entries);
+    u64 max_entries = (total_size / (sizeof(void*) * sizeof(freelist_node))); 
+    *memory_requirement = sizeof(internal_state) + (sizeof(freelist_node) * max_entries);
     if (!memory) {
         // First pass.
         return;
@@ -61,7 +60,7 @@ void freelist_create(u32 total_size, u64* memory_requirement, void* memory, free
 
     // Invalidate the offset an dsize for all but the first node. The invalid
     // value will be checked for thwn seeking a new node from teh list. 
-    for (u32 i = 1; i < state->max_entries; i++) {
+    for (u64 i = 1; i < state->max_entries; i++) {
         state->nodes[i].offset = INVALID_ID;
         state->nodes[i].size = INVALID_ID;
     }
@@ -79,7 +78,7 @@ void freelist_destroy(freelist* list)
     list->memory = 0;
 }
 
-b8 freelist_allocate_block(freelist* list, u32 size, u32* out_offset)
+b8 freelist_allocate_block(freelist* list, u64 size, u64* out_offset)
 {
     if (!(list || out_offset || list->memory)) {
         return false;
@@ -125,7 +124,7 @@ b8 freelist_allocate_block(freelist* list, u32 size, u32* out_offset)
     return false;
 }
 
-b8 freelist_allocate_block_best(freelist* list, u32 size, u32* out_offset) 
+b8 freelist_allocate_block_best(freelist* list, u64 size, u64* out_offset) 
 {
     // TODO: Implement.
     // Just pass it to first fit (for now).
@@ -134,7 +133,7 @@ b8 freelist_allocate_block_best(freelist* list, u32 size, u32* out_offset)
     return freelist_allocate_block(list, size, out_offset);
 }
 
-b8 freelist_free_block(freelist* list, u32 size, u32 offset)
+b8 freelist_free_block(freelist* list, u64 size, u64 offset)
 {
     if (!(list || list->memory || size)) {
         return false;
@@ -143,6 +142,17 @@ b8 freelist_free_block(freelist* list, u32 size, u32 offset)
     internal_state* state = list->memory;
     freelist_node* node = state->head;
     freelist_node* prev = 0;
+
+  if (!node) {
+        // Check for the case where the entire thing is allocated.
+        // In this case a new node is needed at the head.
+        freelist_node* new_node = get_node(list);
+        new_node->offset = offset;
+        new_node->size = size;
+        new_node->next = 0;
+        state->head = new_node;
+        return true;
+    }
 
     while (node) 
     {
@@ -211,7 +221,7 @@ void freelist_clear(freelist* list)
     internal_state* state = list->memory;
     // Invalidate the offset and size for all BUT the first node. The invalid
     // value will be checked for when seeing a new node from the list.
-    for (u32 i = 1; i < state->max_entries; i++) {
+    for (u64 i = 1; i < state->max_entries; i++) {
         state->nodes[i].offset = INVALID_ID;
         state->nodes[i].size = INVALID_ID;
     }
@@ -243,7 +253,7 @@ u64 freelist_free_space(freelist* list)
 freelist_node* get_node(freelist* list)
 {
     internal_state* state = list->memory;
-    for (u32 i = 1; i < state->max_entries; i++) {
+    for (u64 i = 1; i < state->max_entries; i++) {
         if (state->nodes[i].offset == INVALID_ID) {
             return &state->nodes[i];
         }
