@@ -75,7 +75,7 @@ b8 memory_system_initialize(memory_system_configuration config)
     // Allocator block is after the system block
     state_ptr->allocator_block = ((void*)block + state_memory_requirement); 
 
-    if(!dynamic_allocator_create(
+    if (!dynamic_allocator_create(
         config.total_alloc_size,
         &state_ptr->allocator_memory_requirement,
         state_ptr->allocator_block,
@@ -91,7 +91,7 @@ b8 memory_system_initialize(memory_system_configuration config)
 
 void memory_system_shutdown()
 {
-    if(!state_ptr) {
+    if (!state_ptr) {
         state_ptr = 0;
         return;
     } 
