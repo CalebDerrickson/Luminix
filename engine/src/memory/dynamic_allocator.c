@@ -22,7 +22,7 @@ b8 dynamic_allocator_create(u64 total_size, u64* memory_requirement, void* memor
         return false;
     }
 
-    if(!memory_requirement) {
+    if (!memory_requirement) {
         LERROR("dynamic_allocator_create requires memory_requirement to exist. Create failed.");
         return false;
     }
@@ -77,13 +77,13 @@ b8 dynamic_allocator_destroy(dynamic_allocator* allocator)
 
 void* dynamic_allocator_allocate(dynamic_allocator* allocator, u64 size)
 {
-    if(!allocator || !size) {
+    if (!allocator || !size) {
         return 0;
     }
 
     dynamic_allocator_state* state = allocator->memory;
     u64 offset = 0;
-    if(!freelist_allocate_block(&state->list, size, &offset)) {
+    if (!freelist_allocate_block(&state->list, size, &offset)) {
         LERROR("dynamic_allocator_allocate no blocks of memory large enough to allocate!");
         u64 available = freelist_free_space(&state->list);
         LERROR("Requested size: %llu B, total space available: %llu B", size, available);
@@ -98,7 +98,7 @@ void* dynamic_allocator_allocate(dynamic_allocator* allocator, u64 size)
 
 b8 dynamic_allocator_free(dynamic_allocator* allocator, void* block, u64 size)
 {
-    if(!allocator || !block || !size) {
+    if (!allocator || !block || !size) {
         LERROR("dynamic_allocator_free requires both a valid allocator (0x%p) and a block (0x%p) to be freed, as well as a nonzero size.", 
         allocator, block);
         return false;
@@ -113,7 +113,7 @@ b8 dynamic_allocator_free(dynamic_allocator* allocator, void* block, u64 size)
     }
 
     u64 offset = (block - state->memory_block);
-    if(!freelist_free_block(&state->list, size, offset)) {
+    if (!freelist_free_block(&state->list, size, offset)) {
         LERROR("dynamic_allocator_free failed");
         return false;
     }
