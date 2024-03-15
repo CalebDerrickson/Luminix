@@ -25,7 +25,10 @@ typedef struct game {
     // Function pointer to handle resizes, if applicable.
     void (*on_resize)(struct game* game_inst, u32 width, u32 height);
 
-    // Game specific game state. Created and managed by the game.
+    /** @brief The required size for the game state.*/
+    u64 state_memory_requirement;
+
+    /** @brief Game specific game state. Created and managed by the game.*/
     void* state;
 
     // Application state. 

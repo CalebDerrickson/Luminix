@@ -49,9 +49,9 @@ int main()
     test_manager_init();
 
     // TODO: Add test registration here
-    //linear_allocator_register_tests();
-    //hashtable_register_tests();
-    //freelist_register_tests();
+    linear_allocator_register_tests();
+    hashtable_register_tests();
+    freelist_register_tests();
     dynamic_allocator_register_tests();
 
     LDEBUG("Starting tests...");
