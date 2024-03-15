@@ -30,7 +30,7 @@ typedef struct freelist {
  * @param memory 0; or a pre-allocated block of memory for the free list to use (the intenal state!).
  * @param out_list  A pointer to hold the created free list.
  */
-LAPI void freelist_create(u32 total_size, u64* memory_requirement, void* memory, freelist* out_list);
+LAPI void freelist_create(u64 total_size, u64* memory_requirement, void* memory, freelist* out_list);
 
 
 /**
@@ -48,7 +48,7 @@ LAPI void freelist_destroy(freelist* list);
  * @param out_offset A pointer to hold the offset to the allocated memory.
  * @return b8 True if a block of memory was found and allocated; otherwise false
  */
-LAPI b8 freelist_allocate_block(freelist* list, u32 size, u32* out_offset);
+LAPI b8 freelist_allocate_block(freelist* list, u64 size, u64* out_offset);
 
 /**
  * @brief Attempts to find a free block of memory of the given size. Done by best fit.
@@ -59,7 +59,7 @@ LAPI b8 freelist_allocate_block(freelist* list, u32 size, u32* out_offset);
  * @param out_offset A pointer to hold the offset to the allocated memory.
  * @return b8 True if a block of memory was found and allocated; otherwise false
  */
-LAPI b8 freelist_allocate_block_best(freelist* list, u32 size, u32* out_offset);
+LAPI b8 freelist_allocate_block_best(freelist* list, u64 size, u64* out_offset);
 
 
 
@@ -72,7 +72,7 @@ LAPI b8 freelist_allocate_block_best(freelist* list, u32 size, u32* out_offset);
  * @param offset The offset to free at.
  * @return b8 True if successful; otherwise false. False should be treated as an error.
  */
-LAPI b8 freelist_free_block(freelist* list, u32 size, u32 offset);
+LAPI b8 freelist_free_block(freelist* list, u64 size, u64 offset);
 
 /**
  * @brief Clears the freelist
