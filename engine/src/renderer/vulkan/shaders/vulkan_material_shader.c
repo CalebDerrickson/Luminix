@@ -159,8 +159,8 @@ b8 vulkan_material_shader_create(vulkan_context* context, vulkan_material_shader
     }
 
     // Desciptor set layouts.
-    const i32 descriptor_set_layout_count = 2;
-    VkDescriptorSetLayout layouts[descriptor_set_layout_count] = {
+    // size of array is 2.
+    VkDescriptorSetLayout layouts[2] = {
         out_shader->global_descriptor_set_layout,
         out_shader->object_descriptor_set_layout
     };
@@ -180,7 +180,7 @@ b8 vulkan_material_shader_create(vulkan_context* context, vulkan_material_shader
             sizeof(vertex_3d),
             ATTRIBUTE_COUNT,
             attribute_descriptions,
-            descriptor_set_layout_count,
+            2,
             layouts,
             MATERIAL_SHADER_STAGE_COUNT,
             stage_create_infos,

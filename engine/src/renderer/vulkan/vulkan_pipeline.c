@@ -85,15 +85,15 @@ b8 vulkan_graphics_pipeline_create(
     // Dynamic state
     // These states are dynamic since the overall pipeline itself is immutable, ie cannot be changed on the fly.
     // Dynamic states, on the other hand, are the only part of the pipeline which is mutable.  
-    const u32 dynamic_state_count = 3;
-    VkDynamicState dynamic_states[dynamic_state_count] = {
+    // The dynamic state count is 3
+    VkDynamicState dynamic_states[3] = {
         VK_DYNAMIC_STATE_VIEWPORT,
         VK_DYNAMIC_STATE_SCISSOR,
         VK_DYNAMIC_STATE_LINE_WIDTH
     };
 
     VkPipelineDynamicStateCreateInfo dynamic_state_create_info = {VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO};
-    dynamic_state_create_info.dynamicStateCount = dynamic_state_count;
+    dynamic_state_create_info.dynamicStateCount = 3;
     dynamic_state_create_info.pDynamicStates = dynamic_states;
 
     // Vertex input
