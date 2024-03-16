@@ -4,6 +4,7 @@
 
 #include "core/asserts.h"
 #include "renderer/renderer_types.inl"
+#include "containers/freelist.h"
 
 #include <vulkan/vulkan.h>
 
@@ -35,17 +36,25 @@
     }                               \
 
 /**
- * @brief Internal buffer data for geometry
+ * @brief Internal buffer data for geometry. This data gets loaded directly into a buffer.
  */
 typedef struct vulkan_geometry_data {
+    /** @brief The identification of the geometry. */
     u32 id;
+    /** @brief The geometry generation. Incremented every the game updates. */
     u32 generation;
+    /** @brief The vertex count.*/
     u32 vertex_count;
+    /** @brief The size of each vertex.*/
     u32 vertex_element_size;
-    u32 vertex_buffer_offset;
+    /** @brief The offset in bytes of the vertex buffer.*/
+    u64 vertex_buffer_offset;
+    /** @brief The index count.*/
     u32 index_count;
+    /** @brief The size of each index.*/
     u32 index_element_size;
-    u32 index_buffer_offset;
+    /** @brief The offset in bytes in the index buffer.*/
+    u64 index_buffer_offset;
 } vulkan_geometry_data;
 
 typedef struct vulkan_swapchain_support_info {
@@ -67,15 +76,32 @@ typedef struct vulkan_pipeline {
     VkPipelineLayout pipeline_layout;
 } vulkan_pipeline;
 
-
+/** 
+ * @brief Represents a Vulkan-specific buffer.
+ * Used to load data onto the GPU. 
+ * 
+ * */
 typedef struct vulkan_buffer {
+    /** @brief The total size of the buffer.*/
     u64 total_size;
+    /** @brief The handle to the internal buffer.*/
     VkBuffer handle;
+    /** @brief The usage flags.*/
     VkBufferUsageFlagBits usage;
+    /** @brief Indicates if the buffer's memory is currently locked.*/
     b8 is_locked;
+    /** @brief The memory used by the buffer.*/
     VkDeviceMemory memory;
+    /** @brief The index of the memory used by the buffer.*/
     i32 memory_index;
+    /** @brief The property flags for the memory used by the buffer.*/
     u32 memory_property_flags;
+    /** @brief The amount of memory required for the freelist.*/
+    u64 freelist_memory_requirement;
+    /** @brief The memory block used by the internal freelist.*/
+    void* freelist_block;
+    /** @brief A freelist used to track allocations.*/
+    freelist buffer_freelist;
 }vulkan_buffer;
 
 
@@ -356,9 +382,6 @@ typedef struct vulkan_context {
 
     // Framebuffers used for world rendering, one per frame.
     VkFramebuffer world_framebuffers[3];
-
-    u64 geometry_vertex_offset;
-    u64 geometry_index_offset;
 
     // TODO: Make dynamic
     vulkan_geometry_data geometries[VULKAN_MAX_GEOMETRY_COUNT];
