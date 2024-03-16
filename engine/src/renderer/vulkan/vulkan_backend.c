@@ -71,7 +71,7 @@ b8 upload_data_range(vulkan_context* context, VkCommandPool pool, VkFence fence,
 }
 
 void free_data_range(vulkan_buffer* buffer, u64 offset, u64 size) {
-    if(buffer) {
+    if (buffer) {
         vulkan_buffer_free(buffer, size, offset);
     }
 }
@@ -1003,7 +1003,7 @@ b8 vulkan_renderer_create_geometry(geometry* geometry, u32 vertex_size, u32 vert
     internal_data->vertex_count = vertex_count;
     internal_data->vertex_element_size = sizeof(vertex_3d);
     u32 total_size = vertex_count * vertex_size;
-    if(!upload_data_range(
+    if (!upload_data_range(
         &context,
         pool,
         0,
@@ -1021,7 +1021,7 @@ b8 vulkan_renderer_create_geometry(geometry* geometry, u32 vertex_size, u32 vert
         internal_data->index_count = index_count;
         internal_data->index_element_size = sizeof(u32);
         total_size = index_count * index_size;
-        if(!upload_data_range(
+        if (!upload_data_range(
             &context, 
             pool, 
             0, 
