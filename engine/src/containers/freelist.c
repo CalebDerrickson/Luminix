@@ -214,14 +214,14 @@ b8 freelist_free_block(freelist* list, u64 size, u64 offset)
 
 b8 freelist_resize(freelist* list, u64* memory_requirement, void* new_memory, u64 new_size, void** out_old_memory)
 {
-    if(!list || !memory_requirement  || ((internal_state*)list->memory)->total_size > new_size) {
+    if (!list || !memory_requirement  || ((internal_state*)list->memory)->total_size > new_size) {
         return false;
     }
 
     // Enough space to hold the state, plus array for all nodes.
     u64 max_entries = (new_size / sizeof(void*));
     *memory_requirement = sizeof(internal_state) + (sizeof(freelist_node) * max_entries);
-    if(!new_memory) {
+    if (!new_memory) {
         return true;
     }
 
